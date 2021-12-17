@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    //"types": ["@emotion/react/types/css-prop"],
+    "module": "ESNext",
+    "strict": true,
+    "target": "ES2016",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist",
+    "forceConsistentCasingInFileNames": false
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

@@ -1,0 +1,5 @@
+export { default } from './Apac'
+export { default as SimpleSentece } from './simple-sentence'
+export { default as NormalSentece } from './normal-sentence'
+export { default as Word } from './word'
+export { default as Information } from './information'
