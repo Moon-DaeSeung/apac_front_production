@@ -13,8 +13,8 @@ export type TextFieldProps = {
 const TextField = ({ label, value, onChange, css: cssProp, isError, errorMessage = '오류가 발생했습니다' }: TextFieldProps) => {
   const [focused, setFocused] = useState(false)
   return (
-     <div css={[wrapper, cssProp, ignore]}>
-      <div css={[container, cssProp, isError && css`border: red;`]}>
+     <div css={[container, cssProp, ignore]}>
+      <div css={[fieldset, cssProp, isError && css`border: red;`]}>
         <div css={[layout]}>
           <label css={[labelText, (value || focused) && moved]}>
             {label}
@@ -46,10 +46,10 @@ const ignore = css`
  height: auto;
  outline: none;
 `
-const wrapper = css`
-  width: 200px;
-`
 const container = css`
+ width: 200px;
+`
+const fieldset = css`
  padding: 8px 12px;
  height: 50px;
  border-radius: 8px;
