@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { css, SerializedStyles } from '@emotion/react'
 
 export type TextFieldProps = {
-  css?: SerializedStyles
+  customCss?: SerializedStyles
   value: string
   label: string
   errorMessage?: string
@@ -10,11 +10,11 @@ export type TextFieldProps = {
   onChange: (value: string) => void
 }
 
-const TextField = ({ label, value, onChange, css: cssProp, isError, errorMessage = '오류가 발생했습니다' }: TextFieldProps) => {
+const TextField = ({ label, value, onChange, customCss, isError, errorMessage = '오류가 발생했습니다' }: TextFieldProps) => {
   const [focused, setFocused] = useState(false)
   return (
-     <div css={[container, cssProp, ignore]}>
-      <div css={[fieldset, cssProp, isError && css`border: red;`]}>
+     <div css={[container, customCss, ignore]}>
+      <div css={[fieldset, customCss, isError && css`border: red;`]}>
         <div css={[layout]}>
           <label css={[labelText, (value || focused) && moved]}>
             {label}
