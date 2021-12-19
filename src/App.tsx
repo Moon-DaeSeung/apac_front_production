@@ -11,7 +11,7 @@ const globalStyle = css`
     height: 100%;
     margin: 0;
     padding: 0;
-    background-color: #f4f5f7;
+    background-color: #EAEFF2;
   }
   #root {
     width: 100%;
@@ -27,7 +27,7 @@ function App () {
      <AppBar customCss={constraint}/>
      <Global styles={globalStyle} />
      <main css={[main]}>
-       <div css={[constraint, content]}>
+       <div css={[constraint]}>
         <Outlet/>
        </div>
      </main>
@@ -38,7 +38,6 @@ function App () {
 const constraint = css`
   padding: 0px 10px;
   width: 100%;
-  border: 1px solid black;
   @media (min-width: 1280px) {
     width: 1280px;
   }
@@ -46,11 +45,7 @@ const constraint = css`
 const main = css`
   display: flex;
   justify-content: center;
-  background-color: grey;
   flex-grow: 1;
-`
-const content = css`
-  background-color: greenyellow;
 `
 
 export default App

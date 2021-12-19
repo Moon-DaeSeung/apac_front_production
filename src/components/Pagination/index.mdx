@@ -1,0 +1,36 @@
+---
+name: Pagination
+menu: Components
+---
+
+import { Playground, Props } from 'docz'
+import Pagination from './Pagination.tsx'
+
+# Pagination
+
+## Basic usage
+
+<Playground>
+  {
+    () => {
+      const [currentPage, setCurrentPage] = React.useState(0)
+      return (
+        <Pagination totalPageCount={42} currentPage={currentPage} setCurrentPage={setCurrentPage} showFirstButton showLastButton />
+      )
+    }
+  }
+</Playground>
+
+## Properties
+
+<Props of={Pagination} />
+
+## Using different kinds
+
+<Playground>
+  <Pagination totalPageCount={6} currentPage={4} setCurrentPage={()=>null} />
+  <Pagination totalPageCount={42} currentPage={4} setCurrentPage={()=>null} hidePreviousButton hideNextButton />
+  <Pagination totalPageCount={42} currentPage={4} setCurrentPage={()=>null} showFirstButton showLastButton />
+</Playground>
+
+

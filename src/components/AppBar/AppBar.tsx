@@ -31,19 +31,17 @@ const button = css`
 `
 const home = css`
   text-decoration: none;
-  border: solid 1px black;
+  color: black;
 `
 const header = css`
-  border: solid 1px black;
   display: flex;
   justify-content: center;
+  background-color: white;
 `
 const layout = css`
   display: flex;
-  border: solid 1px black;
 `
 const logInOut = css`
-  border: solid 1px black;
   margin-left: auto;
   align-self: center;
   display: flex;

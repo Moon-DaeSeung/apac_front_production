@@ -2,6 +2,7 @@ import { css } from '@emotion/react'
 import React, { useState } from 'react'
 import Button from '../../../components/Button'
 import TextField from '../../../components/TextField'
+import { headerCommon, rowCommon } from '../css'
 
 const Word = () => {
   const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -9,7 +10,7 @@ const Word = () => {
   return (
     <>
       <h2>단어 검사</h2>
-      <div css={row}>
+      <div css={[row, headerCommon]}>
         <div css={[item]}>문항</div>
         <div css={[item]}>목표 단어</div>
         <div css={[item]}>아동 반응</div>
@@ -18,7 +19,7 @@ const Word = () => {
       </div>
       {data.map(value => {
         return (
-          <div key={value} css={row}>
+          <div key={value} css={[row, rowCommon]}>
             <div css={[item]}>{value}</div>
             <div css={[item]}>목표 단어</div>
             <div css={[item]}>
@@ -45,35 +46,38 @@ const Word = () => {
 export default Word
 
 const button = css`
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  aspect-ratio: 1;
   padding: 0;
   border-radius: 100%;
-  background-color: lightblue;
-  font-size: 20px;
-  border: 1px solid black;
+  background: linear-gradient(180deg, #1C9AFF 0%, #007EFD 100%);
+  font-size: 15px;
 `
 const fixed = css`
   position: fixed;
   bottom: 20px;
   right: 20px;
   @media (min-width: 1280px) {
-    right: calc((100% - 1280px - 300px) / 2);
+    right: calc((100% - 1280px - 200px) / 2);
   }
   display: flex;
   flex-direction: column;
   gap: 10px;
+  transition: bottom 0.4s;
 `
 const row = css`
- border: solid 1px black;
- :not(:first-of-type){
-  border-top: none;
+border-style: solid;
+border-width: 0;
+border-bottom-width: 2px;
+border-color: #EAEFF2;
+ :first-of-type {
+   border-width: 2px;
+   border-radius: 10px;
  }
  display: grid;
  grid-template-columns: minmax(60px, 1fr) minmax(100px, 2fr) minmax(120px, 3fr) minmax(300px, 7fr) minmax(200px, 3fr);
 `
 const item = css`
- border-right: solid black 1px;
  padding: 10px;
  display: flex;
  justify-content: center;

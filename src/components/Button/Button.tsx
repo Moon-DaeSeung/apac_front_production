@@ -51,9 +51,9 @@ const button = css`
   background-color: #1560c0;
   outline: 0;
   border: 0;
+  font-size: 1.5rem;
   border-radius: 0.25rem;
   padding: 10px 30px;
-  font-size: 1.5rem;
   box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
   cursor: pointer;
 `

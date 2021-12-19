@@ -26,7 +26,7 @@ function DateInput ({ value, onChange = () => null, readOnly = false, customCss 
   return (
     <div css={[container, customCss, ignore]}>
       <TextField
-        customCss={[dateInput, customCss, textFieldIgnore]}
+        customCss={[customCss, textFieldIgnore]}
         value={date}
         onChange={dateChange}
       />
@@ -37,7 +37,7 @@ function DateInput ({ value, onChange = () => null, readOnly = false, customCss 
             isVisible={isOpen}
             setIsVisible={setIsOpen}
             popperNode={(() => <Calendar currentDate={calendarDate} onSelected={setCalendarDate} onClickEvent={() => setIsOpen(false)} />)()}
-            placement='left'/>
+            placement='bottom'/>
         </div>
       }
     </div>
@@ -47,6 +47,7 @@ function DateInput ({ value, onChange = () => null, readOnly = false, customCss 
 const container = css`
   position: relative;
   width: 200px;
+  min-width: fit-content;
 `
 const ignore = css`
  padding: 0;
@@ -57,9 +58,6 @@ const ignore = css`
 const textFieldIgnore = css`
   margin: 0px;
   width: auto;
-`
-const dateInput = css`
-  height: 50px;
 `
 const calendar = css`
   position: absolute;

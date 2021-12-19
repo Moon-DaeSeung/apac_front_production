@@ -6,7 +6,7 @@ import { configs } from './config'
 const Apac = () => {
   return (
     <>
-      <header css={[header]}>
+      <header css={[header, container, constaint]}>
         <nav>
           <menu css={memu}>
             {configs.map(({ to, name }) => {
@@ -19,7 +19,7 @@ const Apac = () => {
           </menu>
         </nav>
       </header>
-      <main css={[main]}>
+      <main css={[main, container, constaint]}>
         <Outlet />
       </main>
     </>
@@ -29,9 +29,8 @@ const Apac = () => {
 export default Apac
 
 const header = css`
- border: solid 1px black;
  margin: 20px 0;
- background-color: white;
+ box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 `
 const memu = css`
  display: flex;
@@ -45,7 +44,7 @@ const menuItem = css`
  text-align: center;
  text-decoration: none;
  :not(:first-child) {
-  border-left: solid black 2px;
+  border-left: solid #DADADA 2px;
  } 
  :hover {
    background-color: lightblue
@@ -55,6 +54,14 @@ const menuItem = css`
  }
 `
 const main = css`
+ padding: 10px 20px;
+ border-radius: 4px;
+`
+const container = css`
  background-color: white;
- padding: 10px;
+ border-radius: 4px;
+`
+
+const constaint = css`
+ min-width: 780px;
 `

@@ -70,7 +70,8 @@ const container = css`
 `
 const fieldset = css`
  padding: 8px 12px;
- height: 38px;
+ box-sizing: border-box;
+ height: 50px;
  border-radius: 4px;
  border: solid #d1c6c6 1px;
  color: white;
