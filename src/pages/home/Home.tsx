@@ -1,6 +1,7 @@
 import { css } from '@emotion/react'
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Button from '../../components/Button'
 
 const Home = () => {
   const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -43,7 +44,7 @@ const Home = () => {
               <div css={item}>{value}</div>
               <div css={item}>{value}</div>
               <div css={item}>
-                <button css={modify}>수정</button>
+                <Button customCss={modify}>수정</Button>
               </div>
             </div>
           )
@@ -137,4 +138,5 @@ const carrecel = css`
 `
 const modify = css`
   padding: 10px 20px;
+  font-size: 1rem;
 `

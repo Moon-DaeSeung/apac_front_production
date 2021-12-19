@@ -7,13 +7,20 @@ export type ButtonProps = {
   customCss?: SerializedStyles
 }
 
+type SpanAttribute = {
+  radius: number,
+  x: number,
+  y: number
+}
+
 const Button = ({ children, onClick, customCss }: ButtonProps) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null)
-  const [effectXY, setEffectXY] = useState<[number, number] | null>(null)
+  const [spanAttribute, setSpanAttribute] = useState<SpanAttribute | null>(null)
   const handleMouseDown = ({ clientX, clientY }: MouseEvent) => {
     if (!buttonRef.current) return
-    const { x, y } = buttonRef.current.getBoundingClientRect()
-    setEffectXY([clientX - x, clientY - y])
+    const { x, y, width, height } = buttonRef.current.getBoundingClientRect()
+    const radius = Math.max(width, height) / 4
+    setSpanAttribute({ x: clientX - x, y: clientY - y, radius })
   }
   return (
     <button
@@ -23,14 +30,14 @@ const Button = ({ children, onClick, customCss }: ButtonProps) => {
       onMouseDown={handleMouseDown}
     >
       {children}
-      {effectXY && <Effect effectXY={effectXY} />}
+      {spanAttribute && <Effect props={spanAttribute} />}
     </button>
   )
 }
 
-const Effect = ({ effectXY }: {effectXY: [number, number]}) => {
+const Effect = ({ props }: {props: SpanAttribute}) => {
   const Render = () => {
-    return <span css={span(effectXY)}/>
+    return <span css={span(props)}/>
   }
   return <Render/>
 }
@@ -45,13 +52,9 @@ const button = css`
   outline: 0;
   border: 0;
   border-radius: 0.25rem;
-  width: 150px;
-  height: 50px;
+  padding: 10px 30px;
   font-size: 1.5rem;
   box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   cursor: pointer;
 `
 const ripple = keyframes`
@@ -60,12 +63,13 @@ const ripple = keyframes`
    opacity: 0;
  }
 `
-const span = ([x, y]: [number, number]) => css`
+const span = ({ radius, x, y }: SpanAttribute) => css`
   position: absolute;
   background-color: white;
   opacity: 0.5;
-  width: 10%;
   aspect-ratio: 1;
+  width: ${radius}px;
+  height: ${radius}px;
   top: ${y}px;
   left: ${x}px;
   transform: scale(0);
