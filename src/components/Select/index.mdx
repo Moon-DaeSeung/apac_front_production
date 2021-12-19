@@ -1,0 +1,111 @@
+---
+name: Select
+menu: Components
+---
+
+import { Playground, Props } from 'docz'
+import Select from './Select.tsx'
+import {useState, useRef} from 'react'
+
+# Select
+
+## Basic usage
+
+<Playground>
+  {
+    () => {
+      const options = [0,1,2,3,4,5]
+      const [value, setValue] = useState(null)
+      return(
+        <div>
+          <Select
+           style={{width: '500px', height: '40px'}} 
+           value={value} 
+           onChange={setValue} 
+           options={options}
+          />
+        </div>
+      )
+    }
+  }
+</Playground>
+
+## Option could be object
+
+<Playground>
+  {
+    () => {
+      const options = [
+        { id: 1, name: 'apple'}, 
+        { id: 2, name: 'banana'},
+        { id: 3, name: 'melon'},
+        { id: 4, name: 'strawberry'},
+        { id: 5, name: 'carot'},
+        { id: 6, name: 'grape'},
+        { id: 7, name: 'tomato'},
+        { id: 8, name: 'nut'},
+      ]
+      const [value, setValue] = useState(null)
+      return(
+        <div>
+          <Select
+           style={{width: '500px', height: '40px'}} 
+           value={value} 
+           onChange={setValue} 
+           options={options}
+           getOptionLabel={(option) => option.name}
+          />
+        </div>
+      )
+    }
+  }
+</Playground>
+
+## Usage with Ref
+
+<Playground>
+  {
+    () => {
+      const options = [1,2,3,4,5,6]
+      const inputRef = useRef(null)
+      return(
+        <div>
+          <Select
+           style={{width: '500px', height: '40px'}} 
+           options={options}
+           ref={inputRef}
+          />
+          <button onClick={() => console.log(inputRef.current.value) }>확인</button>
+        </div>
+      )
+    }
+  }
+</Playground>
+
+## Usage with Summit
+
+<Playground>
+  {
+    () => {
+      const options = [1,2,3,4,5,6]
+      const handleSubmit = (event) => {
+        event.preventDefault()
+        console.log(event.target.select.value)
+      }
+      return(
+        <form onSubmit={handleSubmit}>
+          <Select
+           style={{width: '500px', height: '40px'}} 
+           options={options}
+           name='select'
+          />
+          <input type="submit"/>
+        </form>
+      )
+    }
+  }
+</Playground>
+
+## Properties
+
+<Props of={Select} />

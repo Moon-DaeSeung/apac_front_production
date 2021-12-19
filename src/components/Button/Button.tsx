@@ -3,7 +3,7 @@ import React, { MouseEvent, useRef, useState } from 'react'
 
 export type ButtonProps = {
   children: React.ReactNode
-  onClick?: () => void
+  onClick?: (e: any | null) => void
   customCss?: SerializedStyles
 }
 

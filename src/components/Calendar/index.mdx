@@ -1,0 +1,60 @@
+---
+name: Calendar
+menu: Components
+---
+
+import { Playground, Props } from 'docz'
+import Calendar from './Calendar.tsx'
+
+# Calendar
+
+## Basic usage
+
+<Playground>
+  {
+    () => {
+      const [date, setDate] = React.useState(new Date())
+      return (
+        <Calendar currentDate={date} onSelected={setDate}/>
+      )
+    }
+  }
+</Playground>
+
+## Properties
+
+<Props of={Calendar} />
+
+## Using different kinds
+
+<Playground>
+  {
+    () => {
+      const [date, setDate] = React.useState(new Date())
+      const [value, setValue] = React.useState('')
+      const handleSelectDate = (selectedDate) => {
+         setValue(selectedDate.toISOString().split('T')[0])
+         console.log(selectedDate)
+         setDate(selectedDate)
+      } 
+      const now = new Date('2021-07-04')
+      const minDate = new Date('2021-07-02')
+      const maxDate = new Date('2021-07-10')
+      return (
+        <>
+        <h1>
+          input 출력
+        </h1>
+         <input value={value} onChange={(event) => setValue(event.target.value)} />
+         <Calendar currentDate={date} onSelected={handleSelectDate}/>
+        <h1>
+          Minimum Date / Maximum Date 지정
+        </h1>
+        <Calendar minimumDate={minDate} maximumDate={maxDate} currentDate={now} onSelected={()=>null} />
+        </>
+      )
+    }
+  }
+</Playground>
+
+

@@ -1,5 +1,7 @@
 import { css } from '@emotion/react'
 import React from 'react'
+import TextField from '../../../components/TextField'
+import Button from '../../../components/Button'
 
 const Information = () => {
   return (
@@ -9,28 +11,28 @@ const Information = () => {
         <div css={[row]}>
           <label css={[item]}>이름</label>
           <div css={[item]}>
-            <input css={[input]} />
+            <TextField customCss={input} />
           </div>
         </div>
         <div css={[row]}>
           <label css={[item]}>성별</label>
           <div css={[item]}>
-            <input css={[input]} />
+            <TextField customCss={input} />
           </div>
         </div>
         <div css={[row]}>
           <label css={[item]}>나이</label>
           <div css={[item]}>
-            <input css={[input]} />
+            <TextField customCss={input} />
           </div>
         </div>
         <div css={[row]}>
           <label css={[item]}>검사일자</label>
           <div css={[item]}>
-            <input css={[input]} />
+            <TextField customCss={input} />
           </div>
         </div>
-        <button css={[button]}>등록</button>
+        <Button customCss={button}>등록</Button>
       </div>
     </>
   )
@@ -60,7 +62,7 @@ const item = css`
   }
 `
 const input = css`
-  padding: 15px 30px 15px 10px;
+  padding: 10px;
 `
 const form = css`
  border: 1px solid black;

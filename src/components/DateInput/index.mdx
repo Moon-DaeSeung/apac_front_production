@@ -1,0 +1,47 @@
+---
+name: DateInput
+menu: Components
+---
+
+import { Playground, Props } from 'docz'
+import DateInput from './DateInput.tsx'
+import { css } from '@emotion/core'
+
+# DateInput
+
+## Basic usage
+
+<Playground>
+  {
+    () => {
+      const [date, setDate] = React.useState('')
+      return (
+        <DateInput value={date} onChange={setDate} />
+      )
+    }
+  }
+</Playground>
+
+## Customizing with Emotion css props 
+
+<Playground>
+  {
+    () => {
+      const [date, setDate] = React.useState('')
+      return (
+        <>
+          <DateInput customCss={css`width: 300px; height: 100px; margin-bottom: 20px;`} value={date} onChange={setDate} />
+          <DateInput customCss={css`width: 200px; height: 30px;`} value={date} onChange={setDate} />
+        </>
+      )
+    }
+  }
+</Playground>
+
+
+## Properties
+
+<Props of={DateInput} />
+
+
+

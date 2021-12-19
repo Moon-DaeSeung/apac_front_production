@@ -1,5 +1,6 @@
 import { css } from '@emotion/react'
 import React, { useState } from 'react'
+import Button from '../../../components/Button'
 import TextField from '../../../components/TextField'
 
 const Word = () => {
@@ -34,8 +35,8 @@ const Word = () => {
         )
       })}
       <div css={[fixed]}>
-        <button css={[button]}>저장</button>
-        <button css={[button]}>오류패턴</button>
+        <Button customCss={button}>저장</Button>
+        <Button customCss={button}>오류패턴</Button>
       </div>
     </>
   )
@@ -46,6 +47,7 @@ export default Word
 const button = css`
   width: 100px;
   height: 100px;
+  padding: 0;
   border-radius: 100%;
   background-color: lightblue;
   font-size: 20px;

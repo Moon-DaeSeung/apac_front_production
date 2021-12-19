@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="54" height="54" viewBox="0 0 54 54">
+    <defs>
+        <clipPath id="clip-path">
+            <path id="사각형_2297" fill="#fff" stroke="#707070" d="M0 0H54V54H0z" opacity="0.346" transform="translate(1718 31)"/>
+        </clipPath>
+        <clipPath id="clip-path-2">
+            <path id="사각형_1885" fill="#fff" stroke="#707070" d="M0 0H28V28H0z" transform="translate(1733 45)"/>
+        </clipPath>
+        <style>
+            .cls-5{fill:none;stroke:#aaa;stroke-miterlimit:10;stroke-width:2px}
+        </style>
+    </defs>
+    <g id="coin" clip-path="url(#clip-path)" transform="translate(-1718 -31)">
+        <g id="ic_coin" clip-path="url(#clip-path-2)" transform="translate(-2)">
+            <g id="그룹_19" transform="translate(1286.077 -157.307)">
+                <g id="타원_6" class="cls-5" transform="translate(448.041 203.22)">
+                    <circle cx="13.087" cy="13.087" r="13.087"/>
+                    <circle cx="13.087" cy="13.087" r="12.087" fill="none"/>
+                </g>
+                <path id="패스_213" d="M470.326 224.328a5.21 5.21 0 1 1-.064-5.917" class="cls-5" transform="translate(-5.01 -4.969)"/>
+            </g>
+        </g>
+    </g>
+</svg>

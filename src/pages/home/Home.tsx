@@ -20,12 +20,12 @@ const Home = () => {
             <label>검사일자</label>
             <input />
           </fieldset>
-          <button>조회</button>
+          <Button onClick={(e: any) => { e.preventDefault() }}>조회</Button>
         </form>
       </header>
       <main css={container}>
         <Link to="tests" css={register}>
-          <button css={css`width: 100%; padding: 10px;`}>등록</button>
+          <Button customCss={css`padding:10px 60px;`}>등록</Button>
         </Link>
         <div css={[row]}>
           <div css={[item]}>이름</div>

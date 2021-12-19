@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+    <defs>
+        <clipPath id="clip-path">
+            <path id="사각형_2617" fill="#fff" stroke="#acb1bf" stroke-linecap="round" d="M0 0H18V18H0z" transform="translate(-.405 -.458)"/>
+        </clipPath>
+        <style>
+            .cls-3{stroke:#acb1bf;stroke-linecap:round;fill:none;stroke-linejoin:round;stroke-miterlimit:10;stroke-width:2.5px}
+        </style>
+    </defs>
+    <g id="ic_x" clip-path="url(#clip-path)" transform="translate(.405 .458)">
+        <g id="x" transform="translate(3.534 3.718)">
+            <path id="Stroke_1" d="M0 10.27L10.27 0" class="cls-3"/>
+            <path id="Stroke_3" d="M10.27 10.27L0 0" class="cls-3" transform="translate(.148)"/>
+        </g>
+    </g>
+</svg>

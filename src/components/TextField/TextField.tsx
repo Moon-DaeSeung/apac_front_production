@@ -1,17 +1,35 @@
-import React, { useState } from 'react'
-import { css, SerializedStyles } from '@emotion/react'
+import React, { useImperativeHandle, useRef, useState } from 'react'
+import { css } from '@emotion/react'
 
 export type TextFieldProps = {
-  customCss?: SerializedStyles
-  value: string
+  customCss?: any
+  value?: string
+  onChange?: (value: string) => void
   label?: string
   errorMessage?: string
   isError?: boolean
-  onChange: (value: string) => void
 }
 
-const TextField = ({ label, value, onChange, customCss, isError, errorMessage = '오류가 발생했습니다' }: TextFieldProps) => {
+const TextField = (
+  {
+    label,
+    value: controlledValue,
+    onChange: controlledSetValue,
+    customCss,
+    isError,
+    errorMessage = '오류가 발생했습니다'
+  }: TextFieldProps, ref?: any) => {
   const [focused, setFocused] = useState(false)
+  const [uncontrolledValue, setUncotrolledValue] = useState('')
+  const value = controlledValue || uncontrolledValue
+  const onChange = controlledSetValue || setUncotrolledValue
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current && inputRef.current.focus()
+    },
+    value: inputRef.current && inputRef.current.value
+  }))
   return (
      <div css={[container, customCss, ignore]}>
       <div css={[fieldset, customCss, isError && css`border: red;`]}>
@@ -19,7 +37,7 @@ const TextField = ({ label, value, onChange, customCss, isError, errorMessage = 
           <label css={[labelText, (value || focused) && moved]}>
             {label}
           </label>
-          <input css={[input, label || css`height: 100%`]}
+          <input ref={inputRef} css={[input, label || css`height: 100%;`]}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             value={value}
@@ -32,7 +50,7 @@ const TextField = ({ label, value, onChange, customCss, isError, errorMessage = 
   )
 }
 
-export default TextField
+export default React.forwardRef(TextField)
 
 const error = css`
  font-size: 0.7em;

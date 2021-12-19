@@ -18,6 +18,7 @@ const globalStyle = css`
     min-height: 100%;
     display: flex;
     flex-direction: column;
+    margin-right: 12px;
   }
 `
 function App () {

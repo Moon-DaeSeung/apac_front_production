@@ -1,0 +1,104 @@
+---
+name: Dropdown
+menu: Components
+---
+
+import { Playground, Props } from 'docz'
+import Dropdown from './Dropdown.tsx'
+import {useState} from 'react'
+
+# Dropdown
+
+## Basic usage
+
+<Playground>
+  {
+    <>
+      <h1>Dropdown</h1>
+      <Dropdown
+        popperNode={
+          <div
+            style={{
+              width: '220px',
+              height: '240px',
+              background: '#e9f7ff',
+              textAlign: 'center',
+              color: '#2f97ff',
+              lineHeight: '140px',
+              borderRadius: '10px',
+              border: 'solid 2px #2faeff',
+            }}
+          >
+            외부를 클릭해야 사라집니다
+          </div>
+        }
+      >
+        <div
+          style={{
+            width: '100px',
+            height: '40px',
+            background: '#0082fe',
+            cursor: 'pointer',
+            textAlign: 'center',
+            color: 'white',
+            lineHeight: '40px',
+            borderRadius: '10px',
+          }}
+        >
+          Dropdown
+        </div>
+      </Dropdown>
+    </>
+  }
+
+</Playground>
+
+## Properties
+
+<Props of={Dropdown} />
+
+## Using different kinds
+
+<Playground>
+  {
+    <>
+      <h1>Select</h1>
+      <Dropdown
+        select
+        popperNode={
+          <div
+            style={{
+              width: '220px',
+              height: '240px',
+              background: '#e9f7ff',
+              textAlign: 'center',
+              color: '#2f97ff',
+              lineHeight: '140px',
+              cursor: 'pointer',
+              borderRadius: '10px',
+              border: 'solid 2px #2faeff',
+            }}
+          >
+            클릭시 사라집니다
+          </div>
+        }
+      >
+        <div
+          style={{
+            width: '100px',
+            height: '40px',
+            background: '#0082fe',
+            cursor: 'pointer',
+            textAlign: 'center',
+            color: 'white',
+            lineHeight: '40px',
+            borderRadius: '10px',
+          }}
+        >
+          Select
+        </div>
+      </Dropdown>
+    </>
+  }
+
+</Playground>
