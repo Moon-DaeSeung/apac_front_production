@@ -17,7 +17,20 @@ import { css } from '@emotion/core'
     () => {
       const [value, setValue] = useState('')
       return(
-          <TextField label='label' value={value} onChange={setValue}/>
+          <TextField  value={value} onChange={setValue}/>
+      )
+    }
+  }
+</Playground>
+
+## With label 
+
+<Playground>
+  {
+    () => {
+      const [value, setValue] = useState('')
+      return(
+          <TextField label="label" value={value} onChange={setValue}/>
       )
     }
   }

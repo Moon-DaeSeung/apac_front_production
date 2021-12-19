@@ -4,7 +4,7 @@ import { css, SerializedStyles } from '@emotion/react'
 export type TextFieldProps = {
   customCss?: SerializedStyles
   value: string
-  label: string
+  label?: string
   errorMessage?: string
   isError?: boolean
   onChange: (value: string) => void
@@ -19,7 +19,7 @@ const TextField = ({ label, value, onChange, customCss, isError, errorMessage = 
           <label css={[labelText, (value || focused) && moved]}>
             {label}
           </label>
-          <input css={[input]}
+          <input css={[input, label || css`height: 100%`]}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             value={value}
@@ -48,16 +48,18 @@ const ignore = css`
 `
 const container = css`
  width: 200px;
+ font-size: 1rem;
 `
 const fieldset = css`
  padding: 8px 12px;
- height: 50px;
- border-radius: 8px;
- border: solid black 1px;
+ height: 38px;
+ border-radius: 4px;
+ border: solid #d1c6c6 1px;
  color: white;
- background-color: #386d9e;
+ background-color: transparent;
  :focus-within {
-   outline: solid blue 2px;
+   outline: solid #0003EE 1px;
+   border-color: #0003EE;
  }
 `
 const layout = css`
@@ -73,10 +75,11 @@ const labelText = css`
   position: absolute;
   pointer-events: none;
   line-height: 1;
+  color: #A8A8A8;
   font-size: 1.2em;
 `
 const moved = css`
-  transform: translateY(-50%) scale(0.6);
+  transform: translateY(-50%) scale(0.75);
 `
 const input = css`
   padding: 0;
