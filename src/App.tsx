@@ -1,7 +1,7 @@
 import React from 'react'
 import { Outlet } from 'react-router'
 import { Global, css } from '@emotion/react'
-import { Link } from 'react-router-dom'
+import AppBar from './components/AppBar'
 
 const globalStyle = css`
   * {
@@ -10,7 +10,7 @@ const globalStyle = css`
   body {
     height: 100%;
     margin: 0;
-    min-width: 1600px;
+    padding: 0;
     background-color: #f4f5f7;
   }
   #root {
@@ -23,15 +23,33 @@ const globalStyle = css`
 function App () {
   return (
     <>
+     <AppBar customCss={constraint}/>
      <Global styles={globalStyle} />
-     <header css={css`width: 100px;`}>
-       <Link to='/'>
-         <h1>HOME</h1>
-       </Link>
-     </header>
-     <Outlet/>
+     <main css={[main]}>
+       <div css={[constraint, content]}>
+        <Outlet/>
+       </div>
+     </main>
     </>
   )
 }
+
+const constraint = css`
+  padding: 0px 10px;
+  width: 100%;
+  border: 1px solid black;
+  @media (min-width: 1280px) {
+    width: 1280px;
+  }
+`
+const main = css`
+  display: flex;
+  justify-content: center;
+  background-color: grey;
+  flex-grow: 1;
+`
+const content = css`
+  background-color: greenyellow;
+`
 
 export default App
