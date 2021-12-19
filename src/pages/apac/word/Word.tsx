@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Button from '../../../components/Button'
 import TextField from '../../../components/TextField'
 import { headerCommon, rowCommon } from '../css'
@@ -7,8 +7,19 @@ import { headerCommon, rowCommon } from '../css'
 const Word = () => {
   const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   const [reaction, setReaction] = useState('')
+  const node = useRef<HTMLDivElement | null>(null)
+  const [top, setTop] = useState(0)
+  useEffect(() => {
+    const scrollHandle = () => {
+      if (node.current == null) return
+      const rect = node.current.getBoundingClientRect()
+      setTop(rect.bottom - window.innerHeight)
+    }
+    window.addEventListener('scroll', scrollHandle)
+    return () => window.removeEventListener('scroll', scrollHandle)
+  }, [])
   return (
-    <>
+    <div ref={node} css={container}>
       <h2>단어 검사</h2>
       <div css={[row, headerCommon]}>
         <div css={[item]}>문항</div>
@@ -35,15 +46,19 @@ const Word = () => {
           </div>
         )
       })}
-      <div css={[fixed]}>
+      <div css={[fixed(top)]}>
         <Button customCss={button}>저장</Button>
         <Button customCss={button}>오류패턴</Button>
       </div>
-    </>
+    </div>
   )
 }
 
 export default Word
+
+const container = css`
+  position: relative;
+`
 
 const button = css`
   width: 80px;
@@ -53,17 +68,18 @@ const button = css`
   background: linear-gradient(180deg, #1C9AFF 0%, #007EFD 100%);
   font-size: 15px;
 `
-const fixed = css`
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
+const fixed = (top: number) => css`
+  position: absolute;
+  bottom: ${top}px;
+  right: 0px;
   @media (min-width: 1280px) {
-    right: calc((100% - 1280px - 200px) / 2);
+    right: -120px;
   }
   display: flex;
   flex-direction: column;
   gap: 10px;
-  transition: bottom 0.4s;
+  border: solid 1px black;
+  transition: right 0.4s, bottom 0.4s linear;
 `
 const row = css`
 border-style: solid;
