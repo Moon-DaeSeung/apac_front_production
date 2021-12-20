@@ -35,7 +35,7 @@ const TextField = (
   }))
   return (
      <div css={[container, customCss, ignore]}>
-      <div css={[fieldset, customCss, isError && css`border: red;`]}>
+      <div css={[fieldset, customCss, isError && css`border-color: red;`]}>
         <div css={[layout]}>
           <label css={[labelText, (value || focused) && moved]}>
             {label}
@@ -48,7 +48,7 @@ const TextField = (
           />
         </div>
       </div>
-      <footer css={[error]}>{isError && errorMessage}</footer>
+      <footer css={[isError ? error : css`display: none;`]}>{errorMessage }</footer>
     </div>
   )
 }
@@ -59,6 +59,10 @@ const error = css`
  font-size: 0.7em;
  color: red;
  padding-left: 8px;
+ margin-top: 3px;
+ ::before {
+   content: '*';
+ }
 `
 const ignore = css`
  background-color: inherit;
