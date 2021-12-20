@@ -1,0 +1,30 @@
+---
+name: Floating
+menu: Components
+---
+
+import {Playground, Props} from 'docz'
+import Floating from './Floating'
+import { css } from '@emotion/core'
+
+# Floating
+
+## Basic usage
+
+<Playground>
+  {
+    <Floating offset={{bottom: '620px', right: '900px'}} >Floating</Floating>
+  }
+</Playground>
+
+## Customizing with Emotion css
+
+<Playground>
+  {
+    <Floating offset={{bottom: '430px', right: '900px'}} customCss={css`background-color: red;`}>Custom</Floating>
+  }
+</Playground>
+
+## Properties
+
+<Props of={Floating} />
