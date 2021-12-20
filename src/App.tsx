@@ -2,14 +2,13 @@ import React from 'react'
 import { Outlet } from 'react-router'
 import { Global, css } from '@emotion/react'
 import AppBar from './components/AppBar'
+import { useAuthInitialize } from './hooks/useAuthInitialize'
+import useUser from './hooks/useUser'
+import Login from './pages/login'
 
 const globalStyle = css`
   * {
     font-family: 'Spoqa Han Sans Neo', 'sans-serif';;
-  }
-  html {
-    margin: 0;
-    padding: 0;
   }
   body {
     width: 100%;
@@ -19,25 +18,33 @@ const globalStyle = css`
     background-color: #EAEFF2;
   }
   #root {
-    margin: 0;
-    width: 100%;
-    position: relative;
-    min-height: 100%;
     display: flex;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    min-height: 100%;
     flex-direction: column;
     margin-right: 12px;
   }
 `
 function App () {
+  useAuthInitialize()
+  const { user } = useUser()
   return (
     <>
-     <AppBar customCss={constraint}/>
-     <Global styles={globalStyle} />
-     <main css={[main]}>
-       <div css={[constraint]}>
-        <Outlet/>
-       </div>
-     </main>
+      <Global styles={globalStyle} />
+      {
+       !user
+         ? <Login/>
+         : <>
+          <AppBar customCss={constraint} />
+          <main css={[main]}>
+            <div css={[constraint]}>
+              <Outlet />
+            </div>
+          </main>
+        </>
+      }
     </>
   )
 }

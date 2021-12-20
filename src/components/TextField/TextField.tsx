@@ -8,6 +8,8 @@ export type TextFieldProps = {
   label?: string
   errorMessage?: string
   isError?: boolean
+  password?: boolean
+  type?: 'number' | 'email' | 'password' | 'text'
 }
 
 const TextField = (
@@ -17,6 +19,7 @@ const TextField = (
     onChange: controlledSetValue,
     customCss,
     isError,
+    type,
     errorMessage = '오류가 발생했습니다'
   }: TextFieldProps, ref?: any) => {
   const [focused, setFocused] = useState(false)
@@ -37,7 +40,7 @@ const TextField = (
           <label css={[labelText, (value || focused) && moved]}>
             {label}
           </label>
-          <input ref={inputRef} css={[input, label || css`height: 100%;`]}
+          <input type={type} ref={inputRef} css={[input, label || css`height: 100%;`]}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             value={value}
