@@ -1,9 +1,31 @@
 import { css } from '@emotion/react'
-import React from 'react'
+import React, { useState } from 'react'
 import TextField from '../../../components/TextField'
 import Button from '../../../components/Button'
+import DateInput from '../../../components/DateInput'
+
+type TestInformation = {
+  name: string
+  gender: string
+  age: string
+  testedDate: string
+}
 
 const Information = () => {
+  const [testInformation, setTestInformation] = useState<TestInformation>(
+    {
+      name: '', gender: '', age: '', testedDate: ''
+    }
+  )
+  const resolve = (key: keyof TestInformation) => {
+    return {
+      value: testInformation[key],
+      onChange: (value: string) => {
+        setTestInformation((prev) => { return { ...prev, [key]: value } })
+      }
+    }
+  }
+
   return (
     <>
       <h2>검사 정보</h2>
@@ -11,25 +33,25 @@ const Information = () => {
         <div css={[row]}>
           <label css={[item]}>이름</label>
           <div css={[item]}>
-            <TextField customCss={input} />
+            <TextField customCss={input} {...resolve('name')}/>
           </div>
         </div>
         <div css={[row]}>
           <label css={[item]}>성별</label>
           <div css={[item]}>
-            <TextField customCss={input} />
+            <TextField customCss={input} {...resolve('gender')} />
           </div>
         </div>
         <div css={[row]}>
           <label css={[item]}>나이</label>
           <div css={[item]}>
-            <TextField customCss={input} />
+            <TextField customCss={input} {...resolve('age')} />
           </div>
         </div>
         <div css={[row]}>
           <label css={[item]}>검사일자</label>
           <div css={[item]}>
-            <TextField customCss={input} />
+            <DateInput customCss={input} {...resolve('testedDate')}/>
           </div>
         </div>
         <Button customCss={button}>등록</Button>
