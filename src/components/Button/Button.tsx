@@ -35,12 +35,13 @@ const Button = ({ children, onClick, customCss }: ButtonProps) => {
   )
 }
 
-const Effect = ({ props }: {props: SpanAttribute}) => {
+// eslint-disable-next-line react/display-name
+const Effect = React.memo(({ props }: {props: SpanAttribute}) => {
   const Render = () => {
     return <span css={span(props)}/>
   }
   return <Render/>
-}
+})
 
 export default Button
 
