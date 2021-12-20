@@ -1,25 +1,17 @@
 import { css } from '@emotion/react'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import Button from '../../../components/Button'
 import TextField from '../../../components/TextField'
+import Floating from '../../../components/Floating'
 import { headerCommon, rowCommon } from '../css'
+import { useMediaQuery } from '../utils/useMediaQuery'
 
 const Word = () => {
   const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  const matches = useMediaQuery('(min-width: 1280px)')
   const [reaction, setReaction] = useState('')
-  const node = useRef<HTMLDivElement | null>(null)
-  const [top, setTop] = useState(0)
-  useEffect(() => {
-    const scrollHandle = () => {
-      if (node.current == null) return
-      const rect = node.current.getBoundingClientRect()
-      setTop(rect.bottom - window.innerHeight)
-    }
-    window.addEventListener('scroll', scrollHandle)
-    return () => window.removeEventListener('scroll', scrollHandle)
-  }, [])
   return (
-    <div ref={node} css={container}>
+    <>
       <h2>단어 검사</h2>
       <div css={[row, headerCommon]}>
         <div css={[item]}>문항</div>
@@ -46,40 +38,36 @@ const Word = () => {
           </div>
         )
       })}
-      <div css={[fixed(top)]}>
-        <Button customCss={button}>저장</Button>
-        <Button customCss={button}>오류패턴</Button>
-      </div>
-    </div>
+      <Floating offset={{
+        bottom: '20px',
+        right: matches ? '(100% - 1280px) / 2 - 110px' : '20px'
+      }}>
+        <Button customCss={button}>
+          <i className="fas fa-robot" />
+          <br/>
+          <span css={caption}>오류패턴</span>
+          </Button>
+        <Button customCss={button}>
+          <i className="far fa-save" />
+          <br/>
+          <span css={caption}>저장</span>
+        </Button>
+      </Floating>
+    </>
   )
 }
 
 export default Word
 
-const container = css`
-  position: relative;
-`
-
 const button = css`
-  width: 80px;
+  width: 70px;
   aspect-ratio: 1;
   padding: 0;
-  border-radius: 100%;
-  background: linear-gradient(180deg, #1C9AFF 0%, #007EFD 100%);
-  font-size: 15px;
+  border-radius: 20px;
+  font-size: 35px;
 `
-const fixed = (top: number) => css`
-  position: absolute;
-  bottom: ${top}px;
-  right: 0px;
-  @media (min-width: 1280px) {
-    right: -120px;
-  }
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  border: solid 1px black;
-  transition: right 0.4s, bottom 0.4s linear;
+const caption = css`
+  font-size: 13px;
 `
 const row = css`
 border-style: solid;

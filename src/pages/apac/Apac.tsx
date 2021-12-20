@@ -43,7 +43,7 @@ const menuItem = css`
   flex: 1 1 0;
   text-align: center;
   text-decoration: none;
-  :not(:first-child) {
+  :not(:first-of-type) {
     border-left: solid #dadada 2px;
   }
   :hover {

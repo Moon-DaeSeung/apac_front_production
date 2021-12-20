@@ -131,17 +131,17 @@ const row = css`
   display: grid;
   grid-template-columns: 3fr 1fr 4fr 6fr 8fr 2fr;
   div {
-    &:nth-child(1) {
+    &:first-of-type {
       border-left-width: 2px;
     }
   }
   //검사 목록 하단
   &:last-of-type {
     div {
-      :first-child {
+      :first-of-type {
         border-bottom-left-radius: 10px;
       }
-      :last-child {
+      :last-of-type {
         border-bottom-right-radius: 10px;
       }
     }
@@ -154,10 +154,10 @@ const row = css`
       font-weight: bold;
       color: #979DAF;
       
-      :first-child {
+      :first-of-type {
         border-top-left-radius: 10px;
       }
-      :last-child {
+      :last-of-type {
         border-top-right-radius: 10px;
       }
     }
