@@ -4,7 +4,7 @@ import Button from '../../../components/Button'
 import TextField from '../../../components/TextField'
 import Floating from '../../../components/Floating'
 import { headerCommon, rowCommon } from '../css'
-import { useMediaQuery } from '../utils/useMediaQuery'
+import { useMediaQuery } from '../../../hooks/useMediaQuery'
 
 const Word = () => {
   const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]

@@ -1,6 +1,8 @@
 import { css, SerializedStyles } from '@emotion/react'
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { logout } from '../../auth/firebase'
+import useUser from '../../hooks/useUser'
 import Button from '../Button'
 
 export type AppBarProps = {
@@ -8,6 +10,8 @@ export type AppBarProps = {
 }
 
 const AppBar = ({ customCss }: AppBarProps) => {
+  const { user } = useUser()
+  const handleLogout = () => logout()
   return (
      <header css={[header]}>
        <div css={[layout, customCss]}>
@@ -15,8 +19,8 @@ const AppBar = ({ customCss }: AppBarProps) => {
           <h1>APAC</h1>
         </Link>
         <div css={[logInOut]}>
-            <div>user</div>
-            <Button customCss={button}>logout</Button>
+            <div>{user?.name}</div>
+            <Button customCss={button} onClick={handleLogout}>logout</Button>
         </div>
        </div>
      </header>
@@ -45,7 +49,7 @@ const logInOut = css`
   margin-left: auto;
   align-self: center;
   display: flex;
-  width: 150px;
+  gap: 20px;
   justify-content: space-between;
   align-items: center;
 `
