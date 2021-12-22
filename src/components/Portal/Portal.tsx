@@ -12,7 +12,6 @@ function Portal ({ children, parentPortal }: RootPortalProps) {
     if (!portal) {
       portal = document.createElement('div')
       portal.setAttribute('id', 'root-portal')
-      portal.style.position = 'absolute'
       portal.style.zIndex = '100'
       document.body.append(portal)
     }

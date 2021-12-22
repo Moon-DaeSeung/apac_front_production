@@ -1,0 +1,53 @@
+---
+name: Popper
+menu: Components
+---
+
+import { Playground, Props } from 'docz'
+import Popper from './Popper.tsx'
+import {useState} from 'react'
+import {css} from '@emotion/core'
+
+# Popper
+
+## Basic usage
+
+<Playground>
+  {
+    <>
+      <h1>Popper</h1>
+      <Popper 
+        customCss={css`width: 100px; height: 40px; background: #0082fe; cursor: pointer; border-radius: 10px color: white`}
+        offset={[0, 10]}
+      >
+      {
+        (handleClose) => 
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              width: '400px',
+              paddding: '30px',
+              gap: '10px',
+              height: '240px',
+              background: '#e9f7ff',
+              textAlign: 'center',
+              color: '#2f97ff',
+              lineHeight: '140px',
+              borderRadius: '10px',
+              border: 'solid 2px #2faeff',
+            }}
+          >
+            <span>닫기 또는 바깥을 클릭하면 닫힙니다</span>
+            <button onClick={handleClose}>닫기</button>
+          </div>
+      }
+      </Popper>
+    </>
+  }
+
+</Playground>
+
+## Properties
+
+<Props of={Popper} />

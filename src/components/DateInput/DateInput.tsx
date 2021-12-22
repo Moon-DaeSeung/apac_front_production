@@ -1,7 +1,7 @@
 import { css, SerializedStyles } from '@emotion/react'
 import React from 'react'
 import Calendar from '../../components/Calendar'
-import Dropdown from '../../components/Dropdown'
+import Popper from '../Popper'
 import CalendarIcon from '../../images/calendar.svg'
 import TextField from '../TextField'
 import { useDateInput } from './useDateInput'
@@ -17,8 +17,6 @@ function DateInput ({ value, onChange = () => null, readOnly = false, customCss 
   const {
     date,
     dateChange,
-    isOpen,
-    setIsOpen,
     calendarDate,
     setCalendarDate
   } = useDateInput(value, onChange)
@@ -32,13 +30,16 @@ function DateInput ({ value, onChange = () => null, readOnly = false, customCss 
       />
       {
         !readOnly &&
-        <div css={calendar} onClick={() => setIsOpen(true)}>
-          <Dropdown
-            isVisible={isOpen}
-            setIsVisible={setIsOpen}
-            popperNode={(() => <Calendar currentDate={calendarDate} onSelected={setCalendarDate} onClickEvent={() => setIsOpen(false)} />)()}
-            placement='bottom'/>
-        </div>
+        <Popper
+          placement='bottom'
+          offset={[0, 10]}
+          customCss={calendar}
+        >
+          {
+            (handleClose) =>
+              <Calendar currentDate={calendarDate} onSelected={setCalendarDate} onClickEvent={handleClose} />
+          }
+        </Popper>
       }
     </div>
   )
@@ -66,6 +67,7 @@ const calendar = css`
   align-items: center;
   top: 25%;
   right: 5%;
+  width: auto;
   aspect-ratio: 1;
   height: 50%;
   cursor: pointer;
