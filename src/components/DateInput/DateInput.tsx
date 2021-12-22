@@ -1,4 +1,4 @@
-import { css, SerializedStyles } from '@emotion/react'
+import { css, keyframes, SerializedStyles } from '@emotion/react'
 import React from 'react'
 import Calendar from '../../components/Calendar'
 import Popper from '../Popper'
@@ -37,13 +37,30 @@ function DateInput ({ value, onChange = () => null, readOnly = false, customCss 
         >
           {
             (handleClose) =>
+            <div css={animation}>
               <Calendar currentDate={calendarDate} onSelected={setCalendarDate} onClickEvent={handleClose} />
+            </div>
           }
         </Popper>
       }
     </div>
   )
 }
+
+const pop = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`
+const animation = css`
+  animation: ${pop} .5s ease-in-out;
+`
 
 const container = css`
   position: relative;
