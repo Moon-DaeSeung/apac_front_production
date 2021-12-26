@@ -5,18 +5,34 @@ import Portal from '../Portal'
 import { css, SerializedStyles } from '@emotion/react'
 
 export type PopperProps = {
-  children: (handleClose: (() => void)) => ReactElement;
+  children?: React.ReactNode
+  renderPopNode: (handleClose: (() => void)) => ReactElement;
   placement?: Placement
   offset?: [number, number]
   customCss?: SerializedStyles
+  onChange?: (isOpen: boolean) => void
+  isNotCloseOnOutsideClick?: boolean
+  hasArrow?: boolean
 }
 
-export default function Popper ({ children, placement = 'bottom', offset = [0, 0], customCss }: PopperProps) {
+export default function Popper ({ hasArrow = false, isNotCloseOnOutsideClick = false, onChange, renderPopNode, children, placement = 'bottom', offset = [0, 0], customCss }: PopperProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [targetContainer, setTargetContainer] = useState<HTMLElement | null>(null)
   const [popperContainer, setPopperContainer] = useState<HTMLElement | null>(null)
+  const [arrowContainer, setArrowContainer] = useState<HTMLElement | null>(null)
+  const [popElement, setPopElement] = useState<HTMLDivElement | null>(null)
+  const [popBackgroundColor, setPopBackgroundColor] = useState('')
+  const popNode = React.cloneElement(renderPopNode(() => setIsOpen(false)), {
+    ref: setPopElement
+  })
+  useEffect(() => { onChange && onChange(isOpen) }, [isOpen])
+  useEffect(() => {
+    if (!popElement) return
+    const { backgroundColor } = window.getComputedStyle(popElement)
+    setPopBackgroundColor(backgroundColor)
+  }, [popElement])
 
-  useEffect(
+  isNotCloseOnOutsideClick || useEffect(
     () => {
       if (!targetContainer || !popperContainer) return
       const listener = (event: any) => {
@@ -33,12 +49,18 @@ export default function Popper ({ children, placement = 'bottom', offset = [0, 0
 
   const { styles, attributes } = usePopper(targetContainer, popperContainer, {
     placement,
-    modifiers: [{ name: 'offset', options: { offset } }]
+    modifiers: [
+      { name: 'offset', options: { offset } },
+      { name: 'arrow', options: { element: arrowContainer } }
+    ]
   })
 
   return (
     <>
-      <div ref={setTargetContainer} css={[defaultCss, customCss]} onClick={() => { setIsOpen(!isOpen) }} />
+      <div ref={setTargetContainer} css={[customCss]}
+      onClick={() => { setIsOpen(!isOpen) }} >
+        {children}
+        </div>
       <Portal>
         {
           (isOpen) &&
@@ -46,7 +68,11 @@ export default function Popper ({ children, placement = 'bottom', offset = [0, 0
             style={styles.popper}
             {...attributes.popper}
           >
-            {children(() => setIsOpen(false))}
+            {popNode}
+            { hasArrow && <div ref={setArrowContainer} style={styles.arrow} css={arrowBox} >
+                <div css={arrow(popBackgroundColor)}/>
+              </div>
+            }
           </div>
         }
       </Portal>
@@ -54,8 +80,15 @@ export default function Popper ({ children, placement = 'bottom', offset = [0, 0
   )
 }
 
-const defaultCss = css`
-  width: 50px;
-  height: 50px;
-  background-color: lightblue;
+const arrowBox = css`
+  top: 0;
+  z-index: -100;
+`
+
+const arrow = (backgroundColor: string) => css`
+  z-index: -100;
+  width: 10px;
+  height: 10px;
+  background-color: ${backgroundColor};
+  transform: translateY(-5px) rotate(45deg);
 `

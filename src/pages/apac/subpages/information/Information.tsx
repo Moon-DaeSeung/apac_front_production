@@ -1,8 +1,8 @@
 import { css } from '@emotion/react'
 import React, { useState } from 'react'
-import TextField from '../../../components/TextField'
-import Button from '../../../components/Button'
-import DateInput from '../../../components/DateInput'
+import TextField from '../../../../components/TextField'
+import Button from '../../../../components/Button'
+import DateInput from '../../../../components/DateInput'
 
 type TestInformation = {
   name: string

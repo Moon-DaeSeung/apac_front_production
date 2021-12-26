@@ -101,7 +101,7 @@ const labelText = css`
   position: absolute;
   pointer-events: none;
   line-height: 1;
-  color: #A8A8A8;
+  color: #dee2e6;
   font-size: 1.2em;
 `
 const moved = css`

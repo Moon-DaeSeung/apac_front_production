@@ -34,14 +34,12 @@ function DateInput ({ value, onChange = () => null, readOnly = false, customCss 
           placement='bottom'
           offset={[0, 10]}
           customCss={calendar}
-        >
-          {
+          renderPopNode={
             (handleClose) =>
             <div css={animation}>
               <Calendar currentDate={calendarDate} onSelected={setCalendarDate} onClickEvent={handleClose} />
-            </div>
-          }
-        </Popper>
+            </div>}
+        />
       }
     </div>
   )
