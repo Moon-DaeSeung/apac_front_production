@@ -11,27 +11,27 @@ declare module 'react' {
   ): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
 }
 
-export interface SelectProps<T> {
+export interface SelectProps {
   selectCss?: SerializedStyles | SerializedStyles[]
   constrollCss?: SerializedStyles | SerializedStyles[]
   menuCss?: SerializedStyles | SerializedStyles[]
   style?: CSSProperties
-  options: T[]
-  value: T | null | T[]
-  onChange?: (value: T | null) => void
-  getOptionLabel?: (option: T) => string
+  options: any[]
+  value: any
+  onChange?: (value: any) => void
+  getOptionLabel?: (option: any) => string
   name?: string,
-  isAutoComplete?: boolean
+  autocomplete?: boolean
   deleteEraser?: boolean
-  isMultiple?: boolean
+  multiple?: boolean
 }
 
 function Select<T> ({
   style, menuCss, selectCss, name, constrollCss,
   value: controlledValue, onChange: setControlledValue,
   options: optionsProp, getOptionLabel: getOptionLabelProp,
-  isAutoComplete = false, deleteEraser = false, isMultiple = false
-}: SelectProps<T>, ref?: any) {
+  autocomplete = false, deleteEraser = false, multiple = false
+}: SelectProps, ref?: any) {
   const getOptionLabel = (value: T | null) => {
     if (value === null || value === undefined) return ''
     return getOptionLabelProp ? getOptionLabelProp(value) : (value as unknown as string).toString()
@@ -42,6 +42,9 @@ function Select<T> ({
   useImperativeHandle(ref, () => inputRef.current)
   const value = controlledValue !== undefined ? controlledValue : unControlledValue
   const onChange = setControlledValue !== undefined ? setControlledValue : setUncontrolledValue
+  const handleDelete = (e: any) => {
+    e.preventDefault()
+  }
 
   const {
     setMenuEl,
@@ -88,14 +91,26 @@ function Select<T> ({
           onKeyDown={handleKeyDown}
           onFocus={() => setIsMenuOpen(true)}
         >
+          <div css={items}>
+            {multiple && (value as any[]).map((option: any, key: number) => {
+              return (
+                <div key={key} css={item}>
+                  <span css={itemName}>
+                    {getOptionLabel(option)}
+                  </span>
+                  <button css={deleteItem} onClick={handleDelete}/>
+                </div>
+              )
+            })}
+          </div>
           <input
-            css={[input, !isAutoComplete && css` &:focus { cursor: pointer;}`,
+            css={[input, !autocomplete && css` &:focus { cursor: pointer;}`,
               deleteEraser && css`text-align: center;`
             ]}
             ref={inputRef}
             name={name}
             value={inputValue}
-            readOnly={!isAutoComplete}
+            readOnly={!autocomplete}
             onChange={handleInputChange}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -155,33 +170,55 @@ function Select<T> ({
 
 export default forwardRef(Select)
 
+const items = css`
+  display: flex;
+`
+
+const item = css`
+  display: flex;
+  padding: 5px 10px;
+  place-items: center;
+  font-size: 0.8em;
+  background-color: #EEEEEE;
+  border-radius: 25px;
+`
+const itemName = css`
+  font-size: 0.8em;
+  flex-grow: 1;
+  padding: 2px;
+  text-align: center;
+`
+const deleteItem = css`
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+`
+
 const control = css`
   display: flex;
   place-items: center;
-  height: 100%;
   border: solid 1px rgb(204, 204, 204);
   border-radius: inherit;
   font-size: 20px;
   color: #42515d;
   font-weight: bold;
+  min-height: 30px;
   cursor: pointer;
   &:focus-within {
     box-shadow: 0px 0px 0px 1px rgb(38, 132, 255);
   }
 `
 const icon = css`
-  height: 100%;
   aspect-ratio: 2 / 3;
   display: flex;
   place-items: center;
 `
 const divider = css`
-  height: 60%;
+  height: 30px;
   border-left: solid 1px rgb(204, 204, 204);
 `
 const arrow = css`
   display: flex;
-  height: 100%;
   aspect-ratio: inherit;
   object-fit: cover;
 `
@@ -209,7 +246,6 @@ const input = css`
 `
 const select = css`
   width: 300px;
-  height: 40px;
   border-radius: 4px;
   position: relative;
 `

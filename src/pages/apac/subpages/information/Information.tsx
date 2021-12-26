@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import TextField from '../../../../components/TextField'
 import Button from '../../../../components/Button'
 import DateInput from '../../../../components/DateInput'
+import Select from '../../../../components/Select'
 
 type TestInformation = {
   name: string
@@ -25,11 +26,24 @@ const Information = () => {
       }
     }
   }
+  const options = [1, 2, 3, 4, 5]
+  const [value, setValue] = useState<number[]>([1, 3, 5, 5, 5, 55, 5, 5, 5, 5])
 
   return (
     <>
       <h2>검사 정보</h2>
       <div css={[form]}>
+        <div css={[row]}>
+          <label css={[item]}>temp</label>
+          <div css={[item]}>
+            <Select options={options}
+              autocomplete
+              multiple
+              value={value}
+              onChange={setValue}
+            />
+          </div>
+        </div>
         <div css={[row]}>
           <label css={[item]}>이름</label>
           <div css={[item]}>
