@@ -14,12 +14,26 @@ const Phonemes = ({ phonemes }: PhonemesProps) => {
   const filtering = ({ 목표음소, 반응음소 }: Phoneme, key: number) => {
     const isBlank = 목표음소 === '-' && 반응음소 === '-'
     const isSpace = 목표음소 === ' ' && 반응음소 === ' ' && key % 3 !== 1
-    return !isBlank && !isSpace
+    const isLineBreak = 목표음소 === '\n' && 반응음소 === '\n' && key % 3 !== 1
+    return !isBlank && !isSpace && !isLineBreak
   }
+  const filtered = phonemes.filter(filtering)
+  const secondLineStart = filtered.findIndex(({ 목표음소 }) => 목표음소 === '\n')
+  const row = (key: number) => key > secondLineStart ? 2 : 1
+  console.log(secondLineStart)
   return (
     <div css={container}>
-      {phonemes.filter(filtering).map((value, key) => {
-        return <PhonemeBox key={key} isHidden={value.목표음소 === ' '} phoneme={value} />
+      {filtered.map((value, key) => {
+        return (
+          <div key={key} css={css`grid-row: ${row(key)};`}>
+            <PhonemeBox
+              key={key}
+              isHidden={value.목표음소 === ' ' || value.목표음소 === '\n'}
+              phoneme={value}
+            />
+          </div>
+
+        )
       })}
     </div>
   )
@@ -82,23 +96,22 @@ const PhonemeBox = ({ isHidden = false, phoneme }: PhonemeBoxProps) => {
 export default Phonemes
 
 const container = css`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 29px); 
 `
 const item = css`
   border: 1px solid ${border.base};
   border-radius: 4px;
   width: 24px;
+  aspect-ratio: 1;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
   align-items: center;
-  aspect-ratio: 1;
-  margin: 2px;
 `
 const distortion = css`
   text-align: center;
   background-color: #d8ecf3;
-  z-index: 5000;
 `
 const red = css`
   color: red;
@@ -108,10 +121,16 @@ const white = css`
 `
 const hover = css`
   margin-top: -2px;
-  border: 2px solid ${border.base};
+  outline: 2px solid ${border.base};
   border-radius: 4px;
 `
 const phonemeBox = css`
+  padding: 3px;
+  gap: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
   &:hover {
     ${hover}

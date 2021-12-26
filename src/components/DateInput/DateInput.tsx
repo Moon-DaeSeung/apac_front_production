@@ -57,7 +57,7 @@ const pop = keyframes`
   }
 `
 const animation = css`
-  animation: ${pop} .5s ease-in-out;
+  animation: ${pop} .2s ease-in-out;
 `
 
 const container = css`
