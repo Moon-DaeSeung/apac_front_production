@@ -27,7 +27,7 @@ const Information = () => {
     }
   }
   const options = [1, 2, 3, 4, 5]
-  const [value, setValue] = useState<number[]>([1, 3, 5, 5, 5, 55, 5, 5, 5, 5])
+  const [value, setValue] = useState<number[]>([1, 3, 5, 5, 5])
 
   return (
     <>

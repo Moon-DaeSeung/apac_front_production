@@ -14,7 +14,6 @@ declare module 'react' {
 export interface SelectProps {
   selectCss?: SerializedStyles | SerializedStyles[]
   constrollCss?: SerializedStyles | SerializedStyles[]
-  menuCss?: SerializedStyles | SerializedStyles[]
   style?: CSSProperties
   options: any[]
   value: any
@@ -27,7 +26,7 @@ export interface SelectProps {
 }
 
 function Select<T> ({
-  style, menuCss, selectCss, name, constrollCss,
+  style, selectCss, name, constrollCss,
   value: controlledValue, onChange: setControlledValue,
   options: optionsProp, getOptionLabel: getOptionLabelProp,
   autocomplete = false, deleteEraser = false, multiple = false
@@ -69,7 +68,6 @@ function Select<T> ({
     setMainEl,
     styles,
     attributes,
-    mainWidth,
     setIsMenuOpen
   } = useSelect({ value, options: optionsProp, getOptionLabel, onChange, selectRef, inputRef })
 
@@ -83,7 +81,6 @@ function Select<T> ({
   addOutsideClickEventListenerEffect()
 
   return (
-    <>
       <div css={[select, selectCss]} style={style} ref={setMainEl}>
         <div
           css={[control, constrollCss]}
@@ -132,10 +129,9 @@ function Select<T> ({
             />
           </div>
         </div>
-      </div>
       {isMenuOpen && (
         <div
-          css={[menu(mainWidth), isMenuOpen, menuCss]}
+          css={[menu, isMenuOpen]}
           ref={setMenuEl}
           style={styles.popper}
           {...attributes.popper}
@@ -164,7 +160,7 @@ function Select<T> ({
               )}
         </div>
       )}
-    </>
+      </div>
   )
 }
 
@@ -172,8 +168,8 @@ export default forwardRef(Select)
 
 const items = css`
   display: flex;
+  align-items: center;
 `
-
 const item = css`
   display: flex;
   padding: 5px 10px;
@@ -193,7 +189,6 @@ const deleteItem = css`
   width: 10px;
   height: 10px;
 `
-
 const control = css`
   display: flex;
   place-items: center;
@@ -209,15 +204,15 @@ const control = css`
   }
 `
 const icon = css`
-  aspect-ratio: 2 / 3;
   display: flex;
   place-items: center;
 `
 const divider = css`
-  height: 30px;
+  height: 70%;
   border-left: solid 1px rgb(204, 204, 204);
 `
 const arrow = css`
+  height: 60%;
   display: flex;
   aspect-ratio: inherit;
   object-fit: cover;
@@ -231,8 +226,8 @@ const up = css`
   transform: rotate(180deg);
 `
 const input = css`
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: 25px;
   border: none;
   background-color: white;
   border-radius: inherit;
@@ -249,8 +244,8 @@ const select = css`
   border-radius: 4px;
   position: relative;
 `
-const menu = (width: number) => css`
-  width: ${width}px;
+const menu = css`
+  width: 100%;
   padding: 5px 0px;
   max-height: 200px;
   z-index: 1;

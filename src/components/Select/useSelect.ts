@@ -35,8 +35,6 @@ export function useSelect<T> ({ value, options: optionsProp, getOptionLabel, onC
     ]
   })
 
-  const mainWidth = mainEl?.offsetWidth || 0
-
   const addOutsideClickEventListenerEffect = () => {
     useEffect(() => {
       const checkIfClickedOutside = (event: any) => {
@@ -200,7 +198,6 @@ export function useSelect<T> ({ value, options: optionsProp, getOptionLabel, onC
     setMainEl,
     styles,
     attributes,
-    mainWidth,
     setIsMenuOpen,
     addOutsideClickEventListenerEffect
   }
