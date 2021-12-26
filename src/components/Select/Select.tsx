@@ -17,19 +17,20 @@ export interface SelectProps<T> {
   menuCss?: SerializedStyles | SerializedStyles[]
   style?: CSSProperties
   options: T[]
-  value: T | null
+  value: T | null | T[]
   onChange?: (value: T | null) => void
   getOptionLabel?: (option: T) => string
   name?: string,
   isAutoComplete?: boolean
   deleteEraser?: boolean
+  isMultiple?: boolean
 }
 
 function Select<T> ({
   style, menuCss, selectCss, name, constrollCss,
   value: controlledValue, onChange: setControlledValue,
   options: optionsProp, getOptionLabel: getOptionLabelProp,
-  isAutoComplete = false, deleteEraser = false
+  isAutoComplete = false, deleteEraser = false, isMultiple = false
 }: SelectProps<T>, ref?: any) {
   const getOptionLabel = (value: T | null) => {
     if (value === null || value === undefined) return ''
@@ -80,10 +81,17 @@ function Select<T> ({
 
   return (
     <>
-      <div css={[select, selectCss]} style={style} ref={setMainEl} >
-        <div css={[control, constrollCss]} ref={selectRef} onKeyDown={handleKeyDown} onFocus={() => setIsMenuOpen(true)} >
+      <div css={[select, selectCss]} style={style} ref={setMainEl}>
+        <div
+          css={[control, constrollCss]}
+          ref={selectRef}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setIsMenuOpen(true)}
+        >
           <input
-            css={[input, !isAutoComplete && css`&:focus { cursor: pointer};`, deleteEraser && css`text-align: center;`]}
+            css={[input, !isAutoComplete && css` &:focus { cursor: pointer;}`,
+              deleteEraser && css`text-align: center;`
+            ]}
             ref={inputRef}
             name={name}
             value={inputValue}
@@ -92,20 +100,13 @@ function Select<T> ({
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           />
-          {
-            !deleteEraser &&
+          {!deleteEraser && (
             <div
-              css={[
-                icon,
-                inputValue ||
-                css`
-                display: none;
-              `
-              ]}
+              css={[icon, inputValue || css`display: none;`]}
             >
               <img src={crossIcon} css={cross} onClick={handleEraseValue} />
             </div>
-          }
+          )}
           <div css={divider} />
           <div css={icon}>
             <img
@@ -117,34 +118,37 @@ function Select<T> ({
           </div>
         </div>
       </div>
-        {isMenuOpen &&
-          <div
-            css={[
-              menu(mainWidth),
-              isMenuOpen,
-              menuCss
-            ]}
-            ref={setMenuEl}
-            style={styles.popper} {...attributes.popper} >
-            {options.length !== 0
-              ? options.map((option, optionIndex) => (
-                <div
-                  key={optionIndex}
-                  css={[
-                    menuItem,
-                    isFocused(option) && focused,
-                    isSelected(option) && selected
-                  ]}
-                  onClick={() => handleOptionClick(option)}
-                  onMouseOver={() => setFocusedOption(option)}
-                >
-                  {getOptionLabel(option)}
-                </div>
-              ))
-              : <div css={[menuItem]} style={{ justifyContent: 'center' }}>No options</div>
-            }
-          </div>
-        }
+      {isMenuOpen && (
+        <div
+          css={[menu(mainWidth), isMenuOpen, menuCss]}
+          ref={setMenuEl}
+          style={styles.popper}
+          {...attributes.popper}
+        >
+          {options.length !== 0
+            ? (
+                options.map((option, optionIndex) => (
+              <div
+                key={optionIndex}
+                css={[
+                  menuItem,
+                  isFocused(option) && focused,
+                  isSelected(option) && selected
+                ]}
+                onClick={() => handleOptionClick(option)}
+                onMouseOver={() => setFocusedOption(option)}
+              >
+                {getOptionLabel(option)}
+              </div>
+                ))
+              )
+            : (
+            <div css={[menuItem]} style={{ justifyContent: 'center' }}>
+              No options
+            </div>
+              )}
+        </div>
+      )}
     </>
   )
 }

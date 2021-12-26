@@ -8,6 +8,7 @@ const Note = () => {
     <div css={[container, value && written]}>
       <Popper
         hasArrow
+        placement='bottom-end'
         offset={[0, 10]}
         renderPopNode={() => (
           <div css={popnode}>
@@ -33,11 +34,10 @@ const container = css`
 const popnode = css`
   padding: 10px;
   background-color: whitesmoke;
-  min-width: 200px;
 `
 const textarea = css`
-  width: 100%;
-  min-height: 50px;
+  min-width: 500px;
+  min-height: 200px;
   padding: 5px;
 `
 const written = css`
