@@ -46,7 +46,6 @@ function Calendar ({
           <Select
             selectCss={select}
             constrollCss={select}
-            parentPortal={document.getElementById(CALENDAR_YEAR)}
             onChange={(event) => onChange({ ...values, year: event ?? new Date().getFullYear() })}
             value={values.year}
             options={yearOptions}
@@ -57,7 +56,6 @@ function Calendar ({
           <Select
             selectCss={select}
             constrollCss={select}
-            parentPortal={document.getElementById(CALENDAR_MONTH)}
             onChange={(event) => onChange({ ...values, month: event ?? new Date().getMonth() })}
             value={values.month}
             options={monthOptions}

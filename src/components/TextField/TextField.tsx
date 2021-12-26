@@ -76,9 +76,9 @@ const container = css`
  font-size: 1rem;
 `
 const fieldset = css`
- padding: 8px 12px;
+ padding: 6px 12px;
  box-sizing: border-box;
- height: 55px;
+ height: 52px;
  border-radius: 4px;
  border: solid #d1c6c6 1px;
  color: white;

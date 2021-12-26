@@ -3,7 +3,6 @@ import React, { CSSProperties, forwardRef, useImperativeHandle, useRef, useState
 import downArrowIcon from '../../images/down_arrow.svg'
 import crossIcon from '../../images/cross.svg'
 import { useSelect } from './useSelect'
-import Portal from '../Portal'
 
 // Redecalare forwardRef
 declare module 'react' {
@@ -23,7 +22,6 @@ export interface SelectProps<T> {
   getOptionLabel?: (option: T) => string
   name?: string,
   isAutoComplete?: boolean
-  parentPortal?: HTMLElement | undefined | null
   deleteEraser?: boolean
 }
 
@@ -31,7 +29,7 @@ function Select<T> ({
   style, menuCss, selectCss, name, constrollCss,
   value: controlledValue, onChange: setControlledValue,
   options: optionsProp, getOptionLabel: getOptionLabelProp,
-  isAutoComplete = false, parentPortal, deleteEraser = false
+  isAutoComplete = false, deleteEraser = false
 }: SelectProps<T>, ref?: any) {
   const getOptionLabel = (value: T | null) => {
     if (value === null || value === undefined) return ''
@@ -119,7 +117,6 @@ function Select<T> ({
           </div>
         </div>
       </div>
-      <Portal parentPortal={parentPortal}>
         {isMenuOpen &&
           <div
             css={[
@@ -148,7 +145,6 @@ function Select<T> ({
             }
           </div>
         }
-      </Portal>
     </>
   )
 }

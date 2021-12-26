@@ -11,23 +11,26 @@ export type PhonemesProps = {
 }
 
 const Phonemes = ({ phonemes }: PhonemesProps) => {
-  const filtering = ({ 목표음소, 반응음소 }: Phoneme) => {
-    return 목표음소 !== '-' || 반응음소 !== '-'
+  const filtering = ({ 목표음소, 반응음소 }: Phoneme, key: number) => {
+    const isBlank = 목표음소 === '-' && 반응음소 === '-'
+    const isSpace = 목표음소 === ' ' && 반응음소 === ' ' && key % 3 !== 1
+    return !isBlank && !isSpace
   }
   return (
     <div css={container}>
       {phonemes.filter(filtering).map((value, key) => {
-        return <PhonemeBox key={key} phoneme={value} />
+        return <PhonemeBox key={key} isHidden={value.목표음소 === ' '} phoneme={value} />
       })}
     </div>
   )
 }
 
 type PhonemeBoxProps = {
+  isHidden: boolean
   phoneme: Phoneme
 }
 
-const PhonemeBox = ({ phoneme }: PhonemeBoxProps) => {
+const PhonemeBox = ({ isHidden = false, phoneme }: PhonemeBoxProps) => {
   const { 목표음소, 반응음소 } = phoneme
   const [isSelected, setIsSelected] = useState(false)
   const options: ErrorPattern[] = [
@@ -41,7 +44,6 @@ const PhonemeBox = ({ phoneme }: PhonemeBoxProps) => {
     <>
       <Popper
         offset={[0, 10]}
-        isNotCloseOnOutsideClick
         hasArrow={true}
         renderPopNode={(closeEvent) => (
           <div css={[errorpattern]}>
@@ -65,12 +67,12 @@ const PhonemeBox = ({ phoneme }: PhonemeBoxProps) => {
         )}
         onChange={(isOpen) => setIsSelected(isOpen)}
       >
-        <div css={[phonemeBox, isSelected && selected]}>
+        <div css={[phonemeBox, isSelected && selected, isHidden && hidden]}>
           <div css={item}>{목표음소}</div>
           <div css={[item, red, 목표음소 === 반응음소 && white]}>
             {반응음소}
           </div>
-          <input css={[item, distortion]} />
+          <input css={[item, distortion]} onClick={(e: any) => e.stopPropagation()}/>
         </div>
       </Popper>
     </>
@@ -96,6 +98,7 @@ const item = css`
 const distortion = css`
   text-align: center;
   background-color: #d8ecf3;
+  z-index: 5000;
 `
 const red = css`
   color: red;
@@ -104,6 +107,7 @@ const white = css`
   color: white;
 `
 const hover = css`
+  margin-top: -2px;
   border: 2px solid ${border.base};
   border-radius: 4px;
 `
@@ -133,4 +137,7 @@ const button = css`
   margin-top: auto;
   margin-left: auto;
   font-size: 12px;
+`
+const hidden = css`
+  visibility: hidden;
 `

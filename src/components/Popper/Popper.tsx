@@ -11,11 +11,10 @@ export type PopperProps = {
   offset?: [number, number]
   customCss?: SerializedStyles
   onChange?: (isOpen: boolean) => void
-  isNotCloseOnOutsideClick?: boolean
   hasArrow?: boolean
 }
 
-export default function Popper ({ hasArrow = false, isNotCloseOnOutsideClick = false, onChange, renderPopNode, children, placement = 'bottom', offset = [0, 0], customCss }: PopperProps) {
+export default function Popper ({ hasArrow = false, onChange, renderPopNode, children, placement = 'bottom', offset = [0, 0], customCss }: PopperProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [targetContainer, setTargetContainer] = useState<HTMLElement | null>(null)
   const [popperContainer, setPopperContainer] = useState<HTMLElement | null>(null)
@@ -32,7 +31,7 @@ export default function Popper ({ hasArrow = false, isNotCloseOnOutsideClick = f
     setPopBackgroundColor(backgroundColor)
   }, [popElement])
 
-  isNotCloseOnOutsideClick || useEffect(
+  useEffect(
     () => {
       if (!targetContainer || !popperContainer) return
       const listener = (event: any) => {
