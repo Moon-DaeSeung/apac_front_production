@@ -2,11 +2,9 @@
 import React, { useState } from 'react'
 import { Phoneme } from '../../../../lib/api/types'
 import TextField from '../../../../components/TextField'
-import { Phonemes } from '../../components'
-import FloatingButtons from '../../components/FloatingButtons'
+import { Phonemes, Note, FloatingButtons } from '../../components'
 import { errorpattern, header, item, phonemestart, row, textfield } from '../../css'
 import { css } from '@emotion/react'
-import Note from '../../components/Note'
 
 const Word = () => {
   const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]

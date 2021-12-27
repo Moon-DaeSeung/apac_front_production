@@ -57,9 +57,9 @@ export default function Popper ({ hasArrow = false, onChange, renderPopNode, chi
   return (
     <>
       <div ref={setTargetContainer} css={[customCss]}
-      onClick={() => { setIsOpen(!isOpen) }} >
+        onClick={() => { setIsOpen(!isOpen) }} >
         {children}
-        </div>
+      </div>
       <Portal>
         {
           (isOpen) &&
@@ -68,9 +68,9 @@ export default function Popper ({ hasArrow = false, onChange, renderPopNode, chi
             {...attributes.popper}
           >
             {popNode}
-            { hasArrow && <div ref={setArrowContainer} style={styles.arrow} css={arrowBox} >
-                <div css={arrow(popBackgroundColor)}/>
-              </div>
+            {hasArrow && <div ref={setArrowContainer} style={styles.arrow} css={arrowBox} >
+              <div css={arrow(popBackgroundColor)} />
+            </div>
             }
           </div>
         }

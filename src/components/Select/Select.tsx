@@ -1,5 +1,5 @@
 import { css, SerializedStyles } from '@emotion/react'
-import React, { CSSProperties, forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import downArrowIcon from '../../images/down_arrow.svg'
 import crossIcon from '../../images/cross.svg'
 import { useSelect } from './useSelect'
@@ -12,37 +12,35 @@ declare module 'react' {
 }
 
 export interface SelectProps {
-  selectCss?: SerializedStyles | SerializedStyles[]
-  constrollCss?: SerializedStyles | SerializedStyles[]
-  style?: CSSProperties
+  customCss?: SerializedStyles | SerializedStyles[]
   options: any[]
   value: any
   onChange?: (value: any) => void
   getOptionLabel?: (option: any) => string
   name?: string,
   autocomplete?: boolean
-  deleteEraser?: boolean
+  eraser?: boolean
   multiple?: boolean
 }
 
-function Select<T> ({
-  style, selectCss, name, constrollCss,
+function Select ({
+  customCss, name,
   value: controlledValue, onChange: setControlledValue,
   options: optionsProp, getOptionLabel: getOptionLabelProp,
-  autocomplete = false, deleteEraser = false, multiple = false
+  autocomplete = true, eraser = true, multiple = false
 }: SelectProps, ref?: any) {
-  const getOptionLabel = (value: T | null) => {
-    if (value === null || value === undefined) return ''
-    return getOptionLabelProp ? getOptionLabelProp(value) : (value as unknown as string).toString()
+  const getOptionLabel = (option: any) => {
+    if (option === null || option === undefined) return ''
+    return getOptionLabelProp ? getOptionLabelProp(option) : (option as unknown as string).toString()
   }
-  const selectRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef(null)
   const [unControlledValue, setUncontrolledValue] = useState<any | null>(null)
   useImperativeHandle(ref, () => inputRef.current)
   const value = controlledValue !== undefined ? controlledValue : unControlledValue
   const onChange = setControlledValue !== undefined ? setControlledValue : setUncontrolledValue
-  const handleDelete = (e: any) => {
-    e.preventDefault()
+  const handleDeleteItem = (option: any) => {
+    const filtered = (value as any[]).filter((item) => item !== option)
+    onChange(filtered)
   }
 
   const {
@@ -54,81 +52,60 @@ function Select<T> ({
     options,
     handleOptionClick,
     handleKeyDown,
-    isFocused,
-    isSelected,
+    isFocusedOption,
+    isSelectedOption,
     setFocusedOption,
-    scrollOnFocusOptionEffect,
-    syncFocusedOptionEffect,
-    focusInputOnMenuOpenEffect,
-    registerWheelEventEffect,
-    resetOnInputValueBlankEffect,
-    defocusOnOptionsChangeEffect,
-    syncValueOnModalClosedEffect,
-    addOutsideClickEventListenerEffect,
-    setMainEl,
+    setSelectEl: setMainEl,
     styles,
     attributes,
-    setIsMenuOpen
-  } = useSelect({ value, options: optionsProp, getOptionLabel, onChange, selectRef, inputRef })
-
-  scrollOnFocusOptionEffect()
-  syncFocusedOptionEffect()
-  focusInputOnMenuOpenEffect()
-  registerWheelEventEffect()
-  resetOnInputValueBlankEffect()
-  defocusOnOptionsChangeEffect()
-  syncValueOnModalClosedEffect()
-  addOutsideClickEventListenerEffect()
+    setIsMenuOpen,
+    isFocused
+  } = useSelect({ value, options: optionsProp, getOptionLabel, onChange, inputRef, multiple })
 
   return (
-      <div css={[select, selectCss]} style={style} ref={setMainEl}>
-        <div
-          css={[control, constrollCss]}
-          ref={selectRef}
-          onKeyDown={handleKeyDown}
+    <div css={[select, customCss, selectIgnore, isFocused && focused]} ref={setMainEl}>
+      <div css={mulitpleBox}>
+        {multiple && (value as any[]).map((option: any, key: number) => {
+          return (
+            <div key={key} css={item} onClick={() => handleDeleteItem(option)}>
+              <span css={itemName}>
+                {getOptionLabel(option)}
+              </span>
+              <div css={[icon]}>
+                <img src={crossIcon} css={[deleteItem]} onClick={handleDeleteItem} />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+      <div css={control}>
+        <input
+          css={[input, customCss, inputIgnore, !autocomplete && css` &:focus { cursor: pointer;}`, !eraser && css`text-align: center;`]}
+          ref={inputRef}
+          name={name}
+          value={inputValue}
+          readOnly={!autocomplete}
+          onChange={handleInputChange}
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
           onFocus={() => setIsMenuOpen(true)}
-        >
-          <div css={items}>
-            {multiple && (value as any[]).map((option: any, key: number) => {
-              return (
-                <div key={key} css={item}>
-                  <span css={itemName}>
-                    {getOptionLabel(option)}
-                  </span>
-                  <button css={deleteItem} onClick={handleDelete}/>
-                </div>
-              )
-            })}
-          </div>
-          <input
-            css={[input, !autocomplete && css` &:focus { cursor: pointer;}`,
-              deleteEraser && css`text-align: center;`
-            ]}
-            ref={inputRef}
-            name={name}
-            value={inputValue}
-            readOnly={!autocomplete}
-            onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+        />
+        <div css={[icon, (!!inputValue && eraser) || css`display: none;`]}>
+          <img src={crossIcon} css={cross} onClick={handleEraseValue} />
+        </div>
+        <div css={[icon]}>
+          <div css={divider} />
+        </div>
+        <div css={icon}>
+          <img
+            src={downArrowIcon}
+            css={[arrow, isMenuOpen && up]}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           />
-          {!deleteEraser && (
-            <div
-              css={[icon, inputValue || css`display: none;`]}
-            >
-              <img src={crossIcon} css={cross} onClick={handleEraseValue} />
-            </div>
-          )}
-          <div css={divider} />
-          <div css={icon}>
-            <img
-              src={downArrowIcon}
-              css={[arrow, isMenuOpen && up]}
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            />
-          </div>
         </div>
+      </div>
       {isMenuOpen && (
         <div
           css={[menu, isMenuOpen]}
@@ -139,111 +116,133 @@ function Select<T> ({
           {options.length !== 0
             ? (
                 options.map((option, optionIndex) => (
-              <div
-                key={optionIndex}
-                css={[
-                  menuItem,
-                  isFocused(option) && focused,
-                  isSelected(option) && selected
-                ]}
-                onClick={() => handleOptionClick(option)}
-                onMouseOver={() => setFocusedOption(option)}
-              >
-                {getOptionLabel(option)}
-              </div>
+                <div
+                  key={optionIndex}
+                  css={[
+                    menuItem,
+                    isFocusedOption(option) && focusedItem,
+                    isSelectedOption(option) && selectedItem,
+                    isFocusedOption(option) && isSelectedOption(option) && focusedSelctedItem
+                  ]}
+                  onClick={() => handleOptionClick(option) }
+                  onMouseOver={() => setFocusedOption(option)}
+                >
+                  {getOptionLabel(option)}
+                </div>
                 ))
               )
             : (
-            <div css={[menuItem]} style={{ justifyContent: 'center' }}>
-              No options
-            </div>
+              <div css={[menuItem]} style={{ justifyContent: 'center' }}>
+                No options
+              </div>
               )}
         </div>
       )}
-      </div>
+    </div >
   )
 }
 
 export default forwardRef(Select)
 
-const items = css`
+const mulitpleBox = css`
   display: flex;
-  align-items: center;
-`
-const item = css`
-  display: flex;
-  padding: 5px 10px;
-  place-items: center;
-  font-size: 0.8em;
-  background-color: #EEEEEE;
-  border-radius: 25px;
-`
-const itemName = css`
-  font-size: 0.8em;
-  flex-grow: 1;
-  padding: 2px;
-  text-align: center;
-`
-const deleteItem = css`
-  border-radius: 50%;
-  width: 10px;
-  height: 10px;
+  flex-wrap: wrap;
 `
 const control = css`
   display: flex;
+`
+const item = css`
+  display: flex;
+  padding: 2px 5px;
   place-items: center;
-  border: solid 1px rgb(204, 204, 204);
-  border-radius: inherit;
-  font-size: 20px;
-  color: #42515d;
-  font-weight: bold;
-  min-height: 30px;
-  cursor: pointer;
-  &:focus-within {
-    box-shadow: 0px 0px 0px 1px rgb(38, 132, 255);
+  margin: 5px 0 0 5px;
+  background-color: #EBEBEB;
+  border-radius: 25px;
+  font-size: 0.7em;
+`
+const itemName = css`
+  flex-grow: 1;
+  padding: 0px 12px;
+  text-align: center;
+`
+const deleteItem = css`
+  box-sizing: border-box;
+  padding: 0px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50px;
+  background-color: white;
+  :hover {
+    background-color: whitesmoke;
   }
+`
+const select = css`
+  width: 300px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  position: relative;
+  border: solid 1px rgb(204, 204, 204);
+  font-size: 16px;
+  color: #42515d;
+  cursor: pointer;
+`
+const selectIgnore = css`
+  height: auto;
+  padding: 0;
+`
+const focused = css`
+  box-shadow: 0px 0px 0px 1px rgb(38, 132, 255);
 `
 const icon = css`
   display: flex;
   place-items: center;
 `
 const divider = css`
-  height: 70%;
+  height: 20px;
+  margin: 0 1px;
   border-left: solid 1px rgb(204, 204, 204);
 `
 const arrow = css`
-  height: 60%;
-  display: flex;
-  aspect-ratio: inherit;
-  object-fit: cover;
+  width: 25px;
+  height: 25px;
+  border-radius: 50px;
+  :hover {
+    background-color: whitesmoke;
+  }
 `
 const cross = css`
-  aspect-ratio: inherit;
-  height: 60%;
-  margin-left: 10%;
+  box-sizing: border-box;
+  padding: 5px;
+  width: 25px;
+  height: 25px;
+  border-radius: 50px;
+  :hover {
+    background-color: whitesmoke;
+  }
 `
 const up = css`
   transform: rotate(180deg);
 `
 const input = css`
-  width: auto;
-  height: 25px;
+  height: 35px;
+  padding: 2px 5px;
+`
+const inputIgnore = css`
+  align-self: flex-end;
   border: none;
-  background-color: white;
-  border-radius: inherit;
-  font-size: 16px;
+  flex: 1 0 80px;
   cursor: inherit;
-  padding: 0px 10px;
+  margin: 0;
+  font-size: 1em;
+  background-color: inherit;
+  border-radius: inherit;
   &:focus {
     outline: none;
     cursor: text;
   }
+
 `
-const select = css`
-  width: 300px;
-  border-radius: 4px;
-  position: relative;
-`
+
 const menu = css`
   width: 100%;
   padding: 5px 0px;
@@ -263,9 +262,12 @@ const menuItem = css`
   height: 20px;
   padding: 5px;
 `
-const focused = css`
-  background-color: lightblue;
+const focusedItem = css`
+  background-color: #F8F8F8;
 `
-const selected = css`
-  background-color: rgb(38, 132, 255);
+const selectedItem = css`
+  background-color: #F0F8FF;
+`
+const focusedSelctedItem = css`
+  background-color: #CCE6FF;
 `

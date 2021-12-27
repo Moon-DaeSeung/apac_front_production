@@ -2,8 +2,7 @@
 import { css } from '@emotion/react'
 import React, { useState } from 'react'
 import TextField from '../../../../components/TextField'
-import { FloatingButtons, Phonemes } from '../../components'
-import Note from '../../components/Note'
+import { FloatingButtons, Phonemes, Note } from '../../components'
 import { errorpattern, header, item, phonemestart, row, textfield } from '../../css'
 import { phonemes } from '../normal-sentence/temp'
 

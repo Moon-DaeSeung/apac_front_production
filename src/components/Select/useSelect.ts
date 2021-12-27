@@ -5,25 +5,34 @@ import { isEqual } from '../../utils/isEqual'
 import { getScrollParent, invokeScroll, scrollResolver } from './scrollUtils'
 
 interface UseSelectProps<T> {
-  value: null | T,
+  value: any
   options: any[],
-  onChange: (value: null | T) => void
+  onChange: (value: any) => void
   getOptionLabel: (value: T | null) => string,
-  selectRef: React.RefObject<HTMLDivElement>,
-  inputRef: React.RefObject<HTMLInputElement>
+  inputRef: React.RefObject<HTMLInputElement>,
+  multiple?: boolean
 }
 
-export function useSelect<T> ({ value, options: optionsProp, getOptionLabel, onChange, selectRef, inputRef }: UseSelectProps<T>) {
+export function useSelect<T> ({ multiple, value, options: optionsProp, getOptionLabel, onChange, inputRef }: UseSelectProps<T>) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
   const [menuEl, setMenuEl] = useState<HTMLDivElement | null>(null)
+  const [selectEl, setSelectEl] = useState<HTMLElement | null>(null)
   const [options, setOptions] = useState(optionsProp)
-  const [inputValue, setInputValue] = useState(getOptionLabel(value))
-  const [focusedOption, setFocusedOption] = useState<any | null>(value)
-  const isFocused = (option: any) => isEqual(option, focusedOption)
-  const isSelected = (option: any) => isEqual(value, option)
-  const [mainEl, setMainEl] = useState<HTMLElement | null>(null)
+  const [inputValue, setInputValue] = useState(multiple ? '' : getOptionLabel(value))
+  const [focusedOption, setFocusedOption] = useState<any | null>(multiple ? null : value)
+  const isFocusedOption = (option: any) => isEqual(option, focusedOption)
+  const isSelectedOption = (option: any) => {
+    let result: boolean
+    if (multiple) {
+      result = (value as any[]).findIndex((item) => isEqual(item, option)) !== -1
+    } else {
+      result = isEqual(value, option)
+    }
+    return result
+  }
   const placement: Placement = 'bottom'
-  const { styles, attributes } = usePopper(mainEl, menuEl, {
+  const { styles, attributes } = usePopper(selectEl, menuEl, {
     placement,
     modifiers: [
       {
@@ -35,57 +44,59 @@ export function useSelect<T> ({ value, options: optionsProp, getOptionLabel, onC
     ]
   })
 
-  const addOutsideClickEventListenerEffect = () => {
-    useEffect(() => {
-      const checkIfClickedOutside = (event: any) => {
-        if (
-          isMenuOpen &&
-          menuEl &&
-          !menuEl.contains(event.target) &&
-          !menuEl.parentElement?.contains(event.target) &&
-          !mainEl?.contains(event.target)
-        ) {
-          event.preventDefault()
-          setIsMenuOpen(false)
-        }
+  useEffect(() => {
+    const checkIfClickedOutside = (event: any) => {
+      if (
+        isMenuOpen &&
+        menuEl &&
+        !menuEl.contains(event.target) &&
+        !menuEl.parentElement?.contains(event.target) &&
+        !selectEl?.contains(event.target)
+      ) {
+        event.preventDefault()
+        setIsMenuOpen(false)
+        setIsFocused(false)
       }
+    }
 
-      document.addEventListener('mousedown', checkIfClickedOutside)
-      if (!isMenuOpen) return document.removeEventListener('mousedown', checkIfClickedOutside)
+    document.addEventListener('mousedown', checkIfClickedOutside)
+    if (!isMenuOpen) return document.removeEventListener('mousedown', checkIfClickedOutside)
 
-      return () => {
-        document.removeEventListener('mousedown', checkIfClickedOutside)
-      }
-    }, [menuEl])
-  }
+    return () => {
+      document.removeEventListener('mousedown', checkIfClickedOutside)
+    }
+  }, [menuEl])
 
-  const focusInputOnMenuOpenEffect = () => useEffect(() => {
-    isMenuOpen && setFocusedOption(value)
+  useEffect(() => {
+    (!multiple && isMenuOpen) && setFocusedOption(value)
     isMenuOpen && inputRef.current?.focus()
   }, [isMenuOpen])
 
-  const syncFocusedOptionEffect = () => useEffect(() => {
-    setInputValue(value !== null ? getOptionLabel(value) : '')
-    setFocusedOption(value)
+  useEffect(() => {
+    if (multiple) {
+      setInputValue('')
+    } else {
+      setInputValue(value !== null ? getOptionLabel(value) : '')
+      setFocusedOption(value)
+    }
+    setIsMenuOpen(false)
   }, [value])
 
-  const scrollOnFocusOptionEffect = () => {
-    useEffect(() => {
-      const focusedOptionIndex = options.findIndex(option => isEqual(option, focusedOption))
-      if (focusedOptionIndex === -1) return
-      const optionEl = menuEl?.children[focusedOptionIndex] as HTMLDivElement
-      if (!optionEl) return
-      const { offsetTop, offsetHeight } = optionEl
-      const scrollEl = getScrollParent(optionEl)
-      const { scrollTop, viewHeight } = scrollResolver(scrollEl)
-      const scrollUp = scrollTop - offsetTop
-      const scrollDown = offsetTop + offsetHeight - (viewHeight + scrollTop)
-      let move = 0
-      if (scrollUp > 0) move = -scrollUp
-      if (scrollDown > 0) move = scrollDown
-      move !== 0 && invokeScroll({ scrollElement: scrollEl, move })
-    }, [focusedOption])
-  }
+  useEffect(() => {
+    const focusedOptionIndex = options.findIndex(option => isEqual(option, focusedOption))
+    if (focusedOptionIndex === -1) return
+    const optionEl = menuEl?.children[focusedOptionIndex] as HTMLDivElement
+    if (!optionEl) return
+    const { offsetTop, offsetHeight } = optionEl
+    const scrollEl = getScrollParent(optionEl)
+    const { scrollTop, viewHeight } = scrollResolver(scrollEl)
+    const scrollUp = scrollTop - offsetTop
+    const scrollDown = offsetTop + offsetHeight - (viewHeight + scrollTop)
+    let move = 0
+    if (scrollUp > 0) move = -scrollUp
+    if (scrollDown > 0) move = scrollDown
+    move !== 0 && invokeScroll({ scrollElement: scrollEl, move })
+  }, [focusedOption])
 
   const getFocusedOption = (direction: 'up' | 'down') => {
     if (options.length === 0) return null
@@ -98,41 +109,41 @@ export function useSelect<T> ({ value, options: optionsProp, getOptionLabel, onC
     }
     const option = options[nextFocusedOptionIndex]
     setFocusedOption(option)
-
     return option
   }
 
   const handleOptionClick = (option: any) => {
     inputRef.current?.focus()
-    setFocusedOption(option)
-    setIsMenuOpen(false)
+    selectOption(option)
   }
 
   const handleKeyDown = (event: any) => {
-    // event.preventDefault()
+    if (!isMenuOpen) {
+      setIsMenuOpen(true)
+      return
+    }
+
     switch (event.key) {
       case 'ArrowUp':
-        if (!isMenuOpen) break
         getFocusedOption('up')
         break
       case 'ArrowDown':
-        if (!isMenuOpen) setIsMenuOpen(true)
         getFocusedOption('down')
         break
       case 'Enter':
-        if (!isMenuOpen) break
-        setIsMenuOpen(false)
+        if (!focusedOption) return
+        selectOption(focusedOption)
         break
       case 'Tab':
-        if (!isMenuOpen) break
         setIsMenuOpen(false)
+        setIsFocused(false)
         break
     }
   }
 
   const reset = () => {
     setOptions(optionsProp)
-    onChange(null)
+    multiple || onChange(null)
   }
 
   const handleInputChange = (event: any) => {
@@ -143,43 +154,47 @@ export function useSelect<T> ({ value, options: optionsProp, getOptionLabel, onC
   }
 
   const handleEraseValue = () => {
-    onChange(null)
+    multiple || onChange(null)
     setInputValue('')
     setIsMenuOpen(false)
   }
 
-  const resetOnInputValueBlankEffect = () => useEffect(() => {
+  useEffect(() => {
     inputValue === '' && reset()
   }, [inputValue])
 
-  const defocusOnOptionsChangeEffect = () => useEffect(() => {
+  useEffect(() => {
     setFocusedOption(null)
   }, [options])
 
-  const registerWheelEventEffect = () => useEffect(() => {
+  useEffect(() => {
+    if (multiple) return
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault()
       const option = e.deltaY > 0 ? getFocusedOption('down') : getFocusedOption('up')
       onChange(option)
     }
-    const selectEl = selectRef.current
     if (selectEl === null) return
     selectEl.addEventListener('wheel', handleWheel, { passive: false })
 
     return () => selectEl.removeEventListener('wheel', handleWheel)
   }, [focusedOption, options])
 
-  const syncValueOnModalClosedEffect = () => useEffect(() => {
-    if (isMenuOpen) return
-    if (focusedOption !== null) { onChange(focusedOption); return }
-    const option = optionsProp.find((option) => getOptionLabel(option) === inputValue)
-    option ? onChange(option) : setInputValue(''); onChange(null)
+  const selectOption = (option: any) => {
+    if (multiple) {
+      const filtered = (value as any[]).filter(item => item !== option)
+      filtered.length === (value as any[]).length ? onChange([...value, option]) : onChange(filtered)
+    } else {
+      onChange(option)
+    }
+  }
+
+  useEffect(() => {
+    if (isMenuOpen) { setIsFocused(true); return }
+    multiple ? setInputValue('') : setInputValue(getOptionLabel(value))
   }, [isMenuOpen])
 
   return {
-    syncFocusedOptionEffect,
-    focusInputOnMenuOpenEffect,
-    scrollOnFocusOptionEffect,
     inputValue,
     handleInputChange,
     handleKeyDown,
@@ -187,18 +202,14 @@ export function useSelect<T> ({ value, options: optionsProp, getOptionLabel, onC
     setMenuEl,
     isMenuOpen,
     options,
-    isSelected,
-    isFocused,
+    isSelectedOption,
+    isFocusedOption,
     setFocusedOption,
     handleEraseValue,
-    registerWheelEventEffect,
-    resetOnInputValueBlankEffect,
-    defocusOnOptionsChangeEffect,
-    syncValueOnModalClosedEffect,
-    setMainEl,
+    setSelectEl,
     styles,
     attributes,
     setIsMenuOpen,
-    addOutsideClickEventListenerEffect
+    isFocused
   }
 }

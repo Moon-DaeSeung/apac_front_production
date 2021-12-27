@@ -44,23 +44,23 @@ function Calendar ({
         </button>
         <div id={CALENDAR_YEAR}>
           <Select
-            selectCss={select}
+            customCss={select}
             constrollCss={select}
             onChange={(event) => onChange({ ...values, year: event ?? new Date().getFullYear() })}
             value={values.year}
             options={yearOptions}
-            deleteEraser
+            eraser
           />
         </div>
         <div id={CALENDAR_MONTH}>
           <Select
-            selectCss={select}
+            customCss={select}
             constrollCss={select}
             onChange={(event) => onChange({ ...values, month: event ?? new Date().getMonth() })}
             value={values.month}
             options={monthOptions}
             getOptionLabel={(option) => (option + 1).toString()}
-            deleteEraser />
+            eraser />
         </div>
         <button
           css={monthButton(rightArrowIcon)}

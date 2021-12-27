@@ -14,8 +14,8 @@ import {useState, useRef} from 'react'
 <Playground>
   {
     () => {
-      const options = [0,1,2,3,4,5]
-      const [value, setValue] = useState(null)
+      const options = [12,23,33,44,55,66]
+      const [value, setValue] = useState([12,23,33])
       return(
         <div>
           <Select
@@ -23,6 +23,7 @@ import {useState, useRef} from 'react'
            value={value} 
            onChange={setValue} 
            options={options}
+           multiple
           />
         </div>
       )
