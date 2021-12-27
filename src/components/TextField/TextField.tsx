@@ -34,10 +34,10 @@ const TextField = (
     value: inputRef.current && inputRef.current.value
   }))
   return (
-     <div css={[container, customCss, ignore]}>
+     <div css={[container, customCss, ignore]} onMouseDown={(e) => { e.preventDefault(); inputRef.current?.focus() }}>
       <div css={[fieldset, customCss, isError && css`border-color: red;`]}>
         <div css={[layout]}>
-          <label css={[labelText, (value || focused) && moved]}>
+          <label css={[labelText, (!!value || focused) && moved]}>
             {label}
           </label>
           <input type={type} ref={inputRef} css={[input, label || css`height: 100%;`]}
@@ -74,11 +74,12 @@ const ignore = css`
 const container = css`
  width: 200px;
  font-size: 1rem;
+ cursor: text;
 `
 const fieldset = css`
  padding: 6px 12px;
  box-sizing: border-box;
- height: 52px;
+ height: 54px;
  border-radius: 4px;
  border: solid #d1c6c6 1px;
  color: white;

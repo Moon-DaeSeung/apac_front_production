@@ -20,7 +20,6 @@ const Phonemes = ({ phonemes }: PhonemesProps) => {
   const filtered = phonemes.filter(filtering)
   const secondLineStart = filtered.findIndex(({ 목표음소 }) => 목표음소 === '\n')
   const row = (key: number) => key > secondLineStart ? 2 : 1
-  console.log(secondLineStart)
   return (
     <div css={container}>
       {filtered.map((value, key) => {
