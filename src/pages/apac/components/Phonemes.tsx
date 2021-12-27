@@ -31,7 +31,6 @@ const Phonemes = ({ phonemes }: PhonemesProps) => {
               phoneme={value}
             />
           </div>
-
         )
       })}
     </div>
@@ -53,6 +52,7 @@ const PhonemeBox = ({ isHidden = false, phoneme }: PhonemeBoxProps) => {
     { id: 4, name: '도치' },
     { id: 5, name: '기타' }
   ]
+  const [value, setValue] = useState<ErrorPattern[]>([])
   return (
     <>
       <Popper
@@ -63,7 +63,10 @@ const PhonemeBox = ({ isHidden = false, phoneme }: PhonemeBoxProps) => {
             <Select
               getOptionLabel={({ name }) => name}
               options={options}
-              value={null}
+              value={value}
+              onChange={setValue}
+              multiple
+              autocomplete
             />
             <div css={computed}>
               <div>
