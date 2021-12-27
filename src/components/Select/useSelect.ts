@@ -47,25 +47,21 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
   useEffect(() => {
     const checkIfClickedOutside = (event: any) => {
       if (
-        isMenuOpen &&
-        menuEl &&
-        !menuEl.contains(event.target) &&
-        !menuEl.parentElement?.contains(event.target) &&
-        !selectEl?.contains(event.target)
+        !menuEl?.contains(event.target) &&
+            !menuEl?.parentElement?.contains(event.target) &&
+            !selectEl?.contains(event.target)
       ) {
-        event.preventDefault()
         setIsMenuOpen(false)
         setIsFocused(false)
       }
     }
 
     document.addEventListener('mousedown', checkIfClickedOutside)
-    if (!isMenuOpen) return document.removeEventListener('mousedown', checkIfClickedOutside)
 
     return () => {
       document.removeEventListener('mousedown', checkIfClickedOutside)
     }
-  }, [menuEl])
+  }, [menuEl, selectEl])
 
   useEffect(() => {
     (!multiple && isMenuOpen) && setFocusedOption(value)
@@ -115,6 +111,7 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
   const handleOptionClick = (option: any) => {
     inputRef.current?.focus()
     selectOption(option)
+    setIsMenuOpen(false)
   }
 
   const handleKeyDown = (event: any) => {

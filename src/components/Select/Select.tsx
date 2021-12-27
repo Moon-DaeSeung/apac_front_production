@@ -27,7 +27,7 @@ function Select ({
   customCss, name,
   value: controlledValue, onChange: setControlledValue,
   options: optionsProp, getOptionLabel: getOptionLabelProp,
-  autocomplete = true, eraser = true, multiple = false
+  autocomplete = false, eraser = autocomplete, multiple = false
 }: SelectProps, ref?: any) {
   const getOptionLabel = (option: any) => {
     if (option === null || option === undefined) return ''
@@ -64,8 +64,8 @@ function Select ({
 
   return (
     <div css={[select, customCss, selectIgnore, isFocused && focused]} ref={setMainEl}>
-      <div css={mulitpleBox}>
-        {multiple && (value as any[]).map((option: any, key: number) => {
+      {multiple && <div css={mulitpleBox}>
+        {(value as any[]).map((option: any, key: number) => {
           return (
             <div key={key} css={item} onClick={() => handleDeleteItem(option)}>
               <span css={itemName}>
@@ -77,7 +77,7 @@ function Select ({
             </div>
           )
         })}
-      </div>
+      </div>}
       <div css={control}>
         <input
           css={[input, customCss, inputIgnore, !autocomplete && css` &:focus { cursor: pointer;}`, !eraser && css`text-align: center;`]}
@@ -230,7 +230,8 @@ const input = css`
 const inputIgnore = css`
   align-self: flex-end;
   border: none;
-  flex: 1 0 80px;
+  width: 0px;
+  flex: 1 0 0;
   cursor: inherit;
   margin: 0;
   font-size: 1em;

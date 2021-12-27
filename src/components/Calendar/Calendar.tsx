@@ -45,22 +45,19 @@ function Calendar ({
         <div id={CALENDAR_YEAR}>
           <Select
             customCss={select}
-            constrollCss={select}
             onChange={(event) => onChange({ ...values, year: event ?? new Date().getFullYear() })}
             value={values.year}
             options={yearOptions}
-            eraser
           />
         </div>
         <div id={CALENDAR_MONTH}>
           <Select
             customCss={select}
-            constrollCss={select}
             onChange={(event) => onChange({ ...values, month: event ?? new Date().getMonth() })}
             value={values.month}
             options={monthOptions}
             getOptionLabel={(option) => (option + 1).toString()}
-            eraser />
+          />
         </div>
         <button
           css={monthButton(rightArrowIcon)}
@@ -101,8 +98,8 @@ function Calendar ({
 
 const select = css`
   width: 110px;
+  text-align: center;
 `
-
 const header = css`
   margin-top: 25px;
   display: flex;
