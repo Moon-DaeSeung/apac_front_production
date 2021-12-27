@@ -52,18 +52,17 @@ function Select ({
     options,
     handleOptionClick,
     handleKeyDown,
-    isFocusedOption,
-    isSelectedOption,
+    isFocused,
+    isSelected,
     setFocusedOption,
-    setSelectEl: setMainEl,
+    setSelectEl,
     styles,
     attributes,
-    setIsMenuOpen,
-    isFocused
+    setIsMenuOpen
   } = useSelect({ value, options: optionsProp, getOptionLabel, onChange, inputRef, multiple })
 
   return (
-    <div css={[select, customCss, selectIgnore, isFocused && focused]} ref={setMainEl}>
+    <div css={[select, customCss, selectIgnore]} ref={setSelectEl}>
       {multiple && <div css={mulitpleBox}>
         {(value as any[]).map((option: any, key: number) => {
           return (
@@ -120,11 +119,11 @@ function Select ({
                   key={optionIndex}
                   css={[
                     menuItem,
-                    isFocusedOption(option) && focusedItem,
-                    isSelectedOption(option) && selectedItem,
-                    isFocusedOption(option) && isSelectedOption(option) && focusedSelctedItem
+                    isFocused(option) && focusedItem,
+                    isSelected(option) && selectedItem,
+                    isFocused(option) && isSelected(option) && focusedSelctedItem
                   ]}
-                  onClick={() => handleOptionClick(option) }
+                  onMouseDown={(e) => { e.preventDefault(); handleOptionClick(option) } }
                   onMouseOver={() => setFocusedOption(option)}
                 >
                   {getOptionLabel(option)}
@@ -185,13 +184,13 @@ const select = css`
   font-size: 16px;
   color: #42515d;
   cursor: pointer;
+  :focus-within {
+    box-shadow: 0px 0px 0px 1px rgb(38, 132, 255);
+  }
 `
 const selectIgnore = css`
   height: auto;
   padding: 0;
-`
-const focused = css`
-  box-shadow: 0px 0px 0px 1px rgb(38, 132, 255);
 `
 const icon = css`
   display: flex;
@@ -241,9 +240,7 @@ const inputIgnore = css`
     outline: none;
     cursor: text;
   }
-
 `
-
 const menu = css`
   width: 100%;
   padding: 5px 0px;

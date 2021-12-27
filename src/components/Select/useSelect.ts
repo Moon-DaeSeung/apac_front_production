@@ -15,14 +15,13 @@ interface UseSelectProps<T> {
 
 export function useSelect<T> ({ multiple, value, options: optionsProp, getOptionLabel, onChange, inputRef }: UseSelectProps<T>) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isFocused, setIsFocused] = useState(false)
   const [menuEl, setMenuEl] = useState<HTMLDivElement | null>(null)
   const [selectEl, setSelectEl] = useState<HTMLElement | null>(null)
   const [options, setOptions] = useState(optionsProp)
   const [inputValue, setInputValue] = useState(multiple ? '' : getOptionLabel(value))
   const [focusedOption, setFocusedOption] = useState<any | null>(multiple ? null : value)
-  const isFocusedOption = (option: any) => isEqual(option, focusedOption)
-  const isSelectedOption = (option: any) => {
+  const isFocused = (option: any) => isEqual(option, focusedOption)
+  const isSelected = (option: any) => {
     let result: boolean
     if (multiple) {
       result = (value as any[]).findIndex((item) => isEqual(item, option)) !== -1
@@ -52,7 +51,6 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
             !selectEl?.contains(event.target)
       ) {
         setIsMenuOpen(false)
-        setIsFocused(false)
       }
     }
 
@@ -109,7 +107,6 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
   }
 
   const handleOptionClick = (option: any) => {
-    inputRef.current?.focus()
     selectOption(option)
     setIsMenuOpen(false)
   }
@@ -133,7 +130,6 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
         break
       case 'Tab':
         setIsMenuOpen(false)
-        setIsFocused(false)
         break
     }
   }
@@ -187,7 +183,7 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
   }
 
   useEffect(() => {
-    if (isMenuOpen) { setIsFocused(true); return }
+    if (isMenuOpen) return
     multiple ? setInputValue('') : setInputValue(getOptionLabel(value))
   }, [isMenuOpen])
 
@@ -199,14 +195,13 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
     setMenuEl,
     isMenuOpen,
     options,
-    isSelectedOption,
-    isFocusedOption,
+    isSelected,
+    isFocused,
     setFocusedOption,
     handleEraseValue,
     setSelectEl,
     styles,
     attributes,
-    setIsMenuOpen,
-    isFocused
+    setIsMenuOpen
   }
 }
