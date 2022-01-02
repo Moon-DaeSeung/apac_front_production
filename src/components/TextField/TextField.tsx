@@ -1,5 +1,5 @@
 import React, { useImperativeHandle, useRef, useState } from 'react'
-import { css } from '@emotion/react'
+import { css, keyframes } from '@emotion/react'
 
 export type TextFieldProps = {
   customCss?: any
@@ -8,6 +8,7 @@ export type TextFieldProps = {
   label?: string
   errorMessage?: string
   isError?: boolean
+  isPending?: boolean
   password?: boolean
   type?: 'number' | 'email' | 'password' | 'text'
 }
@@ -18,8 +19,9 @@ const TextField = (
     value: controlledValue,
     onChange: controlledSetValue,
     customCss,
-    isError,
+    isError = false,
     type,
+    isPending = false,
     errorMessage = '오류가 발생했습니다'
   }: TextFieldProps, ref?: any) => {
   const [focused, setFocused] = useState(false)
@@ -35,7 +37,7 @@ const TextField = (
   }))
   return (
      <div css={[container, customCss, ignore]} onMouseDown={(e) => { e.preventDefault(); inputRef.current?.focus() }}>
-      <div css={[fieldset, customCss, isError && css`border-color: red;`]}>
+      <div css={[fieldset, customCss, isError && css`border-color: red;`, isPending && pending]}>
         <div css={[layout]}>
           <label css={[labelText, (!!value || focused) && moved]}>
             {label}
@@ -76,6 +78,10 @@ const container = css`
  font-size: 1rem;
  cursor: text;
 `
+const focus = css`
+  outline: solid #0003ee 1px;
+  border-color: #0003ee;
+`
 const fieldset = css`
  padding: 6px 12px;
  box-sizing: border-box;
@@ -85,8 +91,7 @@ const fieldset = css`
  color: white;
  background-color: transparent;
  :focus-within {
-   outline: solid #0003EE 1px;
-   border-color: #0003EE;
+   ${focus}
  }
 `
 const layout = css`
@@ -121,4 +126,15 @@ const input = css`
    outline: none;
  }
  background-color: inherit;
+`
+
+const bright = keyframes`
+  50% {
+    border-color: rgba(0,0,0,0);
+  }
+`
+const pending = css`
+  position: relative;
+  ${focus}
+  animation: ${bright} 2s ease infinite;
 `

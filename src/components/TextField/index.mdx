@@ -80,6 +80,19 @@ import { css } from '@emotion/core'
   }
 </Playground>
 
+## With peding 
+
+<Playground>
+  {
+    () => {
+      const [value, setValue] = useState('')
+      return(
+          <TextField isPending value={value} onChange={setValue}/>
+      )
+    }
+  }
+</Playground>
+
 ## Properties
 
 <Props of={TextField} />
