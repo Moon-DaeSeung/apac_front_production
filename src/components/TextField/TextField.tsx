@@ -36,7 +36,7 @@ const TextField = (
     value: inputRef.current && inputRef.current.value
   }))
   return (
-     <div css={[container, customCss, ignore]} onClick={() => { inputRef.current?.focus() }}>
+     <div css={[container, customCss, ignore]} onMouseDown={(e) => { e.preventDefault(); inputRef.current?.focus() }}>
       <div css={[fieldset, customCss, isError && css`border-color: red;`, isPending && pending]}>
         <div css={[layout]}>
           <label css={[labelText, (!!value || focused) && moved]}>
@@ -46,6 +46,7 @@ const TextField = (
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             value={value}
+            onMouseDown={(e) => { e.stopPropagation() }}
             onChange={(e) => onChange(e.target.value)}
           />
         </div>
