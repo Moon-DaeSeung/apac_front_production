@@ -62,16 +62,16 @@ function Select ({
   } = useSelect({ value, options: optionsProp, getOptionLabel, onChange, inputRef, multiple })
 
   return (
-    <div css={[select, customCss, selectIgnore]} ref={setSelectEl}>
+    <div css={[select, customCss, selectIgnore, multiple || css`cursor: pointer;`]} ref={setSelectEl}>
       {multiple && <div css={mulitpleBox}>
         {(value as any[]).map((option: any, key: number) => {
           return (
-            <div key={key} css={item} onClick={() => handleDeleteItem(option)}>
+            <div key={key} css={item}>
               <span css={itemName}>
                 {getOptionLabel(option)}
               </span>
               <div css={[icon]}>
-                <img src={crossIcon} css={[deleteItem]} onClick={handleDeleteItem} />
+                <img src={crossIcon} css={[deleteItem]} onClick={() => handleDeleteItem(option)} />
               </div>
             </div>
           )
@@ -169,6 +169,7 @@ const deleteItem = css`
   padding: 0px;
   width: 13px;
   height: 13px;
+  cursor: pointer;
   border-radius: 50px;
   background-color: white;
   :hover {
@@ -183,7 +184,6 @@ const select = css`
   border: solid 1px rgb(204, 204, 204);
   font-size: 16px;
   color: #42515d;
-  cursor: pointer;
   :focus-within {
     box-shadow: 0px 0px 0px 1px rgb(38, 132, 255);
   }
