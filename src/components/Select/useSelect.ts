@@ -75,7 +75,6 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
       setInputValue(value !== null ? getOptionLabel(value) : '')
       setFocusedOption(value)
     }
-    setIsMenuOpen(false)
   }, [value])
 
   useEffect(() => {
@@ -115,21 +114,22 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
   }
 
   const handleKeyDown = (event: any) => {
-    if (!isMenuOpen) {
-      setIsMenuOpen(true)
-      return
-    }
-
     switch (event.key) {
       case 'ArrowUp':
+        if (!isMenuOpen) { setIsMenuOpen(true); return }
+        event.preventDefault()
         getFocusedOption('up')
         break
       case 'ArrowDown':
+        if (!isMenuOpen) { setIsMenuOpen(true); return }
+        event.preventDefault()
         getFocusedOption('down')
         break
       case 'Enter':
+        if (!isMenuOpen) { setIsMenuOpen(true); return }
         if (!focusedOption) return
         selectOption(focusedOption)
+        setIsMenuOpen(false)
         break
       case 'Tab':
         setIsMenuOpen(false)
