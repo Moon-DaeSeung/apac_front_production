@@ -2,7 +2,7 @@ function isNotSameLength (origin: any[] | any, other: any[] | any) {
   return Object.keys(origin).length !== Object.keys(other).length
 }
 
-export function isEqual (origin: any[] | any | null, other: any[] | any | null): boolean {
+export default function isEqual (origin: any[] | any | null, other: any[] | any | null): boolean {
   if (origin === other) return true
   if (origin === undefined && other === undefined) return true
   if (origin === null && other === null) return true

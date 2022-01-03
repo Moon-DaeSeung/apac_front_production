@@ -1,7 +1,7 @@
 import { Placement } from '@popperjs/core'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { usePopper } from 'react-popper'
-import { isEqual } from '../../utils/isEqual'
+import { isEqual, debounce } from '../../utils/'
 import { getScrollParent, invokeScroll, scrollResolver } from './scrollUtils'
 
 interface UseSelectProps<T> {
@@ -140,11 +140,17 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
   }
 
   const handleInputChange = (event: any) => {
-    const searchString = event.target.value
-    setInputValue(searchString)
+    setInputValue(event.target.value)
+  }
+
+  const filterMenu = useCallback(debounce((searchString: string) => {
     const searchedOptions = optionsProp.filter(option => getOptionLabel(option).includes(searchString))
     searchString && setOptions(searchedOptions)
-  }
+  }, 100), [])
+
+  useEffect(() => {
+    filterMenu(inputValue)
+  }, [inputValue])
 
   const handleEraseValue = () => {
     multiple || onChange(null)
