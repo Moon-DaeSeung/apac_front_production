@@ -17,6 +17,7 @@ export interface SelectProps {
   value: any
   onChange?: (value: any) => void
   getOptionLabel?: (option: any) => string
+  renderMultiItemNode?: ({ option, deleteEvent }: {option: any, deleteEvent: () => void}) => React.ReactElement
   name?: string,
   autocomplete?: boolean
   eraser?: boolean
@@ -27,6 +28,7 @@ function Select ({
   customCss, name,
   value: controlledValue, onChange: setControlledValue,
   options: optionsProp, getOptionLabel: getOptionLabelProp,
+  renderMultiItemNode,
   autocomplete = false, eraser = autocomplete, multiple = false
 }: SelectProps, ref?: any) {
   const getOptionLabel = (option: any) => {
@@ -66,7 +68,9 @@ function Select ({
       {multiple && <div css={mulitpleBox}>
         {(value as any[]).map((option: any, key: number) => {
           return (
-            <div key={key} css={item}>
+            renderMultiItemNode
+              ? renderMultiItemNode({ option, deleteEvent: () => handleDeleteItem(option) })
+              : <div key={key} css={item}>
               <span css={itemName}>
                 {getOptionLabel(option)}
               </span>
@@ -192,10 +196,6 @@ const selectIgnore = css`
   height: auto;
   padding: 0;
 `
-const icon = css`
-  display: flex;
-  place-items: center;
-`
 const divider = css`
   height: 20px;
   margin: 0 1px;
@@ -208,6 +208,10 @@ const arrow = css`
   :hover {
     background-color: whitesmoke;
   }
+`
+const icon = css`
+  display: flex;
+  place-items: center;
 `
 const cross = css`
   box-sizing: border-box;

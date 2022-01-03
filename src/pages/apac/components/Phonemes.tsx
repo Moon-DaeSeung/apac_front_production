@@ -6,6 +6,7 @@ import { border, text } from '../color'
 import Button from '../../../components/Button'
 import { ErrorPattern, Phoneme } from '../../../api/types'
 import useErrorPatternOptions from '../../../hooks/useErrorPatternOptions'
+import crossIcon from '../../../images/cross.svg'
 
 export type PhonemesProps = {
   value: Phoneme[]
@@ -59,6 +60,9 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
     onChange({ ...value, [key]: item })
   }
   const { errorPatternOptions } = useErrorPatternOptions()
+  const isDifferent = (option: ErrorPattern) => {
+    return computedErrorPatterns.findIndex(({ id }) => option.id === id) === -1
+  }
   return (
     <>
       <Popper
@@ -73,15 +77,35 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
               onChange={handleChange('confirmedErrorPatterns')}
               multiple
               autocomplete
+              renderMultiItemNode={({
+                option,
+                deleteEvent
+              }: {
+                option: ErrorPattern;
+                deleteEvent: () => void;
+              }) => {
+                return (
+                  <div css={[multiItem, isDifferent(option) && css`background-color: #FF8C00;`]} key={option.id}>
+                    <span css={itemName}>{option.name}</span>
+                    <div css={[icon]}>
+                      <img
+                        src={crossIcon}
+                        css={[deleteItem]}
+                        onClick={deleteEvent}
+                      />
+                    </div>
+                  </div>
+                )
+              }}
             />
             <div css={computed}>
               <div>
-                <span>분석한 오류패턴</span>
-                <div>{computedErrorPatterns.map(({ name }) => name).join(', ')}</div>
+                <span>*프로그램이 제시한 오류패턴</span>
+                <div>
+                  {computedErrorPatterns.map(({ name }) => name).join(', ')}
+                </div>
               </div>
-              <Button customCss={button}
-                onClick={closeEvent}
-              >
+              <Button customCss={button} onClick={closeEvent}>
                 확인
               </Button>
             </div>
@@ -91,10 +115,14 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
       >
         <div css={[phonemeBox, isSelected && selected, isHidden && hidden]}>
           <div css={item}>{target}</div>
-          <div css={[item, red, target === react && white]}>
-            {react}
-          </div>
-          <input css={[item, distortion]} onClick={(e: any) => { e.stopPropagation(); handleChange('distortion')(e.target.value) }}/>
+          <div css={[item, red, target === react && white]}>{react}</div>
+          <input
+            css={[item, distortion]}
+            onClick={(e: any) => {
+              e.stopPropagation()
+              handleChange('distortion')(e.target.value)
+            }}
+          />
         </div>
       </Popper>
     </>
@@ -167,4 +195,34 @@ const button = css`
 `
 const hidden = css`
   visibility: hidden;
+`
+const multiItem = css`
+  display: flex;
+  padding: 2px 5px;
+  place-items: center;
+  margin: 5px 0 0 5px;
+  background-color: #EBEBEB;
+  border-radius: 25px;
+  font-size: 0.7em;
+`
+const itemName = css`
+  flex-grow: 1;
+  padding: 0px 12px;
+  text-align: center;
+`
+const deleteItem = css`
+  box-sizing: border-box;
+  padding: 0px;
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+  border-radius: 50px;
+  background-color: white;
+  :hover {
+    background-color: whitesmoke;
+  }
+`
+const icon = css`
+  display: flex;
+  place-items: center;
 `

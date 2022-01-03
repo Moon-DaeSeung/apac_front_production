@@ -181,7 +181,7 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
 
   const selectOption = (option: any) => {
     if (multiple) {
-      const filtered = (value as any[]).filter(item => item !== option)
+      const filtered = (value as any[]).filter(item => !isEqual(item, option))
       filtered.length === (value as any[]).length ? onChange([...value, option]) : onChange(filtered)
     } else {
       onChange(option)
