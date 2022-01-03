@@ -31,6 +31,18 @@ export type TestInformation = {
   testedDate: string | null
 }
 
+export type TestInformationDetail = {
+  id: number
+  testeeName: string
+  testeeGender: string
+  testeeAge: string
+  testeeNote: string
+  testedDate: string | null
+  wordTest: SubTest
+  simpleSentenceTest: SubTest
+  normalSentenceTest: SubTest
+}
+
 export type Answer = {
   number: number
   reaction: string

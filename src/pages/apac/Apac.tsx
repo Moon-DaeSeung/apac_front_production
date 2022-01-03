@@ -14,7 +14,7 @@ export const ApacContext = createContext<{value: ApacState, setValue:(func: ((va
 )
 
 const Apac = () => {
-  const { apacState, setApacState } = useApac({ defaultValue: apacDefaultValue })
+  const { apacUiState: apacState, setApacUiState: setApacState } = useApac({ defaultValue: apacDefaultValue })
   return (
     <>
       <header css={[header, container, constaint]}>

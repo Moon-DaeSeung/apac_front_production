@@ -13,7 +13,13 @@ ReactDOM.render(
         <Routes>
           <Route path='/' element={<App />}>
             <Route index element={<Home />}/>
-            <Route path='tests/*' element={<Apac/>}>
+            <Route path='tests' element={<Apac/>}>
+              <Route index element={<Information/>} />
+              <Route path='word' element={<Word/>} />
+              <Route path='normal-sentence' element={<NormalSentence/>} />
+              <Route path='simple-sentence' element={<SimpleSentence/>} />
+            </Route>
+            <Route path='tests/:id' element={<Apac/>}>
               <Route index element={<Information/>} />
               <Route path='word' element={<Word/>} />
               <Route path='normal-sentence' element={<NormalSentence/>} />
