@@ -107,7 +107,7 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
 
   const handleOptionClick = (option: any) => {
     selectOption(option)
-    setIsMenuOpen(false)
+    if (!multiple) setIsMenuOpen(false)
   }
 
   const handleKeyDown = (event: any) => {
@@ -126,7 +126,7 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
         if (!isMenuOpen) { setIsMenuOpen(true); return }
         if (!focusedOption) return
         selectOption(focusedOption)
-        setIsMenuOpen(false)
+        if (!multiple) setIsMenuOpen(false)
         break
       case 'Tab':
         setIsMenuOpen(false)

@@ -1,13 +1,22 @@
 /* eslint-disable react/display-name */
 import { css } from '@emotion/react'
-import React, { useState } from 'react'
+import React, { useContext, useMemo } from 'react'
+import { Answer, Phoneme } from 'src/api/types'
 import TextField from '../../../../components/TextField'
+import { ApacContext } from '../../Apac'
 import { FloatingButtons, Phonemes, Note } from '../../components'
 import { errorpattern, header, item, phonemestart, row, textfield } from '../../css'
-import { phonemes } from '../normal-sentence/temp'
+import { QuestionAnswer } from '../../types'
 
 const NormalSentence = () => {
-  const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  const { value: { normalSentenceTest: { questionAnswers } }, setValue } = useContext(ApacContext)
+  const handleChange = useMemo(() => questionAnswers.map((_, index) => (questionAnswer: QuestionAnswer) => {
+    setValue(prev => {
+      const copied = [...prev.normalSentenceTest.questionAnswers]
+      copied[index] = questionAnswer
+      return { ...prev, normalSentenceTest: { ...prev.normalSentenceTest, questionAnswers: copied } }
+    })
+  }), [setValue, questionAnswers.length])
   return (
     <>
       <h2>문장검사 일반형</h2>
@@ -17,9 +26,9 @@ const NormalSentence = () => {
         <div css={[item]}>음소 반응</div>
         <div css={[item]}>특이사항</div>
       </div>
-      {data.map(value => {
+      {questionAnswers.map((value, key) => {
         return (
-          <Row key={value} value={value} />
+          <Row key={key} value={value} onChange={handleChange[key]} />
         )
       })}
       <FloatingButtons/>
@@ -28,15 +37,19 @@ const NormalSentence = () => {
 }
 
 export type RowProps = {
-  value: number
+  value: QuestionAnswer
+  onChange: (value: QuestionAnswer) => void
 }
 
-const Row = React.memo(({ value }: RowProps) => {
-  const [reaction, setReaction] = useState('')
+const Row = React.memo(({ value, onChange }: RowProps) => {
+  const { question, answer } = value
+  const handleChange = (key: keyof Answer) => (item: string | Phoneme[]) => {
+    onChange({ ...value, answer: { ...value.answer, [key]: item } })
+  }
   return (
-        <div key={value} css={[row, grid]}>
+        <div key={question.number} css={[row, grid]}>
           <div css={[item, css`grid-row: 1/3; grid-column: 1;`]}>
-            {value}
+            {question.number}
           </div>
           <div css={[item]}>
             <div
@@ -48,32 +61,33 @@ const Row = React.memo(({ value }: RowProps) => {
                     padding: 10px;
                   `}
                 >
-                  보리밥을 먹어봐요
+                  {question.number}
                 </div>
               </div>
               <div css={grid2}>
                 <label css={label}>문장반응</label>
                 <TextField
                   customCss={textfield}
-                  label="보리바블 비벼봐/바요"
-                  value={reaction}
-                  onChange={setReaction}
+                  label={question.target}
+                  value={answer.reaction}
+                  onChange={handleChange('reaction')}
                 />
               </div>
               <div css={[grid2, css`margin-top: 10px;`]}>
                 <label css={label}>오류패턴</label>
                 <div css={[errorpattern]}>
-                  연구개 전방화(2회), 도치(1회), 음절반복(3회), 전형적 어중
-                  단순화(1회) 연구개 전방화(2회), 도치(1회),
+                  {answer.totalErrorPatterns.map(({ total, errorPattern: { name } }) => {
+                    return `${name}(${total}회)`
+                  }).join(', ')}
                 </div>
               </div>
             </div>
           </div>
           <div css={[item, phonemestart]}>
-            <Phonemes phonemes={phonemes} />
+            <Phonemes value={answer.phonemes} onChange={handleChange('phonemes')} />
           </div>
           <div css={[item]}>
-            <Note/>
+            <Note value={answer.note} onChange={handleChange('note')}/>
           </div>
         </div>
   )

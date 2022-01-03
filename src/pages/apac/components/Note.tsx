@@ -1,9 +1,12 @@
 import { css } from '@emotion/react'
-import React, { useState } from 'react'
+import React from 'react'
 import Popper from '../../../components/Popper'
 
-const Note = () => {
-  const [value, setValue] = useState('')
+type NoteProps = {
+  value: string
+  onChange: (value: string) => void
+}
+const Note = ({ value, onChange }: NoteProps) => {
   return (
     <div css={[container, value && written]}>
       <Popper
@@ -15,7 +18,7 @@ const Note = () => {
             <textarea
               css={textarea}
               value={value}
-              onChange={(e) => setValue(e.target.value)}/>
+              onChange={(e) => onChange(e.target.value)}/>
           </div>
         )}
       >

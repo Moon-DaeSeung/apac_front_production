@@ -3,7 +3,7 @@ import { css, keyframes } from '@emotion/react'
 
 export type TextFieldProps = {
   customCss?: any
-  value?: string
+  value?: string | number
   onChange?: (value: string) => void
   label?: string
   errorMessage?: string
@@ -36,7 +36,7 @@ const TextField = (
     value: inputRef.current && inputRef.current.value
   }))
   return (
-     <div css={[container, customCss, ignore]} onMouseDown={(e) => { e.preventDefault(); inputRef.current?.focus() }}>
+     <div css={[container, customCss, ignore]} onClick={() => { inputRef.current?.focus() }}>
       <div css={[fieldset, customCss, isError && css`border-color: red;`, isPending && pending]}>
         <div css={[layout]}>
           <label css={[labelText, (!!value || focused) && moved]}>

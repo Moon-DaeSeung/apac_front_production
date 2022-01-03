@@ -1,13 +1,22 @@
 /* eslint-disable react/display-name */
 import { css } from '@emotion/react'
-import React, { useState } from 'react'
+import React, { useContext, useMemo } from 'react'
+import { Answer, Phoneme } from 'src/api/types'
 import TextField from '../../../../components/TextField'
+import { ApacContext } from '../../Apac'
 import { FloatingButtons, Phonemes, Note } from '../../components'
 import { errorpattern, header, item, phonemestart, row, textfield } from '../../css'
-import { phonemes } from './temp'
+import { QuestionAnswer } from '../../types'
 
 const SimpleSentence = () => {
-  const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  const { value: { simpleSentenceTest: { questionAnswers } }, setValue } = useContext(ApacContext)
+  const handleChange = useMemo(() => questionAnswers.map((_, index) => (questionAnswer: QuestionAnswer) => {
+    setValue(prev => {
+      const copied = [...prev.simpleSentenceTest.questionAnswers]
+      copied[index] = questionAnswer
+      return { ...prev, simpleSentenceTest: { ...prev.normalSentenceTest, questionAnswers: copied } }
+    })
+  }), [setValue, questionAnswers.length])
   return (
     <>
       <h2>문장검사 간략형</h2>
@@ -17,9 +26,9 @@ const SimpleSentence = () => {
         <div css={[item]}>음소 반응</div>
         <div css={[item]}>특이사항</div>
       </div>
-      {data.map(value => {
+      {questionAnswers.map((value, index) => {
         return (
-          <Row key={value} value={value} />
+          <Row key={index} value={value} onChange={handleChange[index]} />
         )
       })}
       <FloatingButtons/>
@@ -28,27 +37,31 @@ const SimpleSentence = () => {
 }
 
 export type RowProps = {
-  value: number
+  value: QuestionAnswer
+  onChange: (value: QuestionAnswer) => void
 }
 
-const Row = React.memo(({ value }: RowProps) => {
-  const [reaction, setReaction] = useState('')
+const Row = React.memo(({ value, onChange }: RowProps) => {
+  const { question, answer } = value
+  const handleChange = (key: keyof Answer) => (item: string | Phoneme[]) => {
+    onChange({ ...value, answer: { ...value.answer, [key]: item } })
+  }
   return (
-      <div key={value} css={[row, grid]}>
-        <div css={[item, css`grid-row: 1 / 3; grid-column: 1;`]}>{value}</div>
+      <div key={question.number} css={[row, grid]}>
+        <div css={[item, css`grid-row: 1 / 3; grid-column: 1;`]}>{question.number}</div>
         <div css={[item]}>
           <div css={css`flex-grow: 1;`}>
             <div css={grid2}>
               <label css={label}>목표문장</label>
-              <div css={css`padding: 10px;`}>보리밥을 먹어봐요</div>
+              <div css={css`padding: 10px;`}>{question.name}</div>
             </div>
             <div css={grid2}>
               <label css={label}>문장반응</label>
               <TextField
                 customCss={textfield}
-                label="보리바블 비벼봐/바요"
-                value={reaction}
-                onChange={setReaction}
+                label={question.target}
+                value={answer.reaction}
+                onChange={handleChange('reaction')}
               />
             </div>
           </div>
@@ -56,16 +69,18 @@ const Row = React.memo(({ value }: RowProps) => {
         <div css={[item, css`grid-column: 2 / 4; grid-row: 2 / 3;`]}>
           <div css={[grid2]}>
             <label css={label}>오류패턴</label>
-            <div css={[errorpattern]}>
-              연구개 전방화(2회), 도치(1회), 음절반복(3회), 전형적 어중, 단순화(1회) 연구개 전방화(2회), 도치(1회),
-            </div>
+          <div css={[errorpattern]}>
+            {answer.totalErrorPatterns.map(({ total, errorPattern: { name } }) => {
+              return `${name}(${total}회)`
+            }).join(', ')}
+          </div>
           </div>
         </div>
         <div css={[item, phonemestart]}>
-          <Phonemes phonemes={phonemes} />
+          <Phonemes value={answer.phonemes} onChange={handleChange('phonemes')} />
         </div>
         <div css={[item, css`grid-row: 1 / 3;`]}>
-          <Note/>
+          <Note value={answer.note} onChange={handleChange('note')}/>
         </div>
       </div>
   )

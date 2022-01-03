@@ -1,13 +1,23 @@
 /* eslint-disable react/display-name */
-import React, { useState } from 'react'
-import { Phoneme } from '../../../../lib/api/types'
+import React, { useContext, useMemo } from 'react'
 import TextField from '../../../../components/TextField'
 import { Phonemes, Note, FloatingButtons } from '../../components'
 import { errorpattern, header, item, phonemestart, row, textfield } from '../../css'
 import { css } from '@emotion/react'
+import { QuestionAnswer } from '../../types'
+import { ApacContext } from '../../Apac'
+import { Answer, Phoneme } from 'src/api/types'
 
 const Word = () => {
-  const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  const { value: { wordTest: { questionAnswers } }, setValue } = useContext(ApacContext)
+  const handleChange = useMemo(() => questionAnswers.map((_, index) => (questionAnswer: QuestionAnswer) => {
+    setValue(prev => {
+      const copied = [...prev.wordTest.questionAnswers]
+      copied[index] = questionAnswer
+      return { ...prev, wordTest: { ...prev.wordTest, questionAnswers: copied } }
+    })
+  }), [setValue, questionAnswers.length])
+
   return (
     <>
       <h2>단어 검사</h2>
@@ -19,9 +29,9 @@ const Word = () => {
         <div css={[item]}>오류패턴</div>
         <div css={[item]}>특이사항</div>
       </div>
-      {data.map(value => {
+      {questionAnswers.map((value, index) => {
         return (
-          <Row key={value} value={value} />
+          <Row key={value.question.number} value={value} onChange={handleChange[index]} />
         )
       })}
       <FloatingButtons/>
@@ -30,40 +40,39 @@ const Word = () => {
 }
 
 export type RowProps = {
-  value: number
+  value: QuestionAnswer
+  onChange: (value: QuestionAnswer) => void
 }
 
-const Row = React.memo(({ value }: RowProps) => {
-  const [reaction, setReaction] = useState('')
-  const phonemes: Phoneme[] = [
-    { 목표음소: 'ㄸ', 반응음소: 'ㅌ', 왜곡음소: '', 오류패턴List: [] },
-    { 목표음소: 'ㅏ', 반응음소: 'ㅏ', 왜곡음소: '', 오류패턴List: [] },
-    { 목표음소: 'ㄹ', 반응음소: '-', 왜곡음소: '', 오류패턴List: [] },
-    { 목표음소: 'ㄱ', 반응음소: 'ㄱ', 왜곡음소: '', 오류패턴List: [] },
-    { 목표음소: 'ㅣ', 반응음소: 'ㅣ', 왜곡음소: '', 오류패턴List: [] }
-  ]
+const Row = React.memo(({ value, onChange }: RowProps) => {
+  const { question, answer } = value
+  const handleChange = (key: keyof Answer) => (item: string | Phoneme[]) => {
+    onChange({ ...value, answer: { ...value.answer, [key]: item } })
+  }
   return (
-      <div key={value} css={[row, grid]}>
-        <div css={[item]}>{value}</div>
-        <div css={[item]}>목표 단어</div>
+      <div key={question.number} css={[row, grid]}>
+        <div css={[item]}>{question.number}</div>
+        <div css={[item]}>{question.name}</div>
         <div css={[item]}>
           <TextField
             customCss={textfield}
-            label="목표음"
-            value={reaction}
-            onChange={setReaction}
+            label={question.target}
+            value={answer.reaction}
+            onChange={handleChange('reaction')}
           />
         </div>
         <div css={[item, phonemestart]}>
-          <Phonemes phonemes={phonemes} />
+          <Phonemes value={answer.phonemes} onChange={handleChange('phonemes')} />
         </div>
         <div css={[item]}>
-          <div css={[errorpattern]}>
-            연구개 전방화(2회), 도치(1회),
-          </div>
+        <div css={[errorpattern]}>
+          {answer.totalErrorPatterns.map(({ total, errorPattern: { name } }) => {
+            return `${name}(${total}회)`
+          }).join(', ')}
+        </div>
         </div>
         <div css={[item]}>
-          <Note/>
+          <Note value={answer.note} onChange={handleChange('note')}/>
         </div>
       </div>
   )

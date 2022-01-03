@@ -3,23 +3,31 @@ import React, { useState } from 'react'
 import Select from '../../../components/Select'
 import Popper from '../../../components/Popper'
 import { border, text } from '../color'
-import { ErrorPattern, Phoneme } from '../../../lib/api/types'
 import Button from '../../../components/Button'
+import { ErrorPattern, Phoneme } from '../../../api/types'
+import useErrorPatternOptions from '../../../hooks/useErrorPatternOptions'
 
 export type PhonemesProps = {
-  phonemes: Phoneme[]
+  value: Phoneme[]
+  onChange: (value: Phoneme[]) => void
 }
 
-const Phonemes = ({ phonemes }: PhonemesProps) => {
-  const filtering = ({ 목표음소, 반응음소 }: Phoneme, key: number) => {
-    const isBlank = 목표음소 === '-' && 반응음소 === '-'
-    const isSpace = 목표음소 === ' ' && 반응음소 === ' ' && key % 3 !== 1
-    const isLineBreak = 목표음소 === '\n' && 반응음소 === '\n' && key % 3 !== 1
+const Phonemes = ({ value, onChange }: PhonemesProps) => {
+  const filtering = ({ target, react }: Phoneme, key: number) => {
+    const isBlank = target === '-' && react === '-'
+    const isSpace = target === ' ' && react === ' ' && key % 3 !== 1
+    const isLineBreak = target === '\n' && react === '\n' && key % 3 !== 1
     return !isBlank && !isSpace && !isLineBreak
   }
-  const filtered = phonemes.filter(filtering)
-  const secondLineStart = filtered.findIndex(({ 목표음소 }) => 목표음소 === '\n')
+  const filtered = value.filter(filtering)
+  const secondLineStart = filtered.findIndex(({ target }) => target === '\n')
   const row = (key: number) => key > secondLineStart ? 2 : 1
+  const handleChange = (index: number) => (item: Phoneme) => {
+    const copied = [...value]
+    copied[index] = item
+    onChange(copied)
+  }
+
   return (
     <div css={container}>
       {filtered.map((value, key) => {
@@ -27,8 +35,9 @@ const Phonemes = ({ phonemes }: PhonemesProps) => {
           <div key={key} css={css`grid-row: ${row(key)};`}>
             <PhonemeBox
               key={key}
-              isHidden={value.목표음소 === ' ' || value.목표음소 === '\n'}
-              phoneme={value}
+              isHidden={value.target === ' ' || value.target === '\n'}
+              value={value}
+              onChange={handleChange(key)}
             />
           </div>
         )
@@ -39,20 +48,17 @@ const Phonemes = ({ phonemes }: PhonemesProps) => {
 
 type PhonemeBoxProps = {
   isHidden: boolean
-  phoneme: Phoneme
+  value: Phoneme
+  onChange: (value: Phoneme) => void
 }
 
-const PhonemeBox = ({ isHidden = false, phoneme }: PhonemeBoxProps) => {
-  const { 목표음소, 반응음소 } = phoneme
+const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
+  const { target, react, confirmedErrorPatterns, computedErrorPatterns } = value
   const [isSelected, setIsSelected] = useState(false)
-  const options: ErrorPattern[] = [
-    { id: 1, name: '연구개음' },
-    { id: 2, name: '전형어중' },
-    { id: 3, name: '음절반복' },
-    { id: 4, name: '도치' },
-    { id: 5, name: '기타' }
-  ]
-  const [value, setValue] = useState<ErrorPattern[]>([])
+  const handleChange = (key: keyof Phoneme) => (item: string | ErrorPattern[]) => {
+    onChange({ ...value, [key]: item })
+  }
+  const { errorPatternOptions } = useErrorPatternOptions()
   return (
     <>
       <Popper
@@ -62,16 +68,16 @@ const PhonemeBox = ({ isHidden = false, phoneme }: PhonemeBoxProps) => {
           <div css={[errorpattern]}>
             <Select
               getOptionLabel={({ name }) => name}
-              options={options}
-              value={value}
-              onChange={setValue}
+              options={errorPatternOptions}
+              value={confirmedErrorPatterns}
+              onChange={handleChange('confirmedErrorPatterns')}
               multiple
               autocomplete
             />
             <div css={computed}>
               <div>
                 <span>분석한 오류패턴</span>
-                <div>연구개전방(1회), 전형어중(2회), 도치(1회)</div>
+                <div>{computedErrorPatterns.map(({ name }) => name).join(', ')}</div>
               </div>
               <Button customCss={button}
                 onClick={closeEvent}
@@ -84,11 +90,11 @@ const PhonemeBox = ({ isHidden = false, phoneme }: PhonemeBoxProps) => {
         onChange={(isOpen) => setIsSelected(isOpen)}
       >
         <div css={[phonemeBox, isSelected && selected, isHidden && hidden]}>
-          <div css={item}>{목표음소}</div>
-          <div css={[item, red, 목표음소 === 반응음소 && white]}>
-            {반응음소}
+          <div css={item}>{target}</div>
+          <div css={[item, red, target === react && white]}>
+            {react}
           </div>
-          <input css={[item, distortion]} onClick={(e: any) => e.stopPropagation()}/>
+          <input css={[item, distortion]} onClick={(e: any) => { e.stopPropagation(); handleChange('distortion')(e.target.value) }}/>
         </div>
       </Popper>
     </>

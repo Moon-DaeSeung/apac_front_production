@@ -1,28 +1,23 @@
 import { css } from '@emotion/react'
-import React, { useState } from 'react'
+import React, { useContext } from 'react'
 import TextField from '../../../../components/TextField'
 import Button from '../../../../components/Button'
 import DateInput from '../../../../components/DateInput'
-
-type TestInformation = {
-  name: string
-  gender: string
-  age: string
-  testedDate: string
-}
+import { InformationProps } from '../../types'
+import { ApacContext } from '../../Apac'
 
 const Information = () => {
-  const [testInformation, setTestInformation] = useState<TestInformation>(
-    {
-      name: '', gender: '', age: '', testedDate: ''
-    }
-  )
-  const resolve = (key: keyof TestInformation) => {
+  const { value: { information }, setValue } = useContext(ApacContext)
+  const handleChange = (key: keyof InformationProps) => (value: string | null) => {
+    setValue((prev) => {
+      return { ...prev, information: { ...prev.information, [key]: value } }
+    })
+  }
+
+  const resolve = (key: keyof InformationProps) => {
     return {
-      value: testInformation[key],
-      onChange: (value: string) => {
-        setTestInformation((prev) => { return { ...prev, [key]: value } })
-      }
+      value: information[key] || '',
+      onChange: handleChange(key)
     }
   }
 
@@ -33,19 +28,25 @@ const Information = () => {
         <div css={[row]}>
           <label css={[item]}>이름</label>
           <div css={[item]}>
-            <TextField customCss={input} {...resolve('name')}/>
+            <TextField customCss={input} {...resolve('testeeName')}/>
           </div>
         </div>
         <div css={[row]}>
           <label css={[item]}>성별</label>
           <div css={[item]}>
-            <TextField customCss={input} {...resolve('gender')} />
+            <TextField customCss={input} {...resolve('testeeGender')} />
           </div>
         </div>
         <div css={[row]}>
           <label css={[item]}>나이</label>
           <div css={[item]}>
-            <TextField customCss={input} {...resolve('age')} />
+            <TextField customCss={input} {...resolve('testeeAge')} />
+          </div>
+        </div>
+        <div css={[row]}>
+          <label css={[item]}>특이사항</label>
+          <div css={[item]}>
+            <TextField customCss={input} {...resolve('testeeNote')} />
           </div>
         </div>
         <div css={[row]}>

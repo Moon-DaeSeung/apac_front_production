@@ -1,9 +1,20 @@
 import { css } from '@emotion/react'
-import React from 'react'
+import React, { createContext } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import { configs } from './config'
+import { apacDefaultValue } from './defaultValue'
+import { ApacState } from './types'
+import { useApac } from './useApac'
+
+export const ApacContext = createContext<{value: ApacState, setValue:(func: ((value: ApacState) => ApacState)) => void}>(
+  {
+    value: apacDefaultValue,
+    setValue: (func) => { throw Error(`${func} is not defined`) }
+  }
+)
 
 const Apac = () => {
+  const { apacState, setApacState } = useApac({ defaultValue: apacDefaultValue })
   return (
     <>
       <header css={[header, container, constaint]}>
@@ -20,7 +31,9 @@ const Apac = () => {
         </nav>
       </header>
       <main css={[main, container, constaint]}>
-        <Outlet />
+        <ApacContext.Provider value={{ value: apacState, setValue: setApacState }}>
+          <Outlet />
+        </ApacContext.Provider>
       </main>
     </>
   )
