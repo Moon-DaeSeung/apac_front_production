@@ -6,7 +6,7 @@ import { errorpattern, header, item, phonemestart, row, textfield } from '../../
 import { css } from '@emotion/react'
 import { QuestionAnswer } from '../../types'
 import { ApacContext } from '../../Apac'
-import { Answer, Phoneme } from 'src/api/types'
+import { Answer, Phoneme } from 'src/libs/api/apac/types'
 
 const Word = () => {
   const { value: { wordTest: { questionAnswers } }, setValue } = useContext(ApacContext)

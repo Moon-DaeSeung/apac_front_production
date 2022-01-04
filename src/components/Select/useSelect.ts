@@ -1,7 +1,7 @@
 import { Placement } from '@popperjs/core'
 import React, { useCallback, useEffect, useState } from 'react'
 import { usePopper } from 'react-popper'
-import { isEqual, debounce } from '../../utils/'
+import { isEqual, debounce } from '../../libs/utils'
 import { getScrollParent, invokeScroll, scrollResolver } from './scrollUtils'
 
 interface UseSelectProps<T> {

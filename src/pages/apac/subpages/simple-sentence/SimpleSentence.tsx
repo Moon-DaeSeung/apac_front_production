@@ -1,7 +1,7 @@
 /* eslint-disable react/display-name */
 import { css } from '@emotion/react'
 import React, { useContext, useMemo } from 'react'
-import { Answer, Phoneme } from 'src/api/types'
+import { Answer, Phoneme } from 'src/libs/api/apac/types'
 import TextField from '../../../../components/TextField'
 import { ApacContext } from '../../Apac'
 import { FloatingButtons, Phonemes, Note } from '../../components'

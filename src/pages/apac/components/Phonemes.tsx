@@ -4,7 +4,7 @@ import Select from '../../../components/Select'
 import Popper from '../../../components/Popper'
 import { border, text } from '../color'
 import Button from '../../../components/Button'
-import { ErrorPattern, Phoneme } from '../../../api/types'
+import { ErrorPattern, Phoneme } from '../../../libs/api/apac/types'
 import useErrorPatternOptions from '../../../hooks/useErrorPatternOptions'
 import crossIcon from '../../../images/cross.svg'
 

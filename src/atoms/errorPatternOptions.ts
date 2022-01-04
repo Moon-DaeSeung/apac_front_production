@@ -1,5 +1,5 @@
 import { atom } from 'recoil'
-import { ErrorPattern } from '../api/types'
+import { ErrorPattern } from '../libs/api/apac/types'
 
 export const errorPatternOptions = atom<ErrorPattern[]>({
   key: 'errorPatternOptionsState',

@@ -1,4 +1,4 @@
-import { Phoneme } from '../../api/types'
+import { Phoneme } from '../../libs/api/apac/types'
 import { ApacState } from './types'
 
 const temp: Phoneme[] = [

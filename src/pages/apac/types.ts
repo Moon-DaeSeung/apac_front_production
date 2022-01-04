@@ -1,4 +1,4 @@
-import { Answer, ApacTestType, Question } from '../../api/types'
+import { Answer, ApacTestType, Question } from '../../libs/api/apac/types'
 
 export type ApacState = {
   information: InformationProps
