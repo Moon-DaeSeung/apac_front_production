@@ -3,6 +3,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { logout } from '../../auth/firebase'
 import useUser from '../../hooks/useUser'
+import { userStorage } from '../../libs/storage/user'
 import Button from '../Button'
 
 export type AppBarProps = {
@@ -11,7 +12,10 @@ export type AppBarProps = {
 
 const AppBar = ({ customCss }: AppBarProps) => {
   const { user } = useUser()
-  const handleLogout = () => logout()
+  const handleLogout = () => {
+    logout()
+    userStorage.set(null)
+  }
   return (
      <header css={[header]}>
        <div css={[layout, customCss]}>
