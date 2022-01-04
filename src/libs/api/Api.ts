@@ -3,9 +3,14 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, Method } from 'ax
 
 class API {
   private axios: AxiosInstance
+  private tokenResolver: (() => string) | null = null
   constructor (url: string) {
     this.axios = axios.create({ baseURL: url })
-    this.use(this.setAuthorization)
+    this.use(config => this.setAuthorization(config))
+  }
+
+  public setTokenResolver (tokenResolver: (() => string) | null) {
+    this.tokenResolver = tokenResolver
   }
 
   protected async request<T> (method: Method, url: string, configProps: AxiosRequestConfig) {
@@ -26,12 +31,6 @@ class API {
       throw new ServerError(code, data, message)
     }
     return data
-  }
-
-  private tokenResolver: (() => string) | null = null
-
-  public setTokenResolver (tokenResolver: (() => string) | null) {
-    this.tokenResolver = tokenResolver
   }
 
   public get<T> (url: string, config: AxiosRequestConfig = {}): Promise<T> {

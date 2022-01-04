@@ -14,7 +14,7 @@ export const ApacContext = createContext<{value: ApacState, setValue:(func: ((va
 )
 
 const Apac = () => {
-  const { apacUiState: apacState, setApacUiState: setApacState } = useApac({ defaultValue: apacDefaultValue })
+  const { apacUiState, setApacUiState } = useApac({ defaultValue: apacDefaultValue })
   return (
     <>
       <header css={[header, container, constaint]}>
@@ -31,7 +31,7 @@ const Apac = () => {
         </nav>
       </header>
       <main css={[main, container, constaint]}>
-        <ApacContext.Provider value={{ value: apacState, setValue: setApacState }}>
+        <ApacContext.Provider value={{ value: apacUiState, setValue: setApacUiState }}>
           <Outlet />
         </ApacContext.Provider>
       </main>

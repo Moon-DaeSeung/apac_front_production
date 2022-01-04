@@ -115,7 +115,7 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
       >
         <div css={[phonemeBox, isSelected && selected, isHidden && hidden]}>
           <div css={item}>{target}</div>
-          <div css={[item, red, target === react && white]}>{react}</div>
+          <div css={[item, red, (target === react || react === '*') && white]}>{react}</div>
           <input
             css={[item, distortion]}
             onClick={(e: any) => {

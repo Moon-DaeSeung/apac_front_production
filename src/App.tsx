@@ -2,10 +2,10 @@ import React from 'react'
 import { Outlet } from 'react-router'
 import { Global, css } from '@emotion/react'
 import AppBar from './components/AppBar'
-import { useAuthInitialize } from './hooks/useAuthInitialize'
 import Login from './pages/login'
 import './auth/firebase'
 import useUser from './hooks/useUser'
+import { useAuthInitialize } from './hooks/useAuthInitialize'
 
 const globalStyle = css`
   * {

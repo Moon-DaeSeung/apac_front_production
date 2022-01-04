@@ -10,7 +10,7 @@ module.exports = (env) => {
   let APAC_URL = ''
   switch (env.profile) {
     case 'local':
-      APAC_URL = 'localhost:8080'
+      APAC_URL = 'http://localhost:8080'
       break
     case 'production':
       throw new Error('production api not supported yet')

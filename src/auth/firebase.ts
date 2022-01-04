@@ -1,6 +1,5 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, User as FirebaseUser } from 'firebase/auth'
 import { User } from '../atoms/user'
 
 const firebaseConfig = {
@@ -18,15 +17,17 @@ const firebaseConfig = {
 type AuthStateChangedEvent = (user: User | null) => void
 const actions: AuthStateChangedEvent[] = []
 const auth = getAuth()
-const invokeAuthChangeEvent = (user: User | null) => actions.forEach((event) => event(user))
-onAuthStateChanged(auth, async (firebaseUser) => {
-  const user = firebaseUser
+const resolveUser = async (user: FirebaseUser | null) => {
+  return user
     ? {
-        name: firebaseUser.email || '',
-        accessToken: await firebaseUser.getIdToken(false)
+        name: user.email || '',
+        accessToken: await user.getIdToken(false)
       }
     : null
-  invokeAuthChangeEvent(user)
+}
+const invokeAuthChangeEvent = (user: User | null) => actions.forEach((event) => event(user))
+onAuthStateChanged(auth, async (firebaseUser) => {
+  resolveUser(firebaseUser).then(invokeAuthChangeEvent)
 })
 export const addAuthEventChangedEvent = (event: AuthStateChangedEvent) => actions.push(event)
 export const login = (email: string, password: string) => signInWithEmailAndPassword(auth, email, password)

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import useErrorPatternOptions from 'src/hooks/useErrorPatternOptions'
-import { getApac, getErrorPatterns } from '../../libs/api/apac'
+import useErrorPatternOptions from '../../hooks/useErrorPatternOptions'
+import { getApac, getErrorPatterns, getLatestQuestionInformation, getQuestionInformation } from '../../libs/api/apac'
 import { Answer, QuestionInformation, ApacTest } from '../../libs/api/apac/types'
 import { ApacState, QuestionAnswer } from './types'
 type UseApacProps = {
@@ -30,7 +30,38 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     })
   }, [apacServerState, wordQuestinoId, simpleQuestionId, normalQuestionId])
 
-  const updateQuestionInfo = (testType: Exclude<keyof ApacState, 'information'>, { questions, id: questionId, type }: QuestionInformation) => {
+  const updateQuestionAnswers = (questionAnswers: QuestionAnswer[], answers: Answer[]) => {
+    if (answers.length !== questionAnswers.length) { console.error(`questionAnswers and answers could not be ziped. questions: ${questionAnswers.length} answers: ${answers.length}`) }
+    return questionAnswers.map(({ question }, i) => ({ question, answer: answers[i] }))
+  }
+
+  const { setErrorPatternOptions } = useErrorPatternOptions()
+
+  useEffect(() => {
+    getErrorPatterns().then(setErrorPatternOptions)
+  }, [])
+
+  useEffect(() => {
+    // router context exsits -> return
+    if (id) {
+      getApac(id).then(data => {
+        setApacServerState(data)
+        const { wordTest, simpleSentenceTest, normalSentenceTest } = data
+        const wordPromise = wordTest ? getQuestionInformation(wordTest.questionInformationId.toString()) : getLatestQuestionInformation({ type: 'WORD' })
+        const simplePromise = simpleSentenceTest ? getQuestionInformation(simpleSentenceTest.questionInformationId.toString()) : getLatestQuestionInformation({ type: 'SIMPLE_SENTENCE' })
+        const normalPromise = normalSentenceTest ? getQuestionInformation(normalSentenceTest.questionInformationId.toString()) : getLatestQuestionInformation({ type: 'NORMAL_SENTENCE' })
+        wordPromise.then(updateQuestionInfo('wordTest'))
+        simplePromise.then(updateQuestionInfo('simpleSentenceTest'))
+        normalPromise.then(updateQuestionInfo('normalSentenceTest'))
+      })
+    } else {
+      getLatestQuestionInformation({ type: 'WORD' }).then(updateQuestionInfo('wordTest'))
+      getLatestQuestionInformation({ type: 'SIMPLE_SENTENCE' }).then(updateQuestionInfo('simpleSentenceTest'))
+      getLatestQuestionInformation({ type: 'NORMAL_SENTENCE' }).then(updateQuestionInfo('normalSentenceTest'))
+    }
+  }, [id])
+
+  const updateQuestionInfo = (testType: Exclude<keyof ApacState, 'information'>) => ({ questions, id: questionId, type }: QuestionInformation) => {
     setApacUiState((prev) => {
       return {
         ...prev,
@@ -45,26 +76,6 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
       }
     })
   }
-
-  const updateQuestionAnswers = (questionAnswers: QuestionAnswer[], answers: Answer[]) => {
-    if (answers.length !== questionAnswers.length) {
-      console.error(`questionAnswers and answers could not be ziped. questions: ${questionAnswers.length} answers: ${answers.length}`)
-    }
-    return questionAnswers.map(({ question }, i) => {
-      return { question, answer: answers[i] }
-    })
-  }
-
-  const { setErrorPatternOptions } = useErrorPatternOptions()
-  useEffect(() => {
-    getErrorPatterns().then(setErrorPatternOptions)
-  }, [])
-
-  useEffect(() => {
-    // router context exsits -> return
-    if (!id) return
-    getApac(id).then(setApacServerState)
-  }, [id])
 
   return { apacUiState, setApacUiState }
 }
