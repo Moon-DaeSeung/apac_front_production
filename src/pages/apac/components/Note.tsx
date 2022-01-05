@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import React from 'react'
+import React, { useRef } from 'react'
 import Popper from '../../../components/Popper'
 
 type NoteProps = {
@@ -7,15 +7,18 @@ type NoteProps = {
   onChange: (value: string) => void
 }
 const Note = ({ value, onChange }: NoteProps) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   return (
     <div css={[container, value && written]}>
       <Popper
         hasArrow
         placement='bottom-end'
         offset={[0, 10]}
+        onChange={(isOpen) => isOpen && textareaRef.current?.focus() }
         renderPopNode={() => (
           <div css={popnode}>
             <textarea
+              ref={textareaRef}
               css={textarea}
               value={value}
               onChange={(e) => onChange(e.target.value)}/>
@@ -49,5 +52,8 @@ const textarea = css`
   border-radius: 5px;
 `
 const written = css`
-  color: blue;
+  color: lightblue;
+  :hover {
+    color: blue;
+  }
 `

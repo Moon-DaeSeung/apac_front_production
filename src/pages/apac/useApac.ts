@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import useErrorPatternOptions from '../../hooks/useErrorPatternOptions'
 import { getApac, getErrorPatterns, getLatestQuestionInformation, getQuestionInformation } from '../../libs/api/apac'
 import { QuestionInformation, ApacTest, SubTest } from '../../libs/api/apac/types'
-import { ApacUiState, TestProps as SubTestUi } from './types'
+import { ApacUiState, SubTestUi } from './types'
 type UseApacProps = {
   defaultValue: ApacUiState
   id?: number
@@ -35,7 +35,9 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     const { questionAnswers } = subTestUi
     const { answers } = subTestServer
     if (answers.length !== questionAnswers.length) { console.error(`questionAnswers and answers could not be ziped. questions: ${questionAnswers.length} answers: ${answers.length}`) }
-    return questionAnswers.map(({ question }, i) => ({ question, answer: answers[i] }))
+    return {
+      questionAnswers: questionAnswers.map(({ question }, i) => ({ question, answer: answers[i] }))
+    }
   }
 
   const { setErrorPatternOptions } = useErrorPatternOptions()

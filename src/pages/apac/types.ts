@@ -2,9 +2,9 @@ import { Answer, ApacTestType, Question } from '../../libs/api/apac/types'
 
 export type ApacUiState = {
   information: InformationProps
-  wordTest: TestProps
-  simpleSentenceTest: TestProps
-  normalSentenceTest: TestProps
+  wordTest: SubTestUi
+  simpleSentenceTest: SubTestUi
+  normalSentenceTest: SubTestUi
 }
 
 export type InformationProps = {
@@ -15,7 +15,7 @@ export type InformationProps = {
   testedDate: string | null
 }
 
-export type TestProps = {
+export type SubTestUi = {
   questionInformationId: string
   type: ApacTestType
   questionAnswers: QuestionAnswer[]
