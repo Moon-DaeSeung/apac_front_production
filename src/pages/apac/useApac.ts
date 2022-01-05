@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import useErrorPatternOptions from '../../hooks/useErrorPatternOptions'
 import { createApac, getApac, getErrorPatterns, getLatestQuestionInformation, getQuestionInformation, patchApac } from '../../libs/api/apac'
 import { QuestionInformation, ApacTest, SubTest } from '../../libs/api/apac/types'
+import apacStorage from '../../libs/storage/apac'
 import { ApacUiState, SubTestUi } from './types'
 type UseApacProps = {
   defaultValue: ApacUiState
@@ -21,8 +22,20 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
   } = apacUiState
 
   useEffect(() => {
-    if (!apacServerState || !wordQuestinoId || !simpleQuestionId || !normalQuestionId) return
-    const { wordTest, simpleSentenceTest, normalSentenceTest, id, ...information } = apacServerState
+    if (!id || !apacServerState || !wordQuestinoId || !simpleQuestionId || !normalQuestionId) return
+    const cache: ApacTest = {
+      id,
+      ...apacUiState.information,
+      ...transUiToServer('wordTest'),
+      ...transUiToServer('normalSentenceTest'),
+      ...transUiToServer('simpleSentenceTest')
+    }
+    apacStorage.set(id, cache)
+  }, [apacUiState])
+
+  useEffect(() => {
+    if (!id || !apacServerState || !wordQuestinoId || !simpleQuestionId || !normalQuestionId) return
+    const { wordTest, simpleSentenceTest, normalSentenceTest, ...information } = apacServerState
     setApacUiState((prev) => {
       return {
         information,
@@ -49,19 +62,21 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     getErrorPatterns().then(setErrorPatternOptions)
   }, [])
 
+  const initialize = (data: ApacTest) => {
+    setApacServerState(data)
+    const { wordTest, simpleSentenceTest, normalSentenceTest } = data
+    const wordPromise = wordTest ? getQuestionInformation(wordTest.questionInformationId.toString()) : getLatestQuestionInformation({ type: 'WORD' })
+    const simplePromise = simpleSentenceTest ? getQuestionInformation(simpleSentenceTest.questionInformationId.toString()) : getLatestQuestionInformation({ type: 'SIMPLE_SENTENCE' })
+    const normalPromise = normalSentenceTest ? getQuestionInformation(normalSentenceTest.questionInformationId.toString()) : getLatestQuestionInformation({ type: 'NORMAL_SENTENCE' })
+    wordPromise.then(updateQuestionInfo('wordTest'))
+    simplePromise.then(updateQuestionInfo('simpleSentenceTest'))
+    normalPromise.then(updateQuestionInfo('normalSentenceTest'))
+  }
+
   useEffect(() => {
-    // router context exsits -> return
     if (id) {
-      getApac(id).then(data => {
-        setApacServerState(data)
-        const { wordTest, simpleSentenceTest, normalSentenceTest } = data
-        const wordPromise = wordTest ? getQuestionInformation(wordTest.questionInformationId.toString()) : getLatestQuestionInformation({ type: 'WORD' })
-        const simplePromise = simpleSentenceTest ? getQuestionInformation(simpleSentenceTest.questionInformationId.toString()) : getLatestQuestionInformation({ type: 'SIMPLE_SENTENCE' })
-        const normalPromise = normalSentenceTest ? getQuestionInformation(normalSentenceTest.questionInformationId.toString()) : getLatestQuestionInformation({ type: 'NORMAL_SENTENCE' })
-        wordPromise.then(updateQuestionInfo('wordTest'))
-        simplePromise.then(updateQuestionInfo('simpleSentenceTest'))
-        normalPromise.then(updateQuestionInfo('normalSentenceTest'))
-      })
+      const cahced = apacStorage.get(id)
+      cahced ? initialize(cahced) : getApac(id).then(initialize)
     } else {
       getLatestQuestionInformation({ type: 'WORD' }).then(updateQuestionInfo('wordTest'))
       getLatestQuestionInformation({ type: 'SIMPLE_SENTENCE' }).then(updateQuestionInfo('simpleSentenceTest'))
@@ -92,32 +107,28 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     switch (type) {
       case 'information':
         promise = id
-          ? patchApac(id, {
-            ...apacUiState.information, testedDate: apacUiState.information.testedDate || ''
-          })
-          : createApac({
-            ...apacUiState.information, testedDate: apacUiState.information.testedDate
-          })
+          ? patchApac(id, { ...apacUiState.information })
+          : createApac({ ...apacUiState.information })
         break
       default:
-        promise = patchApac(id!!, {
-          [type]: transUiToPayload(type)
-        })
+        promise = patchApac(id!!, transUiToServer(type))
     }
     promise.then(data => {
-      setApacServerState(data)
-      Number.isInteger(id) || navigation(`./${data.id}/word`)
+      id || navigation(`./${data.id}/word`)
+      id && apacStorage.remove(id)
       alert('저장하였습니다.')
     }).catch(() => {
       alert('저장에 실패하였습니다. 다시 시도해주세요')
     })
   }
 
-  const transUiToPayload = (testType: Exclude<keyof ApacUiState, 'information'>) => {
+  const transUiToServer = (testType: Exclude<keyof ApacUiState, 'information'>) => {
     return {
-      questionInformationId: apacUiState[testType].questionInformationId,
-      type: apacUiState[testType].type,
-      answers: apacUiState[testType].questionAnswers.map(({ answer }) => answer)
+      [testType]: {
+        questionInformationId: apacUiState[testType].questionInformationId,
+        type: apacUiState[testType].type,
+        answers: apacUiState[testType].questionAnswers.map(({ answer }) => answer)
+      }
     }
   }
 

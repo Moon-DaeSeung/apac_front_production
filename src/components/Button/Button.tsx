@@ -50,6 +50,9 @@ const button = css`
   overflow: hidden;
   color: #fff;
   background-color: #1560c0;
+  :hover {
+    background-color: #0072E5;
+  }
   outline: 0;
   border: 0;
   font-size: 1.5rem;

@@ -13,6 +13,10 @@ class StorageAPI {
     const item = JSON.stringify(value)
     this.storage.setItem(key, item)
   }
+
+  removeItem (key: string): void {
+    this.storage.removeItem(key)
+  }
 }
 
 export default new StorageAPI(localStorage)
