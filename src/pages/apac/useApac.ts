@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import useErrorPatternOptions from '../../hooks/useErrorPatternOptions'
-import { getApac, getErrorPatterns, getLatestQuestionInformation, getQuestionInformation } from '../../libs/api/apac'
+import { createApac, getApac, getErrorPatterns, getLatestQuestionInformation, getQuestionInformation, patchApac } from '../../libs/api/apac'
 import { QuestionInformation, ApacTest, SubTest } from '../../libs/api/apac/types'
 import { ApacUiState, SubTestUi } from './types'
 type UseApacProps = {
   defaultValue: ApacUiState
   id?: number
 }
+
+export type SaveType = 'create' | 'information' | Exclude<keyof ApacUiState, 'information'>
 
 export const useApac = ({ defaultValue, id }: UseApacProps) => {
   const [apacUiState, setApacUiState] = useState<ApacUiState>(defaultValue)
@@ -82,5 +85,41 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     })
   }
 
-  return { apacUiState, setApacUiState }
+  const navigation = useNavigate()
+
+  const handleSave = (type: SaveType) => {
+    let promise: Promise<ApacTest>
+    switch (type) {
+      case 'create':
+        promise = createApac({
+          ...apacUiState.information, testedDate: apacUiState.information.testedDate || ''
+        })
+        break
+      case 'information':
+        promise = patchApac(id!!, {
+          ...apacUiState.information, testedDate: apacUiState.information.testedDate || ''
+        })
+        break
+      default:
+        promise = patchApac(id!!, {
+          [type]: resolve(type)
+        })
+    }
+    promise.then(data => {
+      setApacServerState(data)
+      type === 'create' && navigation(data.id)
+    }).catch(() => {
+      alert('저장에 실패하였습니다. 다시 시도해주세요')
+    })
+  }
+
+  const resolve = (testType: Exclude<keyof ApacUiState, 'information'>) => {
+    return {
+      questionInformationId: apacUiState[testType].questionInformationId,
+      type: apacUiState[testType].type,
+      answers: apacUiState[testType].questionAnswers.map(({ answer }) => answer)
+    }
+  }
+
+  return { apacUiState, setApacUiState, handleSave }
 }

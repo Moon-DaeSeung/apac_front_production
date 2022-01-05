@@ -4,18 +4,25 @@ import { Link, Outlet, useParams } from 'react-router-dom'
 import { configs } from './config'
 import { apacDefaultValue } from './defaultValue'
 import { ApacUiState } from './types'
-import { useApac } from './useApac'
+import { SaveType, useApac } from './useApac'
 
-export const ApacContext = createContext<{value: ApacUiState, setValue:(func: ((value: ApacUiState) => ApacUiState)) => void}>(
+type ApacContextProps = {
+  value: ApacUiState
+  setValue: (func: (value: ApacUiState) => ApacUiState) => void
+  handleSave: (type: SaveType) => void
+}
+
+export const ApacContext = createContext<ApacContextProps>(
   {
     value: apacDefaultValue,
-    setValue: (func) => { throw Error(`${func} is not defined`) }
+    setValue: (func) => { throw Error(`${func} is not defined`) },
+    handleSave: () => { throw Error('save button is not defined') }
   }
 )
 
 const Apac = () => {
   const { id } = useParams<{id: string}>()
-  const { apacUiState, setApacUiState } = useApac({ defaultValue: apacDefaultValue, id: Number(id) })
+  const { apacUiState, setApacUiState, handleSave } = useApac({ defaultValue: apacDefaultValue, id: Number(id) })
   return (
     <>
       <header css={[header, container, constaint]}>
@@ -32,7 +39,7 @@ const Apac = () => {
         </nav>
       </header>
       <main css={[main, container, constaint]}>
-        <ApacContext.Provider value={{ value: apacUiState, setValue: setApacUiState }}>
+        <ApacContext.Provider value={{ value: apacUiState, setValue: setApacUiState, handleSave }}>
           <Outlet />
         </ApacContext.Provider>
       </main>

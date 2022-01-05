@@ -5,9 +5,12 @@ import Button from '../../../../components/Button'
 import DateInput from '../../../../components/DateInput'
 import { InformationProps } from '../../types'
 import { ApacContext } from '../../Apac'
+import { useParams } from 'react-router-dom'
+import { changeDateForm } from '../../../../../../websol-front/src/utils/DateUtils'
 
 const Information = () => {
-  const { value: { information }, setValue } = useContext(ApacContext)
+  const { id } = useParams<{id: string}>()
+  const { value: { information }, setValue, handleSave } = useContext(ApacContext)
   const handleChange = (key: keyof InformationProps) => (value: string | null) => {
     setValue((prev) => {
       return { ...prev, information: { ...prev.information, [key]: value } }
@@ -52,10 +55,10 @@ const Information = () => {
         <div css={[row]}>
           <label css={[item]}>검사일자</label>
           <div css={[item]}>
-            <DateInput customCss={input} {...resolve('testedDate')}/>
+            <DateInput customCss={input} {...resolve('testedDate')} initial={changeDateForm(new Date())}/>
           </div>
         </div>
-        <Button customCss={button}>등록</Button>
+        <Button customCss={button} onClick={() => id ? handleSave('information') : handleSave('information')}>등록</Button>
       </div>
     </>
   )

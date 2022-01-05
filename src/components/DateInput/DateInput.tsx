@@ -7,13 +7,14 @@ import TextField from '../TextField'
 import { useDateInput } from './useDateInput'
 
 type DateInputProps = {
-  value: string
+  value: string,
+  initial?: string,
   onChange?: any
   readOnly?: boolean
   customCss?: SerializedStyles,
 }
 
-function DateInput ({ value, onChange = () => null, readOnly = false, customCss }: DateInputProps) {
+function DateInput ({ initial, value, onChange = () => null, readOnly = false, customCss }: DateInputProps) {
   const {
     date,
     dateChange,
