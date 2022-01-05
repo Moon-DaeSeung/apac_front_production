@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import Select from '../../../components/Select'
 import Popper from '../../../components/Popper'
 import { border, text } from '../color'
@@ -63,47 +63,6 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
   const isDifferent = (option: ErrorPattern) => {
     return computedErrorPatterns.findIndex(({ id }) => option.id === id) === -1
   }
-  const renderErrorPattern = useCallback((closeEvent: () => void) => <div css={[errorpattern]}>
-    <Select
-      getOptionLabel={({ name }) => name}
-      options={errorPatternOptions}
-      value={confirmedErrorPatterns}
-      onChange={handleChange('confirmedErrorPatterns')}
-      multiple
-      autocomplete
-      renderMultiItemNode={({
-        option,
-        deleteEvent
-      }: {
-        option: ErrorPattern;
-        deleteEvent: () => void;
-      }) => {
-        return (
-          <div css={[multiItem, isDifferent(option) && css`background-color: #FF8C00;`]} key={option.id}>
-            <span css={itemName}>{option.name}</span>
-            <div css={[icon]}>
-              <img
-                src={crossIcon}
-                css={[deleteItem]}
-                onClick={deleteEvent}
-              />
-            </div>
-          </div>
-        )
-      }}
-    />
-    <div css={computed}>
-      <div>
-        <span>*프로그램이 제시한 오류패턴</span>
-        <div>
-          {computedErrorPatterns.map(({ name }) => name).join(', ')}
-        </div>
-      </div>
-      <Button customCss={button} onClick={closeEvent}>
-        확인
-      </Button>
-    </div>
-  </div>, [value, onChange])
 
   return (
     <>
@@ -111,7 +70,48 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
         offset={[0, 10]}
         hasArrow={true}
         renderPopNode={
-          renderErrorPattern
+          (closeEvent: () => void) =>
+            <div css={[errorpattern]}>
+              <Select
+                getOptionLabel={({ name }) => name}
+                options={errorPatternOptions}
+                value={confirmedErrorPatterns}
+                onChange={handleChange('confirmedErrorPatterns')}
+                multiple
+                autocomplete
+                renderMultiItemNode={({
+                  option,
+                  deleteEvent
+                }: {
+                  option: ErrorPattern;
+                  deleteEvent: () => void;
+                }) => {
+                  return (
+                    <div css={[multiItem, isDifferent(option) && css`background-color: #FF8C00;`]} key={option.id}>
+                      <span css={itemName}>{option.name}</span>
+                      <div css={[icon]}>
+                        <img
+                          src={crossIcon}
+                          css={[deleteItem]}
+                          onClick={deleteEvent}
+                        />
+                      </div>
+                    </div>
+                  )
+                }}
+              />
+              <div css={computed}>
+                <div>
+                  <span>*프로그램이 제시한 오류패턴</span>
+                  <div>
+                    {computedErrorPatterns.map(({ name }) => name).join(', ')}
+                  </div>
+                </div>
+                <Button customCss={button} onClick={closeEvent}>
+                  확인
+                </Button>
+              </div>
+            </div>
         }
         onChange={(isOpen) => setIsSelected(isOpen)}
       >
