@@ -41,7 +41,7 @@ function App () {
           <AppBar customCss={constraint} />
           <main css={[main]}>
             <div css={[constraint]}>
-              <Outlet />
+              {user.name && <Outlet />}
             </div>
           </main>
         </>

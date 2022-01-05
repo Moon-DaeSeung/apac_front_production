@@ -1,7 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, User as FirebaseUser } from 'firebase/auth'
 import { User } from '../atoms/user'
-import { userStorage } from '../libs/storage/user'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAdXtqiLAlMNOkg2ABSSF39P1POFmGjyx0',
@@ -31,14 +30,8 @@ onAuthStateChanged(auth, (firebaseUser) => {
   const user = resolveUser(firebaseUser)
   invokeAuthChangeEvent(user)
 })
-export const initializeAuth = () => {
-  const user = userStorage.get()
-  console.log(user?.idToken)
-  user && invokeAuthChangeEvent({ name: user.name, getIdToken: () => new Promise(resolve => resolve(user.idToken)) })
-}
 export const addAuthEventChangedEvent = (event: AuthStateChangedEvent) => actions.push(event)
 export const login = (email: string, password: string) => signInWithEmailAndPassword(auth, email, password)
 export const logout = () => {
   signOut(auth)
-  userStorage.set(null)
 }
