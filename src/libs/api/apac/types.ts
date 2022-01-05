@@ -8,10 +8,10 @@ export type ApacTest = {
   testeeGender: string
   testeeAge: string
   testeeNote: string
-  testedDate: string | null
-  wordTest?: SubTest | null
-  simpleSentenceTest?: SubTest | null
-  normalSentenceTest?: SubTest | null
+  testedDate?: string
+  wordTest?: SubTest
+  simpleSentenceTest?: SubTest
+  normalSentenceTest?: SubTest
 }
 
 export type Answer = {
@@ -78,5 +78,5 @@ export type TestInformation = {
   testeeGender: string
   testeeAge: string
   testeeNote: string
-  testedDate: string | null
+  testedDate?: string
 }

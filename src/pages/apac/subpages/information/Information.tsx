@@ -1,16 +1,15 @@
 import { css } from '@emotion/react'
-import React, { useContext } from 'react'
+import React from 'react'
 import TextField from '../../../../components/TextField'
 import Button from '../../../../components/Button'
 import DateInput from '../../../../components/DateInput'
 import { InformationProps } from '../../types'
-import { ApacContext } from '../../Apac'
-import { useParams } from 'react-router-dom'
+import { useOutletContext } from 'react-router-dom'
 import { changeDateForm } from '../../../../../../websol-front/src/utils/DateUtils'
+import { ApacContextProps } from '../../Apac'
 
 const Information = () => {
-  const { id } = useParams<{id: string}>()
-  const { value: { information }, setValue, handleSave } = useContext(ApacContext)
+  const { value: { information }, setValue, handleSave } = useOutletContext<ApacContextProps>()
   const handleChange = (key: keyof InformationProps) => (value: string | null) => {
     setValue((prev) => {
       return { ...prev, information: { ...prev.information, [key]: value } }
@@ -58,7 +57,7 @@ const Information = () => {
             <DateInput customCss={input} {...resolve('testedDate')} initial={changeDateForm(new Date())}/>
           </div>
         </div>
-        <Button customCss={button} onClick={() => id ? handleSave('information') : handleSave('information')}>등록</Button>
+        <Button customCss={button} onClick={() => handleSave('information')}>저장</Button>
       </div>
     </>
   )

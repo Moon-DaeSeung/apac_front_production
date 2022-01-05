@@ -9,7 +9,7 @@ type UseApacProps = {
   id?: number
 }
 
-export type SaveType = 'create' | 'information' | Exclude<keyof ApacUiState, 'information'>
+export type SaveType = 'information' | Exclude<keyof ApacUiState, 'information'>
 
 export const useApac = ({ defaultValue, id }: UseApacProps) => {
   const [apacUiState, setApacUiState] = useState<ApacUiState>(defaultValue)
@@ -26,14 +26,14 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     setApacUiState((prev) => {
       return {
         information,
-        wordTest: { ...prev.wordTest, ...updateQuestionAnswers(prev.wordTest, wordTest) },
-        simpleSentenceTest: { ...prev.simpleSentenceTest, ...updateQuestionAnswers(prev.simpleSentenceTest, simpleSentenceTest) },
-        normalSentenceTest: { ...prev.normalSentenceTest, ...updateQuestionAnswers(prev.normalSentenceTest, normalSentenceTest) }
+        wordTest: { ...prev.wordTest, ...updateServerToUi(prev.wordTest, wordTest) },
+        simpleSentenceTest: { ...prev.simpleSentenceTest, ...updateServerToUi(prev.simpleSentenceTest, simpleSentenceTest) },
+        normalSentenceTest: { ...prev.normalSentenceTest, ...updateServerToUi(prev.normalSentenceTest, normalSentenceTest) }
       }
     })
   }, [apacServerState, wordQuestinoId, simpleQuestionId, normalQuestionId])
 
-  const updateQuestionAnswers = (subTestUi: SubTestUi, subTestServer?: SubTest | null) => {
+  const updateServerToUi = (subTestUi: SubTestUi, subTestServer?: SubTest | null) => {
     if (!subTestServer) return {}
     const { questionAnswers } = subTestUi
     const { answers } = subTestServer
@@ -78,7 +78,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
           questionInformationId: questionId,
           questionAnswers: questions.map((question) => {
             const { number, defaultPhonemes: phonemes } = question
-            return { question, answer: { number, reaction: '', note: '', phonemes, totalErrorPatterns: [] } }
+            return { question, answer: { number, reaction: '', note: '', phonemes, totalErrorPatterns: [], state: 'NOT_WRITTEN' } }
           })
         }
       }
@@ -90,30 +90,30 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
   const handleSave = (type: SaveType) => {
     let promise: Promise<ApacTest>
     switch (type) {
-      case 'create':
-        promise = createApac({
-          ...apacUiState.information, testedDate: apacUiState.information.testedDate || ''
-        })
-        break
       case 'information':
-        promise = patchApac(id!!, {
-          ...apacUiState.information, testedDate: apacUiState.information.testedDate || ''
-        })
+        promise = id
+          ? patchApac(id, {
+            ...apacUiState.information, testedDate: apacUiState.information.testedDate || ''
+          })
+          : createApac({
+            ...apacUiState.information, testedDate: apacUiState.information.testedDate
+          })
         break
       default:
         promise = patchApac(id!!, {
-          [type]: resolve(type)
+          [type]: transUiToPayload(type)
         })
     }
     promise.then(data => {
       setApacServerState(data)
-      type === 'create' && navigation(data.id)
+      Number.isInteger(id) || navigation(`./${data.id}/word`)
+      alert('저장하였습니다.')
     }).catch(() => {
       alert('저장에 실패하였습니다. 다시 시도해주세요')
     })
   }
 
-  const resolve = (testType: Exclude<keyof ApacUiState, 'information'>) => {
+  const transUiToPayload = (testType: Exclude<keyof ApacUiState, 'information'>) => {
     return {
       questionInformationId: apacUiState[testType].questionInformationId,
       type: apacUiState[testType].type,

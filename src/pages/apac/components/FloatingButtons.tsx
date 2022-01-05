@@ -4,7 +4,12 @@ import Button from '../../../components/Button'
 import Floating from '../../../components/Floating'
 import { useMediaQuery } from '../../../hooks/useMediaQuery'
 
-const FloatingButtons = () => {
+type FloatingButtonsProps = {
+  onSave: () => void
+  onAnalyze?: () => void
+}
+
+const FloatingButtons = ({ onSave }: FloatingButtonsProps) => {
   const matches = useMediaQuery('(min-width: 1280px)')
   return (
       <Floating offset={{
@@ -16,7 +21,7 @@ const FloatingButtons = () => {
           <br/>
           <span css={caption}>오류패턴</span>
           </Button>
-        <Button customCss={button}>
+        <Button customCss={button} onClick={onSave}>
           <i className="far fa-save" />
           <br/>
           <span css={caption}>저장</span>

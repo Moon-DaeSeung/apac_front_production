@@ -1,47 +1,40 @@
 import { css } from '@emotion/react'
-import React, { createContext } from 'react'
-import { Link, Outlet, useParams } from 'react-router-dom'
+import React from 'react'
+import { NavLink, Outlet, useParams, useLocation } from 'react-router-dom'
 import { configs } from './config'
 import { apacDefaultValue } from './defaultValue'
 import { ApacUiState } from './types'
 import { SaveType, useApac } from './useApac'
 
-type ApacContextProps = {
+export type ApacContextProps = {
   value: ApacUiState
   setValue: (func: (value: ApacUiState) => ApacUiState) => void
   handleSave: (type: SaveType) => void
 }
 
-export const ApacContext = createContext<ApacContextProps>(
-  {
-    value: apacDefaultValue,
-    setValue: (func) => { throw Error(`${func} is not defined`) },
-    handleSave: () => { throw Error('save button is not defined') }
-  }
-)
-
 const Apac = () => {
   const { id } = useParams<{id: string}>()
   const { apacUiState, setApacUiState, handleSave } = useApac({ defaultValue: apacDefaultValue, id: Number(id) })
+  const { pathname } = useLocation()
+  let current = pathname.split('/').pop()!!
+  current = current === id ? '' : current
   return (
     <>
-      <header css={[header, container, constaint]}>
+      <header css={[header, container, constaint, id || disable]}>
         <nav>
           <menu css={memu}>
             {configs.map(({ to, name }) => {
               return (
-                <Link key={name} to={to} css={menuItem}>
+                <NavLink key={name} to={to} css={[menuItem, to === current && active]}>
                   <li>{name}</li>
-                </Link>
+                </NavLink>
               )
             })}
           </menu>
         </nav>
       </header>
       <main css={[main, container, constaint]}>
-        <ApacContext.Provider value={{ value: apacUiState, setValue: setApacUiState, handleSave }}>
-          <Outlet />
-        </ApacContext.Provider>
+        <Outlet context={{ handleSave, value: apacUiState, setValue: setApacUiState }} />
       </main>
     </>
   )
@@ -68,11 +61,14 @@ const menuItem = css`
     border-left: solid #dadada 2px;
   }
   :hover {
-    background-color: lightblue;
+    background-color: #B5E0F1;
   }
   li {
     list-style: none;
   }
+`
+const active = css`
+  background-color: #d8ecf3;
 `
 const main = css`
   padding: 10px 20px;
@@ -84,4 +80,8 @@ const container = css`
 `
 const constaint = css`
   min-width: 780px;
+`
+const disable = css`
+  pointer-events: none;
+  background-color: whitesmoke;
 `

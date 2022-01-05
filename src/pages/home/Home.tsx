@@ -136,7 +136,7 @@ const fieldset = css`
 `
 const row = css`
   display: grid;
-  grid-template-columns: 3fr 1fr 4fr 6fr 8fr 2fr;
+  grid-template-columns: minmax(100px, 3fr) minmax(50px,1fr) minmax(100px,4fr) minmax(200px, 6fr) minmax(150px, 8fr) 100px;
   div {
     &:first-of-type {
       border-left-width: 2px;

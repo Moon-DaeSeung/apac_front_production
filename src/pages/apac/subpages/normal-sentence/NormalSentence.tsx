@@ -1,15 +1,16 @@
 /* eslint-disable react/display-name */
 import { css } from '@emotion/react'
-import React, { useContext, useMemo } from 'react'
+import React, { useMemo } from 'react'
+import { useOutletContext } from 'react-router-dom'
 import { Answer, Phoneme } from 'src/libs/api/apac/types'
 import TextField from '../../../../components/TextField'
-import { ApacContext } from '../../Apac'
+import { ApacContextProps } from '../../Apac'
 import { FloatingButtons, Phonemes, Note } from '../../components'
 import { errorpattern, header, item, row, textfield } from '../../css'
 import { QuestionAnswer } from '../../types'
 
 const NormalSentence = () => {
-  const { value: { normalSentenceTest: { questionAnswers } }, setValue } = useContext(ApacContext)
+  const { value: { normalSentenceTest: { questionAnswers } }, setValue, handleSave } = useOutletContext<ApacContextProps>()
   const handleChange = useMemo(() => questionAnswers.map((_, index) => (questionAnswer: QuestionAnswer) => {
     setValue(prev => {
       const copied = [...prev.normalSentenceTest.questionAnswers]
@@ -31,7 +32,7 @@ const NormalSentence = () => {
           <Row key={key} value={value} onChange={handleChange[key]} />
         )
       })}
-      <FloatingButtons/>
+      <FloatingButtons onSave={() => handleSave('normalSentenceTest')}/>
     </>
   )
 }

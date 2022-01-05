@@ -1,5 +1,5 @@
 import { css, keyframes, SerializedStyles } from '@emotion/react'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Calendar from '../../components/Calendar'
 import Popper from '../Popper'
 import CalendarIcon from '../../images/calendar.svg'
@@ -21,6 +21,10 @@ function DateInput ({ initial, value, onChange = () => null, readOnly = false, c
     calendarDate,
     setCalendarDate
   } = useDateInput(value, onChange)
+
+  useEffect(() => {
+    value || onChange(initial)
+  }, [initial])
 
   return (
     <div css={[container, customCss, ignore]}>

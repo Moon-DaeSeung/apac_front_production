@@ -5,8 +5,7 @@ export const apacDefaultValue: ApacUiState = {
     testeeName: '',
     testeeGender: '',
     testeeAge: '',
-    testeeNote: '',
-    testedDate: null
+    testeeNote: ''
   },
   wordTest: {
     questionInformationId: '',

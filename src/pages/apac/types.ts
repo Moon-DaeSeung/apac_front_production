@@ -12,7 +12,7 @@ export type InformationProps = {
   testeeGender: string
   testeeAge: string
   testeeNote: string
-  testedDate: string | null
+  testedDate?: string
 }
 
 export type SubTestUi = {

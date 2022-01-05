@@ -10,7 +10,7 @@ export type CreateApacRequest = {
   testeeGender: string
   testeeAge: string
   testeeNote: string
-  testedDate: string
+  testedDate?: string
 }
 
 export type CreateApacResponse = ApacTest
