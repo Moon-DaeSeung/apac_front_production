@@ -1,6 +1,6 @@
-import { ApacState } from './types'
+import { ApacUiState } from './types'
 
-export const apacDefaultValue: ApacState = {
+export const apacDefaultValue: ApacUiState = {
   information: {
     testeeName: '',
     testeeGender: '',

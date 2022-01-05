@@ -3,10 +3,10 @@ import React, { createContext } from 'react'
 import { Link, Outlet, useParams } from 'react-router-dom'
 import { configs } from './config'
 import { apacDefaultValue } from './defaultValue'
-import { ApacState } from './types'
+import { ApacUiState } from './types'
 import { useApac } from './useApac'
 
-export const ApacContext = createContext<{value: ApacState, setValue:(func: ((value: ApacState) => ApacState)) => void}>(
+export const ApacContext = createContext<{value: ApacUiState, setValue:(func: ((value: ApacUiState) => ApacUiState)) => void}>(
   {
     value: apacDefaultValue,
     setValue: (func) => { throw Error(`${func} is not defined`) }

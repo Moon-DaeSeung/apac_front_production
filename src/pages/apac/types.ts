@@ -1,6 +1,6 @@
 import { Answer, ApacTestType, Question } from '../../libs/api/apac/types'
 
-export type ApacState = {
+export type ApacUiState = {
   information: InformationProps
   wordTest: TestProps
   simpleSentenceTest: TestProps

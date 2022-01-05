@@ -14,6 +14,7 @@ const globalStyle = css`
   body {
     width: 100%;
     height: 100%;
+    overflow-y: scroll;
     margin: 0;
     padding: 0;
     background-color: #EAEFF2;
@@ -25,7 +26,6 @@ const globalStyle = css`
     margin: 0;
     min-height: 100%;
     flex-direction: column;
-    margin-right: 12px;
   }
 `
 function App () {

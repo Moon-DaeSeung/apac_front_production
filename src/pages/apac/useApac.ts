@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react'
 import useErrorPatternOptions from '../../hooks/useErrorPatternOptions'
 import { getApac, getErrorPatterns, getLatestQuestionInformation, getQuestionInformation } from '../../libs/api/apac'
 import { QuestionInformation, ApacTest, SubTest } from '../../libs/api/apac/types'
-import { ApacState, TestProps as SubTestUi } from './types'
+import { ApacUiState, TestProps as SubTestUi } from './types'
 type UseApacProps = {
-  defaultValue: ApacState
+  defaultValue: ApacUiState
   id?: number
 }
 
 export const useApac = ({ defaultValue, id }: UseApacProps) => {
-  const [apacUiState, setApacUiState] = useState<ApacState>(defaultValue)
+  const [apacUiState, setApacUiState] = useState<ApacUiState>(defaultValue)
   const [apacServerState, setApacServerState] = useState<ApacTest | null>(null)
   const {
     wordTest: { questionInformationId: wordQuestinoId },
@@ -64,7 +64,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     }
   }, [id])
 
-  const updateQuestionInfo = (testType: Exclude<keyof ApacState, 'information'>) => ({ questions, id: questionId, type }: QuestionInformation) => {
+  const updateQuestionInfo = (testType: Exclude<keyof ApacUiState, 'information'>) => ({ questions, id: questionId, type }: QuestionInformation) => {
     setApacUiState((prev) => {
       return {
         ...prev,
