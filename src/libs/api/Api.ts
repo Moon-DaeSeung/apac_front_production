@@ -3,13 +3,13 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, Method } from 'ax
 
 class API {
   private axios: AxiosInstance
-  private tokenResolver: (() => string) | null = null
+  private tokenResolver: (() => Promise<string>) | null = null
   constructor (url: string) {
     this.axios = axios.create({ baseURL: url })
-    this.use(config => this.setAuthorization(config))
+    this.use(async (config) => await this.setAuthorization(config))
   }
 
-  public setTokenResolver (tokenResolver: (() => string) | null) {
+  public setTokenResolver (tokenResolver: (() => Promise<string>) | null) {
     this.tokenResolver = tokenResolver
   }
 
@@ -24,7 +24,8 @@ class API {
     try {
       result = await this.axios.request<Response<T>>(config)
     } catch (error) {
-      throw new HttpError(error as AxiosError<any>)
+      const httpError = new HttpError(error as AxiosError<any>)
+      throw httpError
     }
     const { data: { code, data, message } } = result
     if (code !== 0 && code !== 200) {
@@ -53,9 +54,9 @@ class API {
     return this.request<T>('delete', url, config)
   }
 
-  protected setAuthorization (config: AxiosRequestConfig): AxiosRequestConfig {
+  protected async setAuthorization (config: AxiosRequestConfig): Promise<AxiosRequestConfig> {
     const authorization = this.tokenResolver
-      ? { Authorization: `Bearer ${this.tokenResolver()}` }
+      ? { Authorization: `Bearer ${await this.tokenResolver()}` }
       : {}
     return {
       ...config,
@@ -67,7 +68,7 @@ class API {
     }
   }
 
-  protected use (handler: (value: AxiosRequestConfig) => AxiosRequestConfig) {
+  protected use (handler: (value: AxiosRequestConfig) => Promise<AxiosRequestConfig>) {
     this.axios.interceptors.request.use(handler)
   }
 }

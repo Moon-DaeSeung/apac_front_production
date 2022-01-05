@@ -15,9 +15,9 @@ export type PhonemesProps = {
 
 const Phonemes = ({ value, onChange }: PhonemesProps) => {
   const filtering = ({ target, react }: Phoneme, key: number) => {
-    const isBlank = target === '-' && react === '-'
-    const isSpace = target === ' ' && react === ' ' && key % 3 !== 1
-    const isLineBreak = target === '\n' && react === '\n' && key % 3 !== 1
+    const isBlank = target === '-' && (react === '-' || react === '')
+    const isSpace = target === ' ' && key % 3 !== 1
+    const isLineBreak = target === '\n' && key % 3 !== 1
     return !isBlank && !isSpace && !isLineBreak
   }
   const filtered = value.filter(filtering)
@@ -31,14 +31,14 @@ const Phonemes = ({ value, onChange }: PhonemesProps) => {
 
   return (
     <div css={container}>
-      {filtered.map((value, key) => {
+      {filtered.map((item, key) => {
         return (
           <div key={key} css={css`grid-row: ${row(key)};`}>
             <PhonemeBox
               key={key}
-              isHidden={value.target === ' ' || value.target === '\n'}
-              value={value}
-              onChange={handleChange(key)}
+              isHidden={item.target === ' ' || item.target === '\n'}
+              value={item}
+              onChange={handleChange(value.indexOf(item))}
             />
           </div>
         )
@@ -113,9 +113,9 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
         )}
         onChange={(isOpen) => setIsSelected(isOpen)}
       >
-        <div css={[phonemeBox, isSelected && selected, isHidden && hidden]}>
+        <div css={[phonemeBox, isSelected && selected, isHidden && hidden]} onClick={(e) => { isHidden && e.preventDefault() }}>
           <div css={item}>{target}</div>
-          <div css={[item, red, (target === react || react === '*') && white]}>{react}</div>
+          <div css={[item, red, (target === react) && white]}>{react}</div>
           <input
             css={[item, distortion]}
             onClick={(e: any) => {
@@ -133,7 +133,7 @@ export default Phonemes
 
 const container = css`
   display: grid;
-  grid-template-columns: repeat(auto-fit, 29px); 
+  grid-template-columns: repeat(auto-fit, 28px); 
 `
 const item = css`
   border: 1px solid ${border.base};
@@ -194,7 +194,7 @@ const button = css`
   font-size: 12px;
 `
 const hidden = css`
-  visibility: hidden;
+  display: none;
 `
 const multiItem = css`
   display: flex;

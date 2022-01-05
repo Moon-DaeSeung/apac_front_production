@@ -24,10 +24,6 @@ export const item = css`
   justify-content: center;
   align-items: center;
 `
-export const phonemestart = css`
-  justify-content: start;
-  padding-left: 10%;
-`
 export const textfield = css`
   width: auto;
   flex-grow: 1;

@@ -1,19 +1,21 @@
 import { useEffect } from 'react'
 import { api } from '../libs/api/Api'
-import { addAuthEventChangedEvent } from '../auth/firebase'
+import { addAuthEventChangedEvent, initializeAuth } from '../auth/firebase'
 import useUser from './useUser'
 import { userStorage } from '../libs/storage/user'
 
 export const useAuthInitialize = () => {
-  const { setUser, user: cachedUser } = useUser()
+  const { setUser } = useUser()
   useEffect(() => {
-    if (cachedUser) {
-      api.setTokenResolver(() => cachedUser.accessToken)
-    }
     addAuthEventChangedEvent((user) => {
       setUser(user)
-      api.setTokenResolver(user ? () => user.accessToken : null)
-      userStorage.set(user)
+      api.setTokenResolver(user ? user.getIdToken : null)
+      user
+        ? user.getIdToken().then(idToken => {
+          userStorage.set({ name: user.name, idToken })
+        })
+        : userStorage.set(null)
     })
+    initializeAuth()
   }, [])
 }

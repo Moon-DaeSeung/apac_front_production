@@ -5,7 +5,7 @@ import { Answer, Phoneme } from 'src/libs/api/apac/types'
 import TextField from '../../../../components/TextField'
 import { ApacContext } from '../../Apac'
 import { FloatingButtons, Phonemes, Note } from '../../components'
-import { errorpattern, header, item, phonemestart, row, textfield } from '../../css'
+import { errorpattern, header, item, row, textfield } from '../../css'
 import { QuestionAnswer } from '../../types'
 
 const NormalSentence = () => {
@@ -97,7 +97,7 @@ export default NormalSentence
 
 const grid = css`
  display: grid;
- grid-template-columns: minmax(70px, 1fr) minmax(400px, 7fr) 9fr minmax(100px, 2fr);
+ grid-template-columns: minmax(70px, 1fr) minmax(400px, 450px) 600px minmax(100px, 1.5fr);
 `
 const grid2 = css`
   display: grid;
@@ -108,4 +108,8 @@ const label = css`
   display: flex;
   justify-content: center;
   align-items: center;
+`
+const phonemestart = css`
+  justify-content: start;
+  padding-left: 10px;
 `

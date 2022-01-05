@@ -5,7 +5,7 @@ import { Answer, Phoneme } from 'src/libs/api/apac/types'
 import TextField from '../../../../components/TextField'
 import { ApacContext } from '../../Apac'
 import { FloatingButtons, Phonemes, Note } from '../../components'
-import { errorpattern, header, item, phonemestart, row, textfield } from '../../css'
+import { errorpattern, header, item, row, textfield } from '../../css'
 import { QuestionAnswer } from '../../types'
 
 const SimpleSentence = () => {
@@ -101,4 +101,8 @@ const label = css`
   display: flex;
   justify-content: center;
   align-items: center;
+`
+const phonemestart = css`
+  justify-content: start;
+  padding-left: 10px;
 `

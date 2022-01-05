@@ -1,7 +1,11 @@
-import { User } from '../../atoms/user'
 import storage from './index'
 
 const KEY = 'user'
+
+type User = {
+  name: string
+  idToken: string
+}
 
 function UserStorage () {
   const get = () => storage.getItem<User>(KEY)

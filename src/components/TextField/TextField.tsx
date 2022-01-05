@@ -109,7 +109,8 @@ const labelText = css`
   pointer-events: none;
   line-height: 1;
   color: #dee2e6;
-  font-size: 1.2em;
+  font-size: 1.1em;
+  white-space: pre;
 `
 const moved = css`
   transform: translateY(-50%) scale(0.75);

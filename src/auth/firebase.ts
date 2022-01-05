@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, User as FirebaseUser } from 'firebase/auth'
 import { User } from '../atoms/user'
+import { userStorage } from '../libs/storage/user'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAdXtqiLAlMNOkg2ABSSF39P1POFmGjyx0',
@@ -17,18 +18,27 @@ const firebaseConfig = {
 type AuthStateChangedEvent = (user: User | null) => void
 const actions: AuthStateChangedEvent[] = []
 const auth = getAuth()
-const resolveUser = async (user: FirebaseUser | null) => {
+const resolveUser = (user: FirebaseUser | null) => {
   return user
     ? {
         name: user.email || '',
-        accessToken: await user.getIdToken(false)
+        getIdToken: async () => await user.getIdToken(false)
       }
     : null
 }
 const invokeAuthChangeEvent = (user: User | null) => actions.forEach((event) => event(user))
-onAuthStateChanged(auth, async (firebaseUser) => {
-  resolveUser(firebaseUser).then(invokeAuthChangeEvent)
+onAuthStateChanged(auth, (firebaseUser) => {
+  const user = resolveUser(firebaseUser)
+  invokeAuthChangeEvent(user)
 })
+export const initializeAuth = () => {
+  const user = userStorage.get()
+  console.log(user?.idToken)
+  user && invokeAuthChangeEvent({ name: user.name, getIdToken: () => new Promise(resolve => resolve(user.idToken)) })
+}
 export const addAuthEventChangedEvent = (event: AuthStateChangedEvent) => actions.push(event)
 export const login = (email: string, password: string) => signInWithEmailAndPassword(auth, email, password)
-export const logout = () => signOut(auth)
+export const logout = () => {
+  signOut(auth)
+  userStorage.set(null)
+}

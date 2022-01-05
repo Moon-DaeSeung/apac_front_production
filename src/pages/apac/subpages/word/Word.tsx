@@ -2,7 +2,7 @@
 import React, { useContext, useMemo } from 'react'
 import TextField from '../../../../components/TextField'
 import { Phonemes, Note, FloatingButtons } from '../../components'
-import { errorpattern, header, item, phonemestart, row, textfield } from '../../css'
+import { errorpattern, header, item, row, textfield } from '../../css'
 import { css } from '@emotion/react'
 import { QuestionAnswer } from '../../types'
 import { ApacContext } from '../../Apac'
@@ -83,4 +83,8 @@ export default Word
 const grid = css`
 display: grid;
 grid-template-columns: minmax(60px, 1fr) minmax(100px, 1fr) minmax(120px, 3fr) minmax(200px, 4fr) minmax(200px, 4fr) minmax(100px, 2fr);
+`
+const phonemestart = css`
+  justify-content: start;
+  padding-left: 10%;
 `
