@@ -1,8 +1,8 @@
 import { api } from '../Api'
 import { Pagination, TestInformation } from './types'
 
-export default async function getAllApac (params: GetAllApacRequestQuery) {
-  return await api.get('/tests', { params })
+export default async function getAllApac (params: GetAllApacRequestQuery = {}) {
+  return await api.get<GetAllApacResponse>('/tests', { params })
 }
 
 export type GetAllApacResponse = {

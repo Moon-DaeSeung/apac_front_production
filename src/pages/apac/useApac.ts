@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import useErrorPatternOptions from '../../hooks/useErrorPatternOptions'
 import { getApac, getErrorPatterns, getLatestQuestionInformation, getQuestionInformation } from '../../libs/api/apac'
-import { Answer, QuestionInformation, ApacTest } from '../../libs/api/apac/types'
-import { ApacState, QuestionAnswer } from './types'
+import { QuestionInformation, ApacTest, SubTest } from '../../libs/api/apac/types'
+import { ApacState, TestProps as SubTestUi } from './types'
 type UseApacProps = {
   defaultValue: ApacState
   id?: number
@@ -23,14 +23,17 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     setApacUiState((prev) => {
       return {
         information,
-        wordTest: { ...prev.wordTest, ...updateQuestionAnswers(prev.wordTest.questionAnswers, wordTest.answers) },
-        simpleSentenceTest: { ...prev.simpleSentenceTest, ...updateQuestionAnswers(prev.simpleSentenceTest.questionAnswers, simpleSentenceTest.answers) },
-        normalSentenceTest: { ...prev.normalSentenceTest, ...updateQuestionAnswers(prev.normalSentenceTest.questionAnswers, normalSentenceTest.answers) }
+        wordTest: { ...prev.wordTest, ...updateQuestionAnswers(prev.wordTest, wordTest) },
+        simpleSentenceTest: { ...prev.simpleSentenceTest, ...updateQuestionAnswers(prev.simpleSentenceTest, simpleSentenceTest) },
+        normalSentenceTest: { ...prev.normalSentenceTest, ...updateQuestionAnswers(prev.normalSentenceTest, normalSentenceTest) }
       }
     })
   }, [apacServerState, wordQuestinoId, simpleQuestionId, normalQuestionId])
 
-  const updateQuestionAnswers = (questionAnswers: QuestionAnswer[], answers: Answer[]) => {
+  const updateQuestionAnswers = (subTestUi: SubTestUi, subTestServer?: SubTest | null) => {
+    if (!subTestServer) return {}
+    const { questionAnswers } = subTestUi
+    const { answers } = subTestServer
     if (answers.length !== questionAnswers.length) { console.error(`questionAnswers and answers could not be ziped. questions: ${questionAnswers.length} answers: ${answers.length}`) }
     return questionAnswers.map(({ question }, i) => ({ question, answer: answers[i] }))
   }

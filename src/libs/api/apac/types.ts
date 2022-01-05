@@ -9,9 +9,9 @@ export type ApacTest = {
   testeeAge: string
   testeeNote: string
   testedDate: string | null
-  wordTest: SubTest
-  simpleSentenceTest: SubTest
-  normalSentenceTest: SubTest
+  wordTest?: SubTest | null
+  simpleSentenceTest?: SubTest | null
+  normalSentenceTest?: SubTest | null
 }
 
 export type Answer = {

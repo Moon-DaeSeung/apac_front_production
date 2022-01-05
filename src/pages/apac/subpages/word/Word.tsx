@@ -17,6 +17,7 @@ const Word = () => {
       return { ...prev, wordTest: { ...prev.wordTest, questionAnswers: copied } }
     })
   }), [setValue, questionAnswers.length])
+  console.log(questionAnswers[0] && questionAnswers[0].answer.reaction)
 
   return (
     <>

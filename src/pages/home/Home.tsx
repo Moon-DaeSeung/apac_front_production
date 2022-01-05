@@ -5,11 +5,15 @@ import TextField from '../../components/TextField'
 import Button from '../../components/Button'
 import DateInput from '../../components/DateInput'
 import Pagination from '../../components/Pagination'
+import useHome from './useHome'
 
 const Home = () => {
-  const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  const [date, setDate] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
+  const { currentPage, totalPage, setCurrentPage, tests, getSearchedData } = useHome()
+  const [searchName, setSearchName] = useState('')
+  const [searchDate, setSearchDate] = useState('')
+  const handleSearch = () => {
+    getSearchedData({ page: currentPage, testedDate: searchDate, testeeName: searchName })
+  }
   return (
     <>
       <header css={[container, header]}>
@@ -19,15 +23,16 @@ const Home = () => {
         <form css={[search]}>
           <fieldset css={[fieldset]}>
             <label>이름</label>
-            <TextField customCss={nameInput} />
+            <TextField customCss={nameInput} value={searchName} onChange={setSearchName} />
           </fieldset>
           <fieldset css={[fieldset]}>
             <label>검사일자</label>
-            <DateInput customCss={dateInput} value={date} onChange={setDate} />
+            <DateInput customCss={dateInput} value={searchDate} onChange={setSearchDate} />
           </fieldset>
           <Button
             onClick={(e: any) => {
               e.preventDefault()
+              handleSearch()
             }}
           >
             조회
@@ -52,23 +57,25 @@ const Home = () => {
           <div css={[item]}>특이사항</div>
           <div css={[item]}>수정하기</div>
         </div>
-        {data.map((value) => {
+        {tests.map(({ testedDate, testeeAge, testeeGender, testeeName, testeeNote, id }, key) => {
           return (
-            <div key={value} css={row}>
-              <div css={item}>{value}</div>
-              <div css={item}>{value}</div>
-              <div css={item}>{value}</div>
-              <div css={item}>{value}</div>
-              <div css={item}>{value}</div>
+            <div key={key} css={row}>
+              <div css={item}>{testeeName}</div>
+              <div css={item}>{testeeGender}</div>
+              <div css={item}>{testeeAge}</div>
+              <div css={item}>{testedDate}</div>
+              <div css={item}>{testeeNote}</div>
               <div css={item}>
-                <Button customCss={modify}>수정</Button>
+                <Link to={`tests/${id}`}>
+                  <Button customCss={modify}>수정</Button>
+                </Link>
               </div>
             </div>
           )
         })}
         <footer css={[page]}>
           <Pagination
-            totalPageCount={10}
+            totalPageCount={totalPage}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
           />

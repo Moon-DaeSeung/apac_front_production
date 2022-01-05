@@ -1,6 +1,6 @@
 import { css } from '@emotion/react'
 import React, { createContext } from 'react'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useParams } from 'react-router-dom'
 import { configs } from './config'
 import { apacDefaultValue } from './defaultValue'
 import { ApacState } from './types'
@@ -14,7 +14,8 @@ export const ApacContext = createContext<{value: ApacState, setValue:(func: ((va
 )
 
 const Apac = () => {
-  const { apacUiState, setApacUiState } = useApac({ defaultValue: apacDefaultValue })
+  const { id } = useParams<{id: string}>()
+  const { apacUiState, setApacUiState } = useApac({ defaultValue: apacDefaultValue, id: Number(id) })
   return (
     <>
       <header css={[header, container, constaint]}>
