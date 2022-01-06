@@ -60,7 +60,7 @@ const Home = () => {
         {tests.map(({ testedDate, testeeAge, testeeGender, testeeName, testeeNote, id }, key) => {
           return (
             <div key={key} css={row}>
-              <div css={item}>{testeeName}</div>
+              <div css={[item]}>{testeeName}</div>
               <div css={item}>{testeeGender}</div>
               <div css={item}>{testeeAge}</div>
               <div css={item}>{testedDate}</div>
@@ -102,6 +102,7 @@ const container = css`
   background-color: white;
   display: flex;
   flex-direction: column;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 `
 const header = css`
  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -137,6 +138,9 @@ const fieldset = css`
 const row = css`
   display: grid;
   grid-template-columns: minmax(100px, 3fr) minmax(50px,1fr) minmax(100px,4fr) minmax(200px, 6fr) minmax(150px, 8fr) 100px;
+  :hover {
+    background-color: whitesmoke;
+  }
   div {
     &:first-of-type {
       border-left-width: 2px;
@@ -180,7 +184,7 @@ const item = css`
   padding: 10px 0;
   justify-content: center;
   align-items: center;
-  color: #CBD1D8;
+  color: grey;
 `
 const page = css`
   display: flex;

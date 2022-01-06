@@ -1,6 +1,6 @@
 import { css, SerializedStyles } from '@emotion/react'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { logout } from '../../auth/firebase'
 import useUser from '../../hooks/useUser'
 import Button from '../Button'
@@ -11,10 +11,14 @@ export type AppBarProps = {
 
 const AppBar = ({ customCss }: AppBarProps) => {
   const { user } = useUser()
+  const { pathname } = useLocation()
+  const handleClick = () => {
+    pathname === '/' && location.reload()
+  }
   return (
      <header css={[header]}>
        <div css={[layout, customCss]}>
-        <Link to='/' css={home}>
+        <Link to='/' css={home} onClick={handleClick}>
           <h1>APAC</h1>
         </Link>
         <div css={[logInOut]}>
