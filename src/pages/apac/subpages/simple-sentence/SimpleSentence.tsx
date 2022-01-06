@@ -2,24 +2,32 @@
 import { css } from '@emotion/react'
 import React from 'react'
 import { useOutletContext } from 'react-router-dom'
+import Button from '../../../../components/Button'
 import TextField from '../../../../components/TextField'
 import { ApacContextProps } from '../../Apac'
 import { FloatingButtons, Phonemes, Note } from '../../components'
-import { errorpattern, header, item, row, textfield } from '../../css'
+import { allCheck, errorpattern, header, item, row, textfield } from '../../css'
 import useSubTestRow, { SubTestRowProps } from '../../hooks/useSubTestRow'
 
 const SimpleSentence = () => {
   const {
     value: { simpleSentenceTest: { subTestRows: questionAnswers, questionInformationId } },
     handleSave,
-    handleSimpleSentenceTestChange: handleChange
+    handleSimpleSentenceTestChange: handleChange,
+    handleAllAnswerCheck
   } = useOutletContext<ApacContextProps>()
   return (
     <>
       <h2>문장검사 간략형</h2>
       <div css={[row, header, grid]}>
         <div css={[item]}>문항</div>
-        <div css={[item]}>목표 단어, 아동 반응, 오류패턴</div>
+        <div css={[item, css`gap: 5px;`]}>
+          <span>목표 단어, </span>
+          <span>아동반응</span>
+          <Button customCss={allCheck} onClick={handleAllAnswerCheck('simpleSentenceTest')}>+</Button>
+          <span>,</span>
+          <span>오류패턴</span>
+        </div>
         <div css={[item]}>음소 반응</div>
         <div css={[item]}>특이사항</div>
       </div>

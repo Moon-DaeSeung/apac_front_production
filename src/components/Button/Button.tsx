@@ -4,7 +4,7 @@ import React, { MouseEvent, useRef, useState } from 'react'
 export type ButtonProps = {
   children: React.ReactNode
   onClick?: (e: any | null) => void
-  customCss?: SerializedStyles
+  customCss?: SerializedStyles | SerializedStyles[] 
 }
 
 type SpanAttribute = {

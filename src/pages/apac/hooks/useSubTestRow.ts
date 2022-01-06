@@ -41,7 +41,7 @@ const useSubTestRow = ({ value, onChange, questionId }: SubTestRowProps) => {
   useEffect(() => {
     if (!isTyping) return
     handleGetPhonemes(question.number, answer.reaction)
-  }, [answer.reaction])
+  }, [answer.reaction, isTyping])
 
   return { handleChange }
 }

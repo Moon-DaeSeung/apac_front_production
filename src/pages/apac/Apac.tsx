@@ -4,7 +4,7 @@ import { NavLink, Outlet, useParams, useLocation } from 'react-router-dom'
 import { configs } from './config'
 import { apacDefaultValue } from './defaultValue'
 import { ApacUiState, SubTestRow } from './types'
-import { SaveType, useApac } from './useApac'
+import { SaveType, TestType, useApac } from './useApac'
 
 export type ApacContextProps = {
   value: ApacUiState
@@ -13,13 +13,15 @@ export type ApacContextProps = {
   handleWordTestChange: ((value: SubTestRow) => void)[]
   handleSimpleSentenceTestChange: ((value: SubTestRow) => void)[]
   handleNormalSentenceTestChange: ((value: SubTestRow) => void)[]
+  handleAllAnswerCheck: (testType: TestType) => () => void
 }
 
 const Apac = () => {
   const { id } = useParams<{id: string}>()
   const {
     apacUiState, setApacUiState, handleSave,
-    handleWordTestChange, handleNormalSentenceTestChange, handleSimpleSentenceTestChange
+    handleWordTestChange, handleNormalSentenceTestChange, handleSimpleSentenceTestChange,
+    handleAllAnswerCheck
   } = useApac({ defaultValue: apacDefaultValue, id: Number(id) })
   const { pathname } = useLocation()
   let current = pathname.split('/').pop()!!
@@ -46,7 +48,8 @@ const Apac = () => {
           setValue: setApacUiState,
           handleSimpleSentenceTestChange,
           handleNormalSentenceTestChange,
-          handleWordTestChange
+          handleWordTestChange,
+          handleAllAnswerCheck
         }} />
       </main>
     </>

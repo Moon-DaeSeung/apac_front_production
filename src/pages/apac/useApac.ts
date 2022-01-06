@@ -11,7 +11,8 @@ type UseApacProps = {
   id?: number
 }
 
-export type SaveType = 'information' | Exclude<keyof ApacUiState, 'information'>
+export type SaveType = 'information' | TestType
+export type TestType = Exclude<keyof ApacUiState, 'information'>
 
 export const useApac = ({ defaultValue, id }: UseApacProps) => {
   const [apacUiState, setApacUiState] = useState<ApacUiState>(defaultValue)
@@ -59,7 +60,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     const { answers } = subTestServer
     if (answers.length !== subTestRow.length) { console.error(`questionAnswers and answers could not be ziped. questions: ${subTestRow.length} answers: ${answers.length}`) }
     return {
-      subTestRows: subTestRow.map((hi, i) => ({ ...hi, answer: { ...answers[i] } }))
+      subTestRows: subTestRow.map((hi, i) => ({ ...hi, answer: answers[i] }))
     }
   }
 
@@ -87,7 +88,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     cahced ? initialize(cahced) : getApac(id).then(initialize)
   }, [id])
 
-  const updateQuestionInfo = (testType: Exclude<keyof ApacUiState, 'information'>) => ({ questions, id: questionId, type }: QuestionInformation) => {
+  const updateQuestionInfo = (testType: TestType) => ({ questions, id: questionId, type }: QuestionInformation) => {
     setApacUiState((prev) => {
       return {
         ...prev,
@@ -96,7 +97,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
           questionInformationId: questionId,
           subTestRows: questions.map((question) => {
             const { number, defaultPhonemes: phonemes } = question
-            return { isTyping: false, question, answer: { number, reaction: '', note: '', phonemes, totalErrorPatterns: [], state: 'NOT_WRITTEN' } }
+            return { isTyping: false, question, answer: { number, reaction: '', note: '', phonemes, totalErrorPatterns: [], state: 'NOT_WRITTEN', errorMessage: '' } }
           })
         }
       }
@@ -125,7 +126,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     })
   }
 
-  const transUiToServer = (testType: Exclude<keyof ApacUiState, 'information'>) => {
+  const transUiToServer = (testType: TestType) => {
     return {
       [testType]: {
         questionInformationId: apacUiState[testType].questionInformationId,
@@ -135,7 +136,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     }
   }
 
-  const handleSubTestChange = useCallback((testType: Exclude<keyof ApacUiState, 'information'>) => {
+  const handleSubTestChange = useCallback((testType: TestType) => {
     const { subTestRows } = apacUiState[testType]
     return subTestRows.map((_, index) => (subTestRow: SubTestRow) => {
       setApacUiState(prev => {
@@ -150,12 +151,21 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
   const handleSimpleSentenceTestChange = useMemo(() => handleSubTestChange('simpleSentenceTest'), [handleSubTestChange])
   const handleNormalSentenceTestChange = useMemo(() => handleSubTestChange('normalSentenceTest'), [handleSubTestChange])
 
+  const handleAllAnswerCheck = (testType: TestType) => () => {
+    setApacUiState(prev => {
+      const allChecked = prev[testType].subTestRows.map((row) =>
+        ({ ...row, isTyping: row.answer.reaction ? row.isTyping : true, answer: { ...row.answer, reaction: row.answer.reaction || '+' } }))
+      return { ...prev, [testType]: { ...prev[testType], subTestRows: allChecked } }
+    })
+  }
+
   return {
     apacUiState,
     setApacUiState,
     handleSave,
     handleWordTestChange,
     handleSimpleSentenceTestChange,
-    handleNormalSentenceTestChange
+    handleNormalSentenceTestChange,
+    handleAllAnswerCheck
   }
 }

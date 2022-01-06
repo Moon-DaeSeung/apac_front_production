@@ -36,3 +36,7 @@ export const errorpattern = css`
   min-height: 20px;
   flex-grow: 1;
 `
+export const allCheck = css`
+  font-size: 1em;
+  padding: 0px 5px;
+`

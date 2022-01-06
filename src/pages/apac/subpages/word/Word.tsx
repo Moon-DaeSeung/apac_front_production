@@ -2,17 +2,19 @@
 import React from 'react'
 import TextField from '../../../../components/TextField'
 import { Phonemes, Note, FloatingButtons } from '../../components'
-import { errorpattern, header, item, row, textfield } from '../../css'
+import { allCheck, errorpattern, header, item, row, textfield } from '../../css'
 import { css } from '@emotion/react'
 import { useOutletContext } from 'react-router-dom'
 import { ApacContextProps } from '../../Apac'
 import useSubTestRow, { SubTestRowProps } from '../../hooks/useSubTestRow'
+import Button from '../../../../components/Button'
 
 const Word = () => {
   const {
-    value: { wordTest: { subTestRows: questionAnswers, questionInformationId } },
+    value: { wordTest: { subTestRows, questionInformationId } },
     handleSave,
-    handleWordTestChange: handleChange
+    handleWordTestChange: handleChange,
+    handleAllAnswerCheck
   } = useOutletContext<ApacContextProps>()
 
   return (
@@ -21,12 +23,15 @@ const Word = () => {
       <div css={[row, header, grid]}>
         <div css={[item]}>문항</div>
         <div css={[item]}>목표 단어</div>
-        <div css={[item]}>아동 반응</div>
+        <div css={[item, css`gap: 5px;`]}>
+          <span>아동반응</span>
+          <Button customCss={allCheck} onClick={handleAllAnswerCheck('wordTest')}>+</Button>
+        </div>
         <div css={[item]}>음소 반응</div>
         <div css={[item]}>오류패턴</div>
         <div css={[item]}>특이사항</div>
       </div>
-      {questionAnswers.map((value, index) => {
+      {subTestRows.map((value, index) => {
         return (
           <Row
             key={value.question.number}
