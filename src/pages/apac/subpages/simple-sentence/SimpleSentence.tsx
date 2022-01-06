@@ -36,7 +36,7 @@ const SimpleSentence = () => {
 const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
   if (!onChange) return <></>
   const { question, answer, isTyping } = value
-  const { handleChange, handleChangeReaction } = useSubTestRow({ value, onChange, questionId })
+  const { handleChange } = useSubTestRow({ value, onChange, questionId })
   return (
       <div key={question.number} css={[row, grid]}>
         <div css={[item, css`grid-row: 1 / 3; grid-column: 1;`]}>{question.number}</div>
@@ -52,7 +52,7 @@ const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
                 customCss={textfield}
                 label={question.target}
                 value={answer.reaction}
-                onChange={handleChangeReaction}
+                onChange={handleChange('reaction')}
                 isError={answer.state === 'ERROR'}
                 isPending={isTyping}
               />
@@ -83,7 +83,7 @@ export default SimpleSentence
 
 const grid = css`
   display: grid;
-  grid-template-columns: minmax(70px, 1fr) minmax(250px, 7fr) 9fr minmax(100px, 2fr);
+  grid-template-columns: minmax(70px, 1fr) minmax(250px, 7fr) 9fr 100px;
 `
 const grid2 = css`
   flex-grow: 1;

@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useDebounce from '../../hooks/useDebouce'
 import useErrorPatternOptions from '../../hooks/useErrorPatternOptions'
-import { createApac, getApac, getErrorPatterns, getLatestQuestionInformation, getPhonemes, getQuestionInformation, patchApac } from '../../libs/api/apac'
-import { QuestionInformation, ApacTest, SubTest, Phoneme, AnswerState } from '../../libs/api/apac/types'
+import { createApac, getApac, getErrorPatterns, getLatestQuestionInformation, getQuestionInformation, patchApac } from '../../libs/api/apac'
+import { QuestionInformation, ApacTest, SubTest } from '../../libs/api/apac/types'
 import apacStorage from '../../libs/storage/apac'
 
 import { ApacUiState, SubTestRow, SubTestUi } from './types'
@@ -160,27 +159,3 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     handleNormalSentenceTestChange
   }
 }
-
-export const createGetPhonemes = ({ questionId, onChange, defaultPhonemes }: {
-  questionId: string
-  defaultPhonemes: Phoneme[]
-  onChange: (phonemes: Phoneme[], state: AnswerState, errorMessage?: string) => void
-}) =>
-  useDebounce((number: number, reaction: string) => {
-    switch (reaction) {
-      case '':
-        onChange(defaultPhonemes, 'NOT_WRITTEN')
-        break
-      case '+':
-        onChange(defaultPhonemes.map(value => ({ ...value, react: value.target })), 'NOT_WRITTEN')
-        break
-      case '-':
-        onChange(defaultPhonemes.map(value => ({ ...value, react: [' ', '\n'].includes(value.target) ? value.target : '-' })), 'NOT_WRITTEN')
-        break
-      default:
-        getPhonemes(questionId, { reaction, number })
-          .then(data => { onChange(data, 'COMPLETE') })
-          .catch(() => { onChange(defaultPhonemes, 'ERROR') })
-    }
-  }
-  , 300)

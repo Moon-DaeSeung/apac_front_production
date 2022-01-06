@@ -44,7 +44,7 @@ const Word = () => {
 const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
   if (!onChange) return <></>
   const { question, answer, isTyping } = value
-  const { handleChange, handleChangeReaction } = useSubTestRow({ value, onChange, questionId })
+  const { handleChange } = useSubTestRow({ value, onChange, questionId })
 
   return (
       <div key={question.number} css={[row, grid]}>
@@ -56,7 +56,7 @@ const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
             label={question.target}
             value={answer.reaction}
             isPending={isTyping}
-            onChange={handleChangeReaction}
+            onChange={handleChange('reaction')}
             isError={answer.state === 'ERROR'}
           />
         </div>
@@ -81,7 +81,7 @@ export default Word
 
 const grid = css`
 display: grid;
-grid-template-columns: minmax(60px, 1fr) minmax(100px, 1fr) minmax(120px, 3fr) minmax(200px, 4fr) minmax(200px, 4fr) minmax(100px, 2fr);
+grid-template-columns: minmax(60px, 1fr) minmax(100px, 1fr) minmax(120px, 3fr) minmax(200px, 4fr) minmax(200px, 4fr) 100px;
 `
 const phonemestart = css`
   justify-content: start;

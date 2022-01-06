@@ -36,7 +36,7 @@ const NormalSentence = () => {
 const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
   if (!onChange) return <></>
   const { question, answer, isTyping } = value
-  const { handleChange, handleChangeReaction } = useSubTestRow({ value, onChange, questionId })
+  const { handleChange } = useSubTestRow({ value, onChange, questionId })
   return (
         <div key={question.number} css={[row, grid]}>
           <div css={[item, css`grid-row: 1/3; grid-column: 1;`]}>
@@ -61,7 +61,7 @@ const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
                   customCss={[textfield, css`height: 60px;`]}
                   label={question.target}
                   value={answer.reaction}
-                  onChange={handleChangeReaction}
+                  onChange={handleChange('reaction')}
                   isPending={isTyping}
                   isError={answer.state === 'ERROR'}
                 />
@@ -90,7 +90,7 @@ export default NormalSentence
 
 const grid = css`
  display: grid;
- grid-template-columns: minmax(70px, 1fr) minmax(400px, 450px) 600px minmax(100px, 1.5fr);
+ grid-template-columns: minmax(70px, 1fr) minmax(400px, 450px) 600px 100px
 `
 const grid2 = css`
   display: grid;
