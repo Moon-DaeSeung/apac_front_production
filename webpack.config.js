@@ -12,6 +12,9 @@ module.exports = (env) => {
     case 'local':
       APAC_URL = 'http://localhost:8080'
       break
+    case 'develop':
+      APAC_URL = 'http://localhost:8080'
+      break
     case 'production':
       throw new Error('production api not supported yet')
     default:

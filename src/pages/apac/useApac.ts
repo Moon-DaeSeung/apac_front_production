@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import useDebounce from '../../hooks/useDebouce'
 import useErrorPatternOptions from '../../hooks/useErrorPatternOptions'
-import { createApac, getApac, getErrorPatterns, getLatestQuestionInformation, getQuestionInformation, patchApac } from '../../libs/api/apac'
-import { QuestionInformation, ApacTest, SubTest } from '../../libs/api/apac/types'
+import { createApac, getApac, getErrorPatterns, getLatestQuestionInformation, getPhonemes, getQuestionInformation, patchApac } from '../../libs/api/apac'
+import { QuestionInformation, ApacTest, SubTest, Phoneme, AnswerState } from '../../libs/api/apac/types'
 import apacStorage from '../../libs/storage/apac'
-import { ApacUiState, SubTestUi } from './types'
+
+import { ApacUiState, SubTestRow, SubTestUi } from './types'
 type UseApacProps = {
   defaultValue: ApacUiState
   id?: number
@@ -15,6 +17,7 @@ export type SaveType = 'information' | Exclude<keyof ApacUiState, 'information'>
 export const useApac = ({ defaultValue, id }: UseApacProps) => {
   const [apacUiState, setApacUiState] = useState<ApacUiState>(defaultValue)
   const [apacServerState, setApacServerState] = useState<ApacTest | null>(null)
+  const [isAllLoadedQuestionInfo, setIsAllLoadedQuestionInfo] = useState(false)
   const {
     wordTest: { questionInformationId: wordQuestinoId },
     simpleSentenceTest: { questionInformationId: simpleQuestionId },
@@ -22,7 +25,12 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
   } = apacUiState
 
   useEffect(() => {
-    if (!id || !apacServerState || !wordQuestinoId || !simpleQuestionId || !normalQuestionId) return
+    if (!wordQuestinoId || !simpleQuestionId || !normalQuestionId) return
+    setIsAllLoadedQuestionInfo(true)
+  }, [wordQuestinoId, simpleQuestionId, normalQuestionId])
+
+  useEffect(() => {
+    if (!id || !isAllLoadedQuestionInfo) return
     const cache: ApacTest = {
       id,
       ...apacUiState.information,
@@ -31,10 +39,10 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
       ...transUiToServer('simpleSentenceTest')
     }
     apacStorage.set(id, cache)
-  }, [apacUiState])
+  }, [apacUiState, isAllLoadedQuestionInfo])
 
   useEffect(() => {
-    if (!id || !apacServerState || !wordQuestinoId || !simpleQuestionId || !normalQuestionId) return
+    if (!apacServerState || !isAllLoadedQuestionInfo) return
     const { wordTest, simpleSentenceTest, normalSentenceTest, ...information } = apacServerState
     setApacUiState((prev) => {
       return {
@@ -44,15 +52,15 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
         normalSentenceTest: { ...prev.normalSentenceTest, ...updateServerToUi(prev.normalSentenceTest, normalSentenceTest) }
       }
     })
-  }, [apacServerState, wordQuestinoId, simpleQuestionId, normalQuestionId])
+  }, [apacServerState, isAllLoadedQuestionInfo])
 
   const updateServerToUi = (subTestUi: SubTestUi, subTestServer?: SubTest | null) => {
     if (!subTestServer) return {}
-    const { questionAnswers } = subTestUi
+    const { subTestRows: subTestRow } = subTestUi
     const { answers } = subTestServer
-    if (answers.length !== questionAnswers.length) { console.error(`questionAnswers and answers could not be ziped. questions: ${questionAnswers.length} answers: ${answers.length}`) }
+    if (answers.length !== subTestRow.length) { console.error(`questionAnswers and answers could not be ziped. questions: ${subTestRow.length} answers: ${answers.length}`) }
     return {
-      questionAnswers: questionAnswers.map(({ question }, i) => ({ question, answer: answers[i] }))
+      subTestRows: subTestRow.map((hi, i) => ({ ...hi, answer: { ...answers[i] } }))
     }
   }
 
@@ -74,14 +82,10 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
   }
 
   useEffect(() => {
-    if (id) {
-      const cahced = apacStorage.get(id)
-      cahced ? initialize(cahced) : getApac(id).then(initialize)
-    } else {
-      getLatestQuestionInformation({ type: 'WORD' }).then(updateQuestionInfo('wordTest'))
-      getLatestQuestionInformation({ type: 'SIMPLE_SENTENCE' }).then(updateQuestionInfo('simpleSentenceTest'))
-      getLatestQuestionInformation({ type: 'NORMAL_SENTENCE' }).then(updateQuestionInfo('normalSentenceTest'))
-    }
+    if (!id) return
+    setIsAllLoadedQuestionInfo(false)
+    const cahced = apacStorage.get(id)
+    cahced ? initialize(cahced) : getApac(id).then(initialize)
   }, [id])
 
   const updateQuestionInfo = (testType: Exclude<keyof ApacUiState, 'information'>) => ({ questions, id: questionId, type }: QuestionInformation) => {
@@ -91,9 +95,9 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
         [testType]: {
           type,
           questionInformationId: questionId,
-          questionAnswers: questions.map((question) => {
+          subTestRows: questions.map((question) => {
             const { number, defaultPhonemes: phonemes } = question
-            return { question, answer: { number, reaction: '', note: '', phonemes, totalErrorPatterns: [], state: 'NOT_WRITTEN' } }
+            return { isTyping: false, question, answer: { number, reaction: '', note: '', phonemes, totalErrorPatterns: [], state: 'NOT_WRITTEN' } }
           })
         }
       }
@@ -127,10 +131,56 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
       [testType]: {
         questionInformationId: apacUiState[testType].questionInformationId,
         type: apacUiState[testType].type,
-        answers: apacUiState[testType].questionAnswers.map(({ answer }) => answer)
+        answers: apacUiState[testType].subTestRows.map(({ answer }) => answer)
       }
     }
   }
 
-  return { apacUiState, setApacUiState, handleSave }
+  const handleSubTestChange = useCallback((testType: Exclude<keyof ApacUiState, 'information'>) => {
+    const { subTestRows } = apacUiState[testType]
+    return subTestRows.map((_, index) => (subTestRow: SubTestRow) => {
+      setApacUiState(prev => {
+        const copied = [...prev[testType].subTestRows]
+        copied[index] = subTestRow
+        return { ...prev, [testType]: { ...prev[testType], subTestRows: copied } }
+      })
+    })
+  }, [isAllLoadedQuestionInfo])
+
+  const handleWordTestChange = useMemo(() => handleSubTestChange('wordTest'), [handleSubTestChange])
+  const handleSimpleSentenceTestChange = useMemo(() => handleSubTestChange('simpleSentenceTest'), [handleSubTestChange])
+  const handleNormalSentenceTestChange = useMemo(() => handleSubTestChange('normalSentenceTest'), [handleSubTestChange])
+
+  return {
+    apacUiState,
+    setApacUiState,
+    handleSave,
+    handleWordTestChange,
+    handleSimpleSentenceTestChange,
+    handleNormalSentenceTestChange
+  }
 }
+
+export const createGetPhonemes = ({ questionId, onChange, defaultPhonemes }: {
+  questionId: string
+  defaultPhonemes: Phoneme[]
+  onChange: (phonemes: Phoneme[], state: AnswerState, errorMessage?: string) => void
+}) =>
+  useDebounce((number: number, reaction: string) => {
+    switch (reaction) {
+      case '':
+        onChange(defaultPhonemes, 'NOT_WRITTEN')
+        break
+      case '+':
+        onChange(defaultPhonemes.map(value => ({ ...value, react: value.target })), 'NOT_WRITTEN')
+        break
+      case '-':
+        onChange(defaultPhonemes.map(value => ({ ...value, react: [' ', '\n'].includes(value.target) ? value.target : '-' })), 'NOT_WRITTEN')
+        break
+      default:
+        getPhonemes(questionId, { reaction, number })
+          .then(data => { onChange(data, 'COMPLETE') })
+          .catch(() => { onChange(defaultPhonemes, 'ERROR') })
+    }
+  }
+  , 300)

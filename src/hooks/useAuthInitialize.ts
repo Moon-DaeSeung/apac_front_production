@@ -7,6 +7,7 @@ export const useAuthInitialize = () => {
   const { setUser } = useUser()
   useEffect(() => {
     addAuthEventChangedEvent((user) => {
+      console.log(user?.getIdToken().then(console.log))
       setUser(user)
       api.setTokenResolver(user ? user.getIdToken : null)
     })

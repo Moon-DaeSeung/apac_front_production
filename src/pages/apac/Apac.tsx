@@ -3,18 +3,24 @@ import React from 'react'
 import { NavLink, Outlet, useParams, useLocation } from 'react-router-dom'
 import { configs } from './config'
 import { apacDefaultValue } from './defaultValue'
-import { ApacUiState } from './types'
+import { ApacUiState, SubTestRow } from './types'
 import { SaveType, useApac } from './useApac'
 
 export type ApacContextProps = {
   value: ApacUiState
   setValue: (func: (value: ApacUiState) => ApacUiState) => void
   handleSave: (type: SaveType) => void
+  handleWordTestChange: ((value: SubTestRow) => void)[]
+  handleSimpleSentenceTestChange: ((value: SubTestRow) => void)[]
+  handleNormalSentenceTestChange: ((value: SubTestRow) => void)[]
 }
 
 const Apac = () => {
   const { id } = useParams<{id: string}>()
-  const { apacUiState, setApacUiState, handleSave } = useApac({ defaultValue: apacDefaultValue, id: Number(id) })
+  const {
+    apacUiState, setApacUiState, handleSave,
+    handleWordTestChange, handleNormalSentenceTestChange, handleSimpleSentenceTestChange
+  } = useApac({ defaultValue: apacDefaultValue, id: Number(id) })
   const { pathname } = useLocation()
   let current = pathname.split('/').pop()!!
   current = current === id ? '' : current
@@ -34,7 +40,14 @@ const Apac = () => {
         </nav>
       </header>
       <main css={[main, container, constaint]}>
-        <Outlet context={{ handleSave, value: apacUiState, setValue: setApacUiState }} />
+        <Outlet context={{
+          handleSave,
+          value: apacUiState,
+          setValue: setApacUiState,
+          handleSimpleSentenceTestChange,
+          handleNormalSentenceTestChange,
+          handleWordTestChange
+        }} />
       </main>
     </>
   )

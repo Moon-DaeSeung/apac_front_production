@@ -1,23 +1,19 @@
 /* eslint-disable react/display-name */
-import React, { useMemo } from 'react'
+import React from 'react'
 import TextField from '../../../../components/TextField'
 import { Phonemes, Note, FloatingButtons } from '../../components'
 import { errorpattern, header, item, row, textfield } from '../../css'
 import { css } from '@emotion/react'
-import { QuestionAnswer } from '../../types'
-import { Answer, Phoneme } from 'src/libs/api/apac/types'
 import { useOutletContext } from 'react-router-dom'
 import { ApacContextProps } from '../../Apac'
+import useSubTestRow, { SubTestRowProps } from '../../hooks/useSubTestRow'
 
 const Word = () => {
-  const { value: { wordTest: { questionAnswers } }, setValue, handleSave } = useOutletContext<ApacContextProps>()
-  const handleChange = useMemo(() => questionAnswers.map((_, index) => (questionAnswer: QuestionAnswer) => {
-    setValue(prev => {
-      const copied = [...prev.wordTest.questionAnswers]
-      copied[index] = questionAnswer
-      return { ...prev, wordTest: { ...prev.wordTest, questionAnswers: copied } }
-    })
-  }), [setValue, questionAnswers.length])
+  const {
+    value: { wordTest: { subTestRows: questionAnswers, questionInformationId } },
+    handleSave,
+    handleWordTestChange: handleChange
+  } = useOutletContext<ApacContextProps>()
 
   return (
     <>
@@ -32,7 +28,12 @@ const Word = () => {
       </div>
       {questionAnswers.map((value, index) => {
         return (
-          <Row key={value.question.number} value={value} onChange={handleChange[index]} />
+          <Row
+            key={value.question.number}
+            value={value}
+            onChange={handleChange[index]}
+            questionId={questionInformationId}
+          />
         )
       })}
       <FloatingButtons onSave={() => handleSave('wordTest')}/>
@@ -40,16 +41,11 @@ const Word = () => {
   )
 }
 
-export type RowProps = {
-  value: QuestionAnswer
-  onChange: (value: QuestionAnswer) => void
-}
+const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
+  if (!onChange) return <></>
+  const { question, answer, isTyping } = value
+  const { handleChange, handleChangeReaction } = useSubTestRow({ value, onChange, questionId })
 
-const Row = React.memo(({ value, onChange }: RowProps) => {
-  const { question, answer } = value
-  const handleChange = (key: keyof Answer) => (item: string | Phoneme[]) => {
-    onChange({ ...value, answer: { ...value.answer, [key]: item } })
-  }
   return (
       <div key={question.number} css={[row, grid]}>
         <div css={[item]}>{question.number}</div>
@@ -59,7 +55,9 @@ const Row = React.memo(({ value, onChange }: RowProps) => {
             customCss={textfield}
             label={question.target}
             value={answer.reaction}
-            onChange={handleChange('reaction')}
+            isPending={isTyping}
+            onChange={handleChangeReaction}
+            isError={answer.state === 'ERROR'}
           />
         </div>
         <div css={[item, phonemestart]}>

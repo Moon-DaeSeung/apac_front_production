@@ -1,9 +1,8 @@
 import { api } from '../Api'
-import { GetAllApacRequestQuery } from './getAllApac'
 import { Phoneme } from './types'
 
-export default async function getPhonemes (params: GetAllApacRequestQuery) {
-  return await api.post<GetPhonemesResponse>('/tests', { params })
+export default async function getPhonemes (id: string, params: GetPhonemesRequestQuery) {
+  return await api.get<GetPhonemesResponse>(`/questions/${id}/phonemes`, { params })
 }
 
 export type GetPhonemesRequestQuery = {

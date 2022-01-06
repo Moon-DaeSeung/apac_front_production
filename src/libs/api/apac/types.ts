@@ -21,6 +21,7 @@ export type Answer = {
   note: string
   state: AnswerState
   totalErrorPatterns: TotalErrorPattern[]
+  errorMessage: string
 }
 
 export type Pagination = {

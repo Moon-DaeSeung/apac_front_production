@@ -18,10 +18,11 @@ export type InformationProps = {
 export type SubTestUi = {
   questionInformationId: string
   type: ApacTestType
-  questionAnswers: QuestionAnswer[]
+  subTestRows: SubTestRow[]
 }
 
-export type QuestionAnswer = {
+export type SubTestRow = {
   question: Question
   answer: Answer
+  isTyping: boolean
 }

@@ -10,16 +10,16 @@ export const apacDefaultValue: ApacUiState = {
   wordTest: {
     questionInformationId: '',
     type: 'WORD',
-    questionAnswers: []
+    subTestRows: []
   },
   simpleSentenceTest: {
     questionInformationId: '',
     type: 'SIMPLE_SENTENCE',
-    questionAnswers: []
+    subTestRows: []
   },
   normalSentenceTest: {
     questionInformationId: '',
     type: 'NORMAL_SENTENCE',
-    questionAnswers: []
+    subTestRows: []
   }
 }

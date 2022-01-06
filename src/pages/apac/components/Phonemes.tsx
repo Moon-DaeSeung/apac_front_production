@@ -63,6 +63,7 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
   const isDifferent = (option: ErrorPattern) => {
     return computedErrorPatterns.findIndex(({ id }) => option.id === id) === -1
   }
+  const hasDifferent = confirmedErrorPatterns.reduce((acc, errorPattern) => acc || isDifferent(errorPattern), false)
 
   return (
     <>
@@ -115,14 +116,17 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
         }
         onChange={(isOpen) => setIsSelected(isOpen)}
       >
-        <div css={[phonemeBox, isSelected && selected, isHidden && hidden]} onClick={(e) => { isHidden && e.preventDefault() }}>
+        <div css={[phonemeBox, isSelected && selected, isHidden && hidden, hasDifferent && different]}
+          onClick={(e) => { isHidden && e.preventDefault() }}
+        >
           <div css={item}>{target}</div>
           <div css={[item, red, (target === react) && white]}>{react}</div>
           <input
             css={[item, distortion]}
+            value={value.distortion}
+            onChange={(e) => handleChange('distortion')(e.target.value)}
             onClick={(e: any) => {
               e.stopPropagation()
-              handleChange('distortion')(e.target.value)
             }}
           />
         </div>
@@ -141,6 +145,7 @@ const item = css`
   border: 1px solid ${border.base};
   border-radius: 4px;
   width: 24px;
+  height: 25px;
   aspect-ratio: 1;
   box-sizing: border-box;
   display: flex;
@@ -162,6 +167,9 @@ const hover = css`
   outline: 2px solid ${border.base};
   border-radius: 4px;
 `
+const different = css`
+  background-color: lightblue;
+`
 const phonemeBox = css`
   padding: 3px;
   gap: 2px;
@@ -169,6 +177,7 @@ const phonemeBox = css`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  border-radius: 4px;
   cursor: pointer;
   &:hover {
     ${hover}
@@ -176,7 +185,7 @@ const phonemeBox = css`
 `
 const selected = css`
   ${hover}
-  background-color: lightblue;
+  background-color: #F0FFFF;
 `
 const errorpattern = css`
   background-color: whitesmoke;
