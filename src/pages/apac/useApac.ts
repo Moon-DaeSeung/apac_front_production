@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useErrorPatternOptions from '../../hooks/useErrorPatternOptions'
-import { createApac, getApac, getErrorPatterns, getLatestQuestionInformation, getQuestionInformation, patchApac } from '../../libs/api/apac'
+import { analyzeErrorPattern, createApac, getApac, getErrorPatterns, getLatestQuestionInformation, getQuestionInformation, patchApac } from '../../libs/api/apac'
 import { QuestionInformation, ApacTest, SubTest } from '../../libs/api/apac/types'
 import apacStorage from '../../libs/storage/apac'
 
@@ -34,9 +34,9 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     const cache: ApacTest = {
       id,
       ...apacUiState.information,
-      ...transUiToServer('wordTest'),
-      ...transUiToServer('normalSentenceTest'),
-      ...transUiToServer('simpleSentenceTest')
+      wordTest: { ...transUiToServer('wordTest') },
+      normalSentenceTest: { ...transUiToServer('normalSentenceTest') },
+      simpleSentenceTest: { ...transUiToServer('simpleSentenceTest') }
     }
     apacStorage.set(id, cache)
   }, [apacUiState, isAllLoadedQuestionInfo])
@@ -115,7 +115,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
           : createApac({ ...apacUiState.information })
         break
       default:
-        promise = patchApac(id!!, transUiToServer(type))
+        promise = patchApac(id!!, { [type]: transUiToServer(type) })
     }
     promise.then(data => {
       id || navigation(`./${data.id}/word`)
@@ -128,11 +128,9 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
 
   const transUiToServer = (testType: TestType) => {
     return {
-      [testType]: {
-        questionInformationId: apacUiState[testType].questionInformationId,
-        type: apacUiState[testType].type,
-        answers: apacUiState[testType].subTestRows.map(({ answer }) => answer)
-      }
+      questionInformationId: apacUiState[testType].questionInformationId,
+      type: apacUiState[testType].type,
+      answers: apacUiState[testType].subTestRows.map(({ answer }) => answer)
     }
   }
 
@@ -147,10 +145,6 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     })
   }, [isAllLoadedQuestionInfo])
 
-  const handleWordTestChange = useMemo(() => handleSubTestChange('wordTest'), [handleSubTestChange])
-  const handleSimpleSentenceTestChange = useMemo(() => handleSubTestChange('simpleSentenceTest'), [handleSubTestChange])
-  const handleNormalSentenceTestChange = useMemo(() => handleSubTestChange('normalSentenceTest'), [handleSubTestChange])
-
   const handleAllAnswerCheck = (testType: TestType) => () => {
     setApacUiState(prev => {
       const allChecked = prev[testType].subTestRows.map((row) =>
@@ -159,13 +153,19 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     })
   }
 
+  const handleErrorPatternAnalyze = (testType: TestType) => {
+    analyzeErrorPattern(id!!, transUiToServer(testType)).then(data =>
+      setApacServerState(prev => {
+        return { ...prev!!, [testType]: data }
+      })
+    )
+  }
+
   return {
     apacUiState,
     setApacUiState,
     handleSave,
-    handleWordTestChange,
-    handleSimpleSentenceTestChange,
-    handleNormalSentenceTestChange,
+    handleSubTestChange,
     handleAllAnswerCheck
   }
 }

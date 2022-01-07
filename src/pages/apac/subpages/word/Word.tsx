@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import React from 'react'
+import React, { useMemo } from 'react'
 import TextField from '../../../../components/TextField'
 import { Phonemes, Note, FloatingButtons } from '../../components'
 import { allCheck, errorpattern, header, item, row, textfield } from '../../css'
@@ -13,9 +13,10 @@ const Word = () => {
   const {
     value: { wordTest: { subTestRows, questionInformationId } },
     handleSave,
-    handleWordTestChange: handleChange,
+    handleSubTestChange,
     handleAllAnswerCheck
   } = useOutletContext<ApacContextProps>()
+  const handleChange = useMemo(() => handleSubTestChange('wordTest'), [handleSubTestChange])
 
   return (
     <>

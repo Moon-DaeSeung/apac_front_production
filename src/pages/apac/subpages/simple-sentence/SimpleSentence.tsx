@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import { css } from '@emotion/react'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import Button from '../../../../components/Button'
 import TextField from '../../../../components/TextField'
@@ -13,9 +13,10 @@ const SimpleSentence = () => {
   const {
     value: { simpleSentenceTest: { subTestRows: questionAnswers, questionInformationId } },
     handleSave,
-    handleSimpleSentenceTestChange: handleChange,
+    handleSubTestChange,
     handleAllAnswerCheck
   } = useOutletContext<ApacContextProps>()
+  const handleChange = useMemo(() => handleSubTestChange('simpleSentenceTest'), [handleSubTestChange])
   return (
     <>
       <h2>문장검사 간략형</h2>

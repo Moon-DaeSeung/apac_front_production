@@ -10,9 +10,7 @@ export type ApacContextProps = {
   value: ApacUiState
   setValue: (func: (value: ApacUiState) => ApacUiState) => void
   handleSave: (type: SaveType) => void
-  handleWordTestChange: ((value: SubTestRow) => void)[]
-  handleSimpleSentenceTestChange: ((value: SubTestRow) => void)[]
-  handleNormalSentenceTestChange: ((value: SubTestRow) => void)[]
+  handleSubTestChange: (testType: TestType) => ((value: SubTestRow) => void)[]
   handleAllAnswerCheck: (testType: TestType) => () => void
 }
 
@@ -20,7 +18,7 @@ const Apac = () => {
   const { id } = useParams<{id: string}>()
   const {
     apacUiState, setApacUiState, handleSave,
-    handleWordTestChange, handleNormalSentenceTestChange, handleSimpleSentenceTestChange,
+    handleSubTestChange,
     handleAllAnswerCheck
   } = useApac({ defaultValue: apacDefaultValue, id: Number(id) })
   const { pathname } = useLocation()
@@ -46,9 +44,7 @@ const Apac = () => {
           handleSave,
           value: apacUiState,
           setValue: setApacUiState,
-          handleSimpleSentenceTestChange,
-          handleNormalSentenceTestChange,
-          handleWordTestChange,
+          handleSubTestChange,
           handleAllAnswerCheck
         }} />
       </main>
