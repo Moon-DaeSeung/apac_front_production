@@ -4,15 +4,15 @@ import useErrorPatternOptions from '../../hooks/useErrorPatternOptions'
 import { analyzeErrorPattern, createApac, getApac, getErrorPatterns, getLatestQuestionInformation, getQuestionInformation, patchApac } from '../../libs/api/apac'
 import { QuestionInformation, ApacTest, SubTest } from '../../libs/api/apac/types'
 import apacStorage from '../../libs/storage/apac'
-
 import { ApacUiState, SubTestRow, SubTestUi } from './types'
+
 type UseApacProps = {
   defaultValue: ApacUiState
   id?: number
 }
 
 export type SaveType = 'information' | TestType
-export type TestType = Exclude<keyof ApacUiState, 'information'>
+export type TestType = Exclude<keyof ApacUiState, 'information' | 'updatedAt'>
 
 export const useApac = ({ defaultValue, id }: UseApacProps) => {
   const [apacUiState, setApacUiState] = useState<ApacUiState>(defaultValue)
@@ -33,6 +33,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     if (!id || !isAllLoadedQuestionInfo) return
     const cache: ApacTest = {
       id,
+      updatedAt: apacUiState.updatedAt,
       ...apacUiState.information,
       wordTest: { ...transUiToServer('wordTest') },
       normalSentenceTest: { ...transUiToServer('normalSentenceTest') },
@@ -43,9 +44,10 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
 
   useEffect(() => {
     if (!apacServerState || !isAllLoadedQuestionInfo) return
-    const { wordTest, simpleSentenceTest, normalSentenceTest, ...information } = apacServerState
+    const { wordTest, simpleSentenceTest, normalSentenceTest, updatedAt, ...information } = apacServerState
     setApacUiState((prev) => {
       return {
+        updatedAt,
         information,
         wordTest: { ...prev.wordTest, ...updateServerToUi(prev.wordTest, wordTest) },
         simpleSentenceTest: { ...prev.simpleSentenceTest, ...updateServerToUi(prev.simpleSentenceTest, simpleSentenceTest) },
@@ -85,7 +87,10 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     if (!id) return
     setIsAllLoadedQuestionInfo(false)
     const cahced = apacStorage.get(id)
-    cahced ? initialize(cahced) : getApac(id).then(initialize)
+    if (!cahced) { getApac(id).then(initialize); return }
+    getApac(id).then(data => {
+      cahced.updatedAt > data.updatedAt ? initialize(cahced) : initialize(data)
+    })
   }, [id])
 
   const updateQuestionInfo = (testType: TestType) => ({ questions, id: questionId, type }: QuestionInformation) => {
@@ -106,7 +111,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
 
   const navigation = useNavigate()
 
-  const handleSave = (type: SaveType) => {
+  const handleSave = (type: SaveType) => () => {
     let promise: Promise<ApacTest>
     switch (type) {
       case 'information':
@@ -140,7 +145,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
       setApacUiState(prev => {
         const copied = [...prev[testType].subTestRows]
         copied[index] = subTestRow
-        return { ...prev, [testType]: { ...prev[testType], subTestRows: copied } }
+        return { ...prev, updatedAt: new Date(), [testType]: { ...prev[testType], subTestRows: copied } }
       })
     })
   }, [isAllLoadedQuestionInfo])
@@ -153,12 +158,13 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     })
   }
 
-  const handleErrorPatternAnalyze = (testType: TestType) => {
-    analyzeErrorPattern(id!!, transUiToServer(testType)).then(data =>
-      setApacServerState(prev => {
-        return { ...prev!!, [testType]: data }
-      })
-    )
+  const handleErrorPatternAnalyze = (testType: TestType) => () => {
+    analyzeErrorPattern(id!!, transUiToServer(testType))
+      .then(data =>
+        setApacServerState(prev => {
+          return { ...prev!!, [testType]: data }
+        })
+      ).catch(() => alert('오류패턴 분석에 실패하였습니다'))
   }
 
   return {
@@ -166,6 +172,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     setApacUiState,
     handleSave,
     handleSubTestChange,
-    handleAllAnswerCheck
+    handleAllAnswerCheck,
+    handleErrorPatternAnalyze
   }
 }

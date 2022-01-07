@@ -26,14 +26,7 @@ export const checkValidDate = (value: string) => {
   return result
 }
 
-export const getRealAge = (birth?: Date, specificDate?: Date) => {
-  if (birth === undefined) { return { age: 0, month: 0 } }
-  const birthday = birth
-  const birthYear = birthday.getFullYear()
-  const specificDay = specificDate === undefined ? new Date() : specificDate
-  const specificYear = specificDay.getFullYear()
-  const months = 12 * (specificYear - birthYear) + specificDay.getMonth() - birthday.getMonth() + (birth.getDate() > specificDay.getDate() ? -1 : 0)
-  const age = Number((months / 12).toString().slice(0, 2))
-  const month = months % 12
-  return { age, month }
+export const getCurrentTime = () => {
+  console.log(new Date().toISOString())
+  return new Date()
 }

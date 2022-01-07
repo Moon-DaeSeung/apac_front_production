@@ -14,7 +14,8 @@ const NormalSentence = () => {
     value: { normalSentenceTest: { subTestRows: questionAnswers, questionInformationId } },
     handleSave,
     handleSubTestChange,
-    handleAllAnswerCheck
+    handleAllAnswerCheck,
+    handleErrorPatternAnalyze
   } = useOutletContext<ApacContextProps>()
   const handleChange = useMemo(() => handleSubTestChange('normalSentenceTest'), [handleSubTestChange])
   return (
@@ -37,7 +38,10 @@ const NormalSentence = () => {
           <Row questionId={questionInformationId} key={key} value={value} onChange={handleChange[key]} />
         )
       })}
-      <FloatingButtons onSave={() => handleSave('normalSentenceTest')}/>
+      <FloatingButtons
+        onSave={handleSave('normalSentenceTest')}
+        onAnalyze={handleErrorPatternAnalyze('normalSentenceTest')}
+      />
     </>
   )
 }

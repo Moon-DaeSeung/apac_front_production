@@ -14,7 +14,8 @@ const Word = () => {
     value: { wordTest: { subTestRows, questionInformationId } },
     handleSave,
     handleSubTestChange,
-    handleAllAnswerCheck
+    handleAllAnswerCheck,
+    handleErrorPatternAnalyze
   } = useOutletContext<ApacContextProps>()
   const handleChange = useMemo(() => handleSubTestChange('wordTest'), [handleSubTestChange])
 
@@ -42,7 +43,10 @@ const Word = () => {
           />
         )
       })}
-      <FloatingButtons onSave={() => handleSave('wordTest')}/>
+      <FloatingButtons
+        onSave={handleSave('wordTest')}
+        onAnalyze={handleErrorPatternAnalyze('wordTest')}
+      />
     </>
   )
 }

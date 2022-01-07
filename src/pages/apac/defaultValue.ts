@@ -1,6 +1,7 @@
 import { ApacUiState } from './types'
 
 export const apacDefaultValue: ApacUiState = {
+  updatedAt: new Date(),
   information: {
     testeeName: '',
     testeeGender: '',

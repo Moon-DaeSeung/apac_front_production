@@ -8,6 +8,7 @@ export type ApacTest = {
   testeeGender: string
   testeeAge: string
   testeeNote: string
+  updatedAt: Date
   testedDate?: string
   wordTest?: SubTest
   simpleSentenceTest?: SubTest

@@ -5,6 +5,7 @@ export type ApacUiState = {
   wordTest: SubTestUi
   simpleSentenceTest: SubTestUi
   normalSentenceTest: SubTestUi
+  updatedAt: Date
 }
 
 export type InformationProps = {

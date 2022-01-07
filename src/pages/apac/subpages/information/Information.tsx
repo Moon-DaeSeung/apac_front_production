@@ -57,7 +57,7 @@ const Information = () => {
             <DateInput customCss={input} {...resolve('testedDate')} initial={changeDateForm(new Date())}/>
           </div>
         </div>
-        <Button customCss={button} onClick={() => handleSave('information')}>저장</Button>
+        <Button customCss={button} onClick={handleSave('information')}>저장</Button>
       </div>
     </>
   )

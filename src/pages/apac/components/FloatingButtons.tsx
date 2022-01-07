@@ -6,17 +6,17 @@ import { useMediaQuery } from '../../../hooks/useMediaQuery'
 
 type FloatingButtonsProps = {
   onSave: () => void
-  onAnalyze?: () => void
+  onAnalyze: () => void
 }
 
-const FloatingButtons = ({ onSave }: FloatingButtonsProps) => {
+const FloatingButtons = ({ onSave, onAnalyze }: FloatingButtonsProps) => {
   const matches = useMediaQuery('(min-width: 1280px)')
   return (
       <Floating offset={{
         bottom: '20px',
         right: matches ? '(100% - 1280px) / 2 - 110px' : '20px'
       }}>
-        <Button customCss={button}>
+        <Button customCss={button} onClick={onAnalyze}>
           <i className="fas fa-robot" />
           <br/>
           <span css={caption}>오류패턴</span>
