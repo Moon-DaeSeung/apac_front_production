@@ -23,7 +23,6 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     simpleSentenceTest: { questionInformationId: simpleQuestionId },
     normalSentenceTest: { questionInformationId: normalQuestionId }
   } = apacUiState
-  console.log(apacUiState.updatedAt)
 
   useEffect(() => {
     if (!wordQuestinoId || !simpleQuestionId || !normalQuestionId) return
@@ -153,13 +152,15 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
 
   const handleAllAnswerCheck = (testType: TestType) => () => {
     setApacUiState(prev => {
+      const subTestRows = prev[testType].subTestRows
+      const isAllWritten = subTestRows.filter(({ answer: { reaction } }) => reaction === '').length === 0
       const allChecked = prev[testType].subTestRows.map((row) => {
         let reaction = ''
         let isTyping = false
         switch (row.answer.reaction) {
           case '':
             reaction = '+'; isTyping = true; break
-          case '+':
+          case isAllWritten ? '+' : '':
             reaction = ''; isTyping = true; break
           default:
             reaction = row.answer.reaction
