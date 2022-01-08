@@ -32,8 +32,9 @@ export const textfield = css`
 export const errorpattern = css`
   border-radius: 4px;
   padding: 10px;
-  background-color: #eaeff2;
+  background-color: rgba(220,220,220,.2);
   min-height: 20px;
+  font-size: 0.9rem;
   flex-grow: 1;
 `
 export const allCheck = css`

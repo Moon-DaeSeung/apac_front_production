@@ -75,7 +75,7 @@ const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
           <Phonemes
             value={answer.phonemes}
             onChange={handleChange('phonemes')}
-            isDisabled={answer.state !== 'COMPLETE'}
+            state={answer.state}
           />
         </div>
         <div css={[item]}>

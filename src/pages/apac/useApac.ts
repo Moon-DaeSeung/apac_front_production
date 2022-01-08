@@ -23,6 +23,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     simpleSentenceTest: { questionInformationId: simpleQuestionId },
     normalSentenceTest: { questionInformationId: normalQuestionId }
   } = apacUiState
+  console.log(apacUiState.updatedAt)
 
   useEffect(() => {
     if (!wordQuestinoId || !simpleQuestionId || !normalQuestionId) return
@@ -33,7 +34,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     if (!id || !isAllLoadedQuestionInfo) return
     const cache: ApacTest = {
       id,
-      updatedAt: apacUiState.updatedAt,
+      updatedAt: new Date(),
       ...apacUiState.information,
       wordTest: { ...transUiToServer('wordTest') },
       normalSentenceTest: { ...transUiToServer('normalSentenceTest') },
@@ -154,17 +155,19 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     setApacUiState(prev => {
       const allChecked = prev[testType].subTestRows.map((row) => {
         let reaction = ''
+        let isTyping = false
         switch (row.answer.reaction) {
           case '':
-            reaction = '+'; break
+            reaction = '+'; isTyping = true; break
           case '+':
-            reaction = ''; break
+            reaction = ''; isTyping = true; break
           default:
             reaction = row.answer.reaction
+            isTyping = row.isTyping
         }
         return {
           ...row,
-          isTyping: row.answer.reaction ? row.isTyping : true,
+          isTyping,
           answer: { ...row.answer, reaction }
         }
       })

@@ -94,7 +94,7 @@ const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
         <Phonemes
           value={answer.phonemes}
           onChange={handleChange('phonemes')}
-          isDisabled={answer.state !== 'COMPLETE'}
+          state={answer.state}
         />
       </div>
       <div css={[item]}>
@@ -108,7 +108,7 @@ export default NormalSentence
 
 const grid = css`
  display: grid;
- grid-template-columns: minmax(70px, 1fr) minmax(400px, 450px) 600px 100px
+ grid-template-columns: minmax(70px, 1fr) minmax(400px, 450px) 600px 100px;
 `
 const grid2 = css`
   display: grid;

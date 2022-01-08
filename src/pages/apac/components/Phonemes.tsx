@@ -4,17 +4,17 @@ import Select from '../../../components/Select'
 import Popper from '../../../components/Popper'
 import { border, text } from '../color'
 import Button from '../../../components/Button'
-import { ErrorPattern, Phoneme } from '../../../libs/api/apac/types'
+import { AnswerState, ErrorPattern, Phoneme } from '../../../libs/api/apac/types'
 import useErrorPatternOptions from '../../../hooks/useErrorPatternOptions'
 import crossIcon from '../../../images/cross.svg'
 
 export type PhonemesProps = {
   value: Phoneme[]
   onChange: (value: Phoneme[]) => void
-  isDisabled?: boolean
+  state: AnswerState
 }
 
-const Phonemes = ({ value, onChange, isDisabled }: PhonemesProps) => {
+const Phonemes = ({ value, onChange, state }: PhonemesProps) => {
   const filtering = ({ target, react }: Phoneme, key: number) => {
     const isBlank = target === '-' && (react === '-' || react === '')
     const isSpace = target === ' ' && key % 3 !== 1
@@ -31,7 +31,7 @@ const Phonemes = ({ value, onChange, isDisabled }: PhonemesProps) => {
   }
 
   return (
-    <div css={[container, isDisabled && disabled]}>
+    <div css={[container, state !== 'COMPLETE' && disabled, state === 'NO_RESPONSE' && noResponse]}>
       {filtered.map((item, key) => {
         return (
           <div key={key} css={css`grid-row: ${row(key)};`}>
@@ -139,9 +139,15 @@ export default Phonemes
 const container = css`
   display: grid;
   grid-template-columns: repeat(auto-fit, 28px); 
+  justify-content: center;
+  padding: 2px 0px;
 `
 const disabled = css`
   pointer-events: none;
+`
+const noResponse = css`
+  background-color: rgba(220,220,220,.2);
+  border-radius: 10px;
 `
 const item = css`
   border: 1px solid ${border.base};
@@ -167,7 +173,6 @@ const white = css`
 const hover = css`
   margin-top: -2px;
   outline: 2px solid ${border.base};
-  border-radius: 4px;
 `
 const different = css`
   background-color: lightblue;

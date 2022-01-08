@@ -36,7 +36,7 @@ const useSubTestRow = ({ value, onChange, questionId }: SubTestRowProps) => {
       default:
         getPhonemes(questionId, { reaction, number })
           .then(data => { resolvePhonemes(data) })
-          .catch(() => { resolvePhonemes(defaultPhonemes, 'ERROR') })
+          .catch(() => { resolvePhonemes(defaultPhonemes, 'ERROR', '잘못된 아동 반응입니다.') })
     }
   }
   , 300)
