@@ -152,8 +152,22 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
 
   const handleAllAnswerCheck = (testType: TestType) => () => {
     setApacUiState(prev => {
-      const allChecked = prev[testType].subTestRows.map((row) =>
-        ({ ...row, isTyping: row.answer.reaction ? row.isTyping : true, answer: { ...row.answer, reaction: row.answer.reaction || '+' } }))
+      const allChecked = prev[testType].subTestRows.map((row) => {
+        let reaction = ''
+        switch (row.answer.reaction) {
+          case '':
+            reaction = '+'; break
+          case '+':
+            reaction = ''; break
+          default:
+            reaction = row.answer.reaction
+        }
+        return {
+          ...row,
+          isTyping: row.answer.reaction ? row.isTyping : true,
+          answer: { ...row.answer, reaction }
+        }
+      })
       return { ...prev, [testType]: { ...prev[testType], subTestRows: allChecked } }
     })
   }

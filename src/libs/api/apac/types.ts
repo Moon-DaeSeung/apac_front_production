@@ -72,7 +72,7 @@ export type TotalErrorPattern = {
 }
 
 export type ApacTestType = 'WORD' | 'SIMPLE_SENTENCE' | 'NORMAL_SENTENCE'
-export type AnswerState = 'NOT_WRITTEN' | 'ERROR' | 'COMPLETE' | 'NOT_CONFIRMED'
+export type AnswerState = 'NOT_WRITTEN' | 'ERROR' | 'COMPLETE' | 'NO_RESPONSE'
 
 export type TestInformation = {
   id: number

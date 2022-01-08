@@ -7,3 +7,4 @@ export { default as getLatestQuestionInformation } from './getLatestQuestionInfo
 export { default as getPhonemes } from './getPhoenems'
 export { default as getQuestionInformation } from './getQuestionInformation'
 export { default as patchApac } from './patchApac'
+export { default as calcaulateTotalErrorPatterns } from './calculateTotalErrorPatterns'

@@ -83,7 +83,11 @@ const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
           </div>
         </div>
         <div css={[item, phonemestart]}>
-          <Phonemes value={answer.phonemes} onChange={handleChange('phonemes')} />
+          <Phonemes
+            value={answer.phonemes}
+            onChange={handleChange('phonemes')}
+            isDisabled={answer.state !== 'COMPLETE'}
+          />
         </div>
         <div css={[item, css`grid-row: 1 / 3;`]}>
           <Note value={answer.note} onChange={handleChange('note')}/>

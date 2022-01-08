@@ -97,5 +97,5 @@ type Response<T> = {
   message?: string
 }
 
-console.log(`current api uri is ${APAC_URL}`)
+console.debug(`current api uri is ${APAC_URL}`)
 export const api = new API(APAC_URL)

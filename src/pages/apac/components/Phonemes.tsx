@@ -11,9 +11,10 @@ import crossIcon from '../../../images/cross.svg'
 export type PhonemesProps = {
   value: Phoneme[]
   onChange: (value: Phoneme[]) => void
+  isDisabled?: boolean
 }
 
-const Phonemes = ({ value, onChange }: PhonemesProps) => {
+const Phonemes = ({ value, onChange, isDisabled }: PhonemesProps) => {
   const filtering = ({ target, react }: Phoneme, key: number) => {
     const isBlank = target === '-' && (react === '-' || react === '')
     const isSpace = target === ' ' && key % 3 !== 1
@@ -30,7 +31,7 @@ const Phonemes = ({ value, onChange }: PhonemesProps) => {
   }
 
   return (
-    <div css={container}>
+    <div css={[container, isDisabled && disabled]}>
       {filtered.map((item, key) => {
         return (
           <div key={key} css={css`grid-row: ${row(key)};`}>
@@ -138,6 +139,9 @@ export default Phonemes
 const container = css`
   display: grid;
   grid-template-columns: repeat(auto-fit, 28px); 
+`
+const disabled = css`
+  pointer-events: none;
 `
 const item = css`
   border: 1px solid ${border.base};
