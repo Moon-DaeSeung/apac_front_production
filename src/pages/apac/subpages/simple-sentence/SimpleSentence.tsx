@@ -66,7 +66,8 @@ const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
                 label={question.target}
                 value={answer.reaction}
                 onChange={handleChange('reaction')}
-                isError={answer.state === 'ERROR'}
+                isError={!!answer.errorMessage}
+                errorMessage={answer.errorMessage}
                 isPending={isTyping}
               />
             </div>

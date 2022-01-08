@@ -174,11 +174,32 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
 
   const handleErrorPatternAnalyze = (testType: TestType) => () => {
     analyzeErrorPattern(id!!, transUiToServer(testType))
-      .then(data =>
+      .then(data => {
         setApacServerState(prev => {
           return { ...prev!!, [testType]: data }
         })
-      ).catch(() => alert('오류패턴 분석에 실패하였습니다'))
+        alert('오류패턴을 분석하였습니다.')
+      }
+      ).catch(
+        () => {
+          alert('오류패턴 분석에 실패하였습니다')
+          setApacUiState(prev => {
+            return {
+              ...prev,
+              [testType]: {
+                ...prev[testType],
+                subTestRows: prev[testType].subTestRows.map((row) => {
+                  const answer = row.answer
+                  if (answer.state === 'NOT_WRITTEN') {
+                    answer.errorMessage = '아동 반응을 입력해주새요.'
+                  }
+                  return { ...row }
+                })
+              }
+            }
+          })
+        }
+      )
   }
 
   return {

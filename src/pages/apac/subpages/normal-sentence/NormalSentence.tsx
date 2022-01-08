@@ -51,55 +51,56 @@ const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
   const { question, answer, isTyping } = value
   const { handleChange } = useSubTestRow({ value, onChange, questionId })
   return (
-        <div key={question.number} css={[row, grid]}>
-          <div css={[item, css`grid-row: 1/3; grid-column: 1;`]}>
-            {question.number}
-          </div>
-          <div css={[item]}>
-            <div
-              css={css`flex-grow: 1;`}>
-              <div css={grid2}>
-                <label css={label}>목표문장</label>
-                <div
-                  css={css`
-                    padding: 10px;
-                  `}
-                >
-                  {question.number}
-                </div>
-              </div>
-              <div css={grid2}>
-                <label css={label}>문장반응</label>
-                <TextField
-                  customCss={[textfield, css`height: 60px;`]}
-                  label={question.target}
-                  value={answer.reaction}
-                  onChange={handleChange('reaction')}
-                  isPending={isTyping}
-                  isError={answer.state === 'ERROR'}
-                />
-              </div>
-              <div css={[grid2, css`margin-top: 10px;`]}>
-                <label css={label}>오류패턴</label>
-                <div css={[errorpattern]}>
-                  {answer.totalErrorPatterns.map(({ total, errorPattern: { name } }) => {
-                    return `${name}(${total}회)`
-                  }).join(', ')}
-                </div>
-              </div>
+    <div key={question.number} css={[row, grid]}>
+      <div
+        css={[item, css`grid-row: 1/3; grid-column: 1;`]}
+      >
+        {question.number}
+      </div>
+      <div css={[item]}>
+        <div
+          css={css`flex-grow: 1;`}
+        >
+          <div css={grid2}>
+            <label css={label}>목표문장</label>
+            <div css={css`padding: 10px;`}>
+              {question.number}
             </div>
           </div>
-          <div css={[item, phonemestart]}>
-            <Phonemes
-              value={answer.phonemes}
-              onChange={handleChange('phonemes')}
-              isDisabled={answer.state !== 'COMPLETE'}
+          <div css={grid2}>
+            <label css={label}>문장반응</label>
+            <TextField
+              customCss={[textfield, css`height: 60px;`]}
+              label={question.target}
+              value={answer.reaction}
+              onChange={handleChange('reaction')}
+              isPending={isTyping}
+              isError={!!answer.errorMessage}
+              errorMessage={answer.errorMessage}
             />
           </div>
-          <div css={[item]}>
-            <Note value={answer.note} onChange={handleChange('note')}/>
+          <div css={[grid2, css`margin-top: 10px;`]}>
+            <label css={label}>오류패턴</label>
+            <div css={[errorpattern]}>
+              {answer.totalErrorPatterns
+                .map(({ total, errorPattern: { name } }) => {
+                  return `${name}(${total}회)`
+                }).join(', ')}
+            </div>
           </div>
         </div>
+      </div>
+      <div css={[item, phonemestart]}>
+        <Phonemes
+          value={answer.phonemes}
+          onChange={handleChange('phonemes')}
+          isDisabled={answer.state !== 'COMPLETE'}
+        />
+      </div>
+      <div css={[item]}>
+        <Note value={answer.note} onChange={handleChange('note')} />
+      </div>
+    </div>
   )
 })
 
