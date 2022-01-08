@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import useErrorPatternOptions from '../../hooks/useErrorPatternOptions'
 import { analyzeErrorPattern, createApac, getApac, getErrorPatterns, getLatestQuestionInformation, getQuestionInformation, patchApac } from '../../libs/api/apac'
 import { QuestionInformation, ApacTest, SubTest } from '../../libs/api/apac/types'
+import { ServerError } from '../../libs/api/Api'
 import apacStorage from '../../libs/storage/apac'
 import { ApacUiState, SubTestRow, SubTestUi } from './types'
 
@@ -90,7 +91,12 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     if (!cahced) { getApac(id).then(initialize); return }
     getApac(id).then(data => {
       cahced.updatedAt > data.updatedAt ? initialize(cahced) : initialize(data)
-    })
+    }).catch((error: Error) => {
+      let message = ''
+      if (error instanceof ServerError) { message = error.message }
+      alert(`정보를 불러오는데 실패하였습니다.\n${message}`)
+    }
+    )
   }, [id])
 
   const updateQuestionInfo = (testType: TestType) => ({ questions, id: questionId, type }: QuestionInformation) => {
@@ -126,8 +132,10 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
       id || navigation(`./${data.id}/word`)
       id && apacStorage.remove(id)
       alert('저장하였습니다.')
-    }).catch(() => {
-      alert('저장에 실패하였습니다. 다시 시도해주세요')
+    }).catch((error: Error) => {
+      let message = ''
+      if (error instanceof ServerError) { message = error.message }
+      alert(`저장에 실패하였습니다.\n${message}`)
     })
   }
 
@@ -185,8 +193,10 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
         alert('오류패턴을 분석하였습니다.')
       }
       ).catch(
-        () => {
-          alert('오류패턴 분석에 실패하였습니다')
+        (error: Error) => {
+          let message
+          if (error instanceof ServerError) { message = error.message }
+          alert(`오류패턴 분석에 실패하였습니다.\n${message}`)
           setApacUiState(prev => {
             return {
               ...prev,

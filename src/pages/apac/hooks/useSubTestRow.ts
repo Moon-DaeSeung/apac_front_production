@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import useDebounce from '../../../hooks/useDebouce'
 import { calcaulateTotalErrorPatterns, getPhonemes } from '../../../libs/api/apac'
 import { Answer, AnswerState, Phoneme, TotalErrorPattern } from '../../../libs/api/apac/types'
+import { ServerError } from '../../../libs/api/Api'
 import { SubTestRow } from '../types'
 
 export type SubTestRowProps = {
@@ -36,7 +37,11 @@ const useSubTestRow = ({ value, onChange, questionId }: SubTestRowProps) => {
       default:
         getPhonemes(questionId, { reaction, number })
           .then(data => { resolvePhonemes(data) })
-          .catch(() => { resolvePhonemes(defaultPhonemes, 'ERROR', '잘못된 아동 반응입니다.') })
+          .catch((error: Error) => {
+            let message = '잘못된 아동 반응입니다.'
+            if (error instanceof ServerError) { message = error.message }
+            resolvePhonemes(defaultPhonemes, 'ERROR', message)
+          })
     }
   }
   , 300)
