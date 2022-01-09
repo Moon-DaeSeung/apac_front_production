@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "start": "webpack serve --env profile=local --mode development --open --hot",
+    "production-start": "webpack serve --env profile=local --mode production --open --hot",
     "production-build": "webpack --env profile=production --mode production",
     "dev-build": "webpack --env profile=develop --mode production",
     "doc-dev": "docz dev",

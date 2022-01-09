@@ -26,4 +26,5 @@ export type SubTestRow = {
   question: Question
   answer: Answer
   isTyping: boolean
+  isActive: boolean
 }

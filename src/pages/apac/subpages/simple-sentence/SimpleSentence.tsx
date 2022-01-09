@@ -15,9 +15,11 @@ const SimpleSentence = () => {
     handleSave,
     handleSubTestChange,
     handleAllAnswerCheck,
-    handleErrorPatternAnalyze
+    handleErrorPatternAnalyze,
+    isTriggered, setIsTriggered, keyboardMovingEffect
   } = useOutletContext<ApacContextProps>()
   const handleChange = useMemo(() => handleSubTestChange('simpleSentenceTest'), [handleSubTestChange])
+  keyboardMovingEffect('simpleSentenceTest')
   return (
     <>
       <h2>문장검사 간략형</h2>
@@ -35,7 +37,14 @@ const SimpleSentence = () => {
       </div>
       {questionAnswers.map((value, index) => {
         return (
-          <Row questionId={questionInformationId} key={index} value={value} onChange={handleChange[index]} />
+          <Row
+            questionId={questionInformationId}
+            key={index}
+            value={value}
+            onChange={handleChange[index]}
+            isTriggered={isTriggered}
+            setIsTriggered={setIsTriggered}
+          />
         )
       })}
       <FloatingButtons
@@ -46,12 +55,12 @@ const SimpleSentence = () => {
   )
 }
 
-const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
+const Row = React.memo(({ value, onChange, questionId, isTriggered, setIsTriggered }: SubTestRowProps) => {
   if (!onChange) return <></>
   const { question, answer, isTyping } = value
-  const { handleChange } = useSubTestRow({ value, onChange, questionId })
+  const { handleChange, setContainerEl, reactionRef } = useSubTestRow({ value, onChange, questionId, setIsTriggered, isTriggered })
   return (
-      <div key={question.number} css={[row, grid]}>
+      <div key={question.number} css={[row, grid]} ref={setContainerEl}>
         <div css={[item, css`grid-row: 1 / 3; grid-column: 1;`]}>{question.number}</div>
         <div css={[item]}>
           <div css={css`flex-grow: 1;`}>
@@ -62,6 +71,7 @@ const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
             <div css={grid2}>
               <label css={label}>문장반응</label>
               <TextField
+                ref={reactionRef}
                 customCss={textfield}
                 label={question.target}
                 value={answer.reaction}

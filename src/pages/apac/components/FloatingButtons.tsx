@@ -16,12 +16,12 @@ const FloatingButtons = ({ onSave, onAnalyze }: FloatingButtonsProps) => {
         bottom: '20px',
         right: matches ? '(100% - 1280px) / 2 - 110px' : '20px'
       }}>
-        <Button customCss={button} onClick={onAnalyze}>
+        <Button customCss={button} onClick={onAnalyze} accessKey='v'>
           <i className="fas fa-robot" />
           <br/>
           <span css={caption}>오류패턴</span>
           </Button>
-        <Button customCss={button} onClick={onSave}>
+        <Button customCss={button} onClick={onSave} accessKey='s'>
           <i className="far fa-save" />
           <br/>
           <span css={caption}>저장</span>

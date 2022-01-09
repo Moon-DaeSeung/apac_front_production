@@ -15,9 +15,13 @@ const Word = () => {
     handleSave,
     handleSubTestChange,
     handleAllAnswerCheck,
-    handleErrorPatternAnalyze
+    handleErrorPatternAnalyze,
+    setIsTriggered,
+    isTriggered,
+    keyboardMovingEffect
   } = useOutletContext<ApacContextProps>()
   const handleChange = useMemo(() => handleSubTestChange('wordTest'), [handleSubTestChange])
+  keyboardMovingEffect('wordTest')
 
   return (
     <>
@@ -36,6 +40,8 @@ const Word = () => {
       {subTestRows.map((value, index) => {
         return (
           <Row
+            isTriggered={isTriggered}
+            setIsTriggered={setIsTriggered}
             key={value.question.number}
             value={value}
             onChange={handleChange[index]}
@@ -51,17 +57,17 @@ const Word = () => {
   )
 }
 
-const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
+const Row = React.memo(({ value, onChange, questionId, isTriggered: isFocused, setIsTriggered }: SubTestRowProps) => {
   if (!onChange) return <></>
   const { question, answer, isTyping } = value
-  const { handleChange } = useSubTestRow({ value, onChange, questionId })
-
+  const { handleChange, setContainerEl, reactionRef } = useSubTestRow({ value, onChange, questionId, isTriggered: isFocused, setIsTriggered })
   return (
-      <div key={question.number} css={[row, grid]}>
+      <div key={question.number} css={[row, grid]} ref={setContainerEl}>
         <div css={[item]}>{question.number}</div>
         <div css={[item]}>{question.name}</div>
         <div css={[item]}>
           <TextField
+            ref={reactionRef}
             customCss={textfield}
             label={question.target}
             value={answer.reaction}

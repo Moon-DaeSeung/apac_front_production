@@ -9,10 +9,13 @@ import { SaveType, TestType, useApac } from './useApac'
 export type ApacContextProps = {
   value: ApacUiState
   setValue: (func: (value: ApacUiState) => ApacUiState) => void
-  handleSubTestChange: (testType: TestType) => ((value: SubTestRow) => void)[]
+  handleSubTestChange: (testType: TestType) => ((func: ((prev: SubTestRow) => SubTestRow)) => void)[]
   handleSave: (type: SaveType) => () => void
   handleAllAnswerCheck: (testType: TestType) => () => void
   handleErrorPatternAnalyze: (testType: TestType) => () => void
+  keyboardMovingEffect: (testType: TestType) => void
+  isTriggered: boolean
+  setIsTriggered: (value: boolean) => void
 }
 
 const Apac = () => {
@@ -21,7 +24,9 @@ const Apac = () => {
     apacUiState, setApacUiState, handleSave,
     handleSubTestChange,
     handleAllAnswerCheck,
-    handleErrorPatternAnalyze
+    handleErrorPatternAnalyze,
+    keyboardMovingEffect,
+    isTriggered, setIsTriggered
   } = useApac({ defaultValue: apacDefaultValue, id: Number(id) })
   const { pathname } = useLocation()
   let current = pathname.split('/').pop()!!
@@ -48,7 +53,10 @@ const Apac = () => {
           setValue: setApacUiState,
           handleSubTestChange,
           handleAllAnswerCheck,
-          handleErrorPatternAnalyze
+          handleErrorPatternAnalyze,
+          keyboardMovingEffect,
+          setIsTriggered,
+          isTriggered
         }} />
       </main>
     </>

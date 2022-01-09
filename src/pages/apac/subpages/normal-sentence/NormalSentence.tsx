@@ -15,9 +15,12 @@ const NormalSentence = () => {
     handleSave,
     handleSubTestChange,
     handleAllAnswerCheck,
-    handleErrorPatternAnalyze
+    handleErrorPatternAnalyze,
+    isTriggered, setIsTriggered,
+    keyboardMovingEffect
   } = useOutletContext<ApacContextProps>()
   const handleChange = useMemo(() => handleSubTestChange('normalSentenceTest'), [handleSubTestChange])
+  keyboardMovingEffect('normalSentenceTest')
   return (
     <>
       <h2>문장검사 일반형</h2>
@@ -35,7 +38,14 @@ const NormalSentence = () => {
       </div>
       {questionAnswers.map((value, key) => {
         return (
-          <Row questionId={questionInformationId} key={key} value={value} onChange={handleChange[key]} />
+          <Row
+            isTriggered={isTriggered}
+            setIsTriggered={setIsTriggered}
+            questionId={questionInformationId}
+            key={key}
+            value={value}
+            onChange={handleChange[key]}
+          />
         )
       })}
       <FloatingButtons
@@ -46,12 +56,12 @@ const NormalSentence = () => {
   )
 }
 
-const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
+const Row = React.memo(({ value, onChange, questionId, isTriggered, setIsTriggered }: SubTestRowProps) => {
   if (!onChange) return <></>
   const { question, answer, isTyping } = value
-  const { handleChange } = useSubTestRow({ value, onChange, questionId })
+  const { handleChange, setContainerEl, reactionRef } = useSubTestRow({ value, onChange, questionId, setIsTriggered, isTriggered })
   return (
-    <div key={question.number} css={[row, grid]}>
+    <div key={question.number} css={[row, grid]} ref={setContainerEl}>
       <div
         css={[item, css`grid-row: 1/3; grid-column: 1;`]}
       >
@@ -70,6 +80,7 @@ const Row = React.memo(({ value, onChange, questionId }: SubTestRowProps) => {
           <div css={grid2}>
             <label css={label}>문장반응</label>
             <TextField
+              ref={reactionRef}
               customCss={[textfield, css`height: 60px;`]}
               label={question.target}
               value={answer.reaction}

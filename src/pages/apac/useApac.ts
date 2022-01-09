@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useErrorPatternOptions from '../../hooks/useErrorPatternOptions'
@@ -19,6 +20,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
   const [apacUiState, setApacUiState] = useState<ApacUiState>(defaultValue)
   const [apacServerState, setApacServerState] = useState<ApacTest | null>(null)
   const [isAllLoadedQuestionInfo, setIsAllLoadedQuestionInfo] = useState(false)
+  const [isTriggered, setIsTriggered] = useState(false)
   const {
     wordTest: { questionInformationId: wordQuestinoId },
     simpleSentenceTest: { questionInformationId: simpleQuestionId },
@@ -149,10 +151,10 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
 
   const handleSubTestChange = useCallback((testType: TestType) => {
     const { subTestRows } = apacUiState[testType]
-    return subTestRows.map((_, index) => (subTestRow: SubTestRow) => {
+    return subTestRows.map((_, index) => (func: ((prev: SubTestRow) => SubTestRow)) => {
       setApacUiState(prev => {
         const copied = [...prev[testType].subTestRows]
-        copied[index] = subTestRow
+        copied[index] = func(copied[index])
         return { ...prev, updatedAt: new Date(), [testType]: { ...prev[testType], subTestRows: copied } }
       })
     })
@@ -216,12 +218,48 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
       )
   }
 
+  const keyboardMovingEffect = (testType: TestType) => useEffect(() => {
+    const listener = (event: any) => {
+      // event.preventDefault()
+      // event.stopPropagation()
+      if (!['ArrowUp', 'ArrowDown'].includes(event.key) || !event.altKey) {
+        return
+      }
+      setApacUiState(prev => {
+        const subTestRows = [...prev[testType].subTestRows]
+        const activeIndex = subTestRows.findIndex(({ isActive }) => isActive)
+        const getActiveRowIndex = (direction: 'down' | 'up') => {
+          if (activeIndex === -1) return 0
+          return (activeIndex + (direction === 'up' ? -1 : 1) + subTestRows.length) % subTestRows.length
+        }
+        let nextActiveIndex = 0
+        if (event.key === 'ArrowUp') {
+          nextActiveIndex = getActiveRowIndex('up')
+        } else {
+          nextActiveIndex = getActiveRowIndex('down')
+        }
+        if (activeIndex !== -1) {
+          subTestRows[activeIndex] = { ...subTestRows[activeIndex], isActive: false }
+        }
+        subTestRows[nextActiveIndex] = { ...subTestRows[nextActiveIndex], isActive: true }
+        setIsTriggered(true)
+        return { ...prev, [testType]: { ...prev[testType], subTestRows } }
+      })
+    }
+
+    window.addEventListener('keydown', listener)
+    return () => window.removeEventListener('keydown', listener)
+  }, [isAllLoadedQuestionInfo])
+
   return {
     apacUiState,
     setApacUiState,
     handleSave,
     handleSubTestChange,
     handleAllAnswerCheck,
-    handleErrorPatternAnalyze
+    handleErrorPatternAnalyze,
+    keyboardMovingEffect,
+    isTriggered,
+    setIsTriggered
   }
 }

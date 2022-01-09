@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useLayoutEffect, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import { Placement } from '@popperjs/core'
 import { usePopper } from 'react-popper'
 import { css, SerializedStyles } from '@emotion/react'
@@ -73,7 +73,7 @@ export default function Popper ({ hasArrow = false, onChange, renderPopNode, chi
   return (
     <>
       <div ref={setTargetContainer} css={[customCss]}
-        onMouseDown={(e) => { setIsOpen(!isOpen); isOpen && e.preventDefault() }}
+        onClick={() => setIsOpen(!isOpen) }
         tabIndex={0}
         onKeyDown={handleKeyDown}
       >

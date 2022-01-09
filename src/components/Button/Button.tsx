@@ -4,7 +4,8 @@ import React, { MouseEvent, useRef, useState } from 'react'
 export type ButtonProps = {
   children: React.ReactNode
   onClick?: (e: any | null) => void
-  customCss?: SerializedStyles | SerializedStyles[] 
+  customCss?: SerializedStyles | SerializedStyles[]
+  accessKey?: string
 }
 
 type SpanAttribute = {
@@ -13,7 +14,7 @@ type SpanAttribute = {
   y: number
 }
 
-const Button = ({ children, onClick, customCss }: ButtonProps) => {
+const Button = ({ children, onClick, customCss, accessKey }: ButtonProps) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null)
   const [spanAttribute, setSpanAttribute] = useState<SpanAttribute | null>(null)
   const handleMouseDown = ({ clientX, clientY }: MouseEvent) => {
@@ -24,6 +25,7 @@ const Button = ({ children, onClick, customCss }: ButtonProps) => {
   }
   return (
     <button
+      accessKey={accessKey}
       ref={buttonRef}
       css={[button, customCss]}
       onClick={onClick}

@@ -186,7 +186,7 @@ const different = css`
   background-color: lightblue;
 `
 const phonemeBox = css`
-  padding: 3px;
+  padding: 2px;
   gap: 2px;
   display: flex;
   flex-direction: column;
