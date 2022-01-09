@@ -74,7 +74,7 @@ const Row = React.memo(({ value, onChange, questionId, isTriggered, setIsTrigger
           <div css={grid2}>
             <label css={label}>목표문장</label>
             <div css={css`padding: 10px;`}>
-              {question.number}
+              {question.name}
             </div>
           </div>
           <div css={grid2}>
