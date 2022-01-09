@@ -11,10 +11,13 @@ const globalStyle = css`
   * {
     font-family: 'Spoqa Han Sans Neo', 'sans-serif';;
   }
+  html {
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+  }
   body {
     width: 100%;
     height: 100%;
-    overflow-y: scroll;
     margin: 0;
     padding: 0;
     background-color: #EAEFF2;

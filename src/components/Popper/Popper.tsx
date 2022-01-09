@@ -1,7 +1,6 @@
-import React, { ReactElement, useEffect, useState } from 'react'
+import React, { ReactElement, useEffect, useLayoutEffect, useState } from 'react'
 import { Placement } from '@popperjs/core'
 import { usePopper } from 'react-popper'
-import Portal from '../Portal'
 import { css, SerializedStyles } from '@emotion/react'
 
 export type PopperProps = {
@@ -35,13 +34,18 @@ export default function Popper ({ hasArrow = false, onChange, renderPopNode, chi
     () => {
       if (!targetContainer || !popperContainer) return
       const listener = (event: any) => {
-        if (!(popperContainer.contains(event.target) || targetContainer.contains(event.target))) {
+        if (!(
+          popperContainer.contains(event.target) ||
+          targetContainer.contains(event.target)
+        )) {
           setIsOpen(false)
         }
       }
-      document.addEventListener('mousedown', listener)
+      document.addEventListener('click', listener)
+      document.addEventListener('focusin', listener)
       return () => {
-        document.removeEventListener('mousedown', listener)
+        document.removeEventListener('click', listener)
+        document.removeEventListener('focusin', listener)
       }
     }, [targetContainer, popperContainer]
   )
@@ -54,13 +58,27 @@ export default function Popper ({ hasArrow = false, onChange, renderPopNode, chi
     ]
   })
 
+  const handleKeyDown = (event: any) => {
+    switch (event.key) {
+      case 'Enter':
+        setIsOpen(!isOpen)
+        break
+      case ' ':
+        setIsOpen(!isOpen)
+        event.preventDefault()
+        break
+    }
+  }
+
   return (
     <>
       <div ref={setTargetContainer} css={[customCss]}
-        onClick={() => { setIsOpen(!isOpen) }} >
+        onMouseDown={(e) => { setIsOpen(!isOpen); isOpen && e.preventDefault() }}
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+      >
         {children}
       </div>
-      <Portal>
         {
           (isOpen) &&
           <div ref={setPopperContainer}
@@ -74,7 +92,6 @@ export default function Popper ({ hasArrow = false, onChange, renderPopNode, chi
             }
           </div>
         }
-      </Portal>
     </>
   )
 }

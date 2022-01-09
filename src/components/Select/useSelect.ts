@@ -131,6 +131,9 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
       case 'Tab':
         setIsMenuOpen(false)
         break
+      case 'Escape':
+        setIsMenuOpen(false)
+        break
     }
   }
 
@@ -146,7 +149,7 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
   const filterMenu = useCallback(debounce((searchString: string) => {
     const searchedOptions = optionsProp.filter(option => getOptionLabel(option).includes(searchString))
     searchString && setOptions(searchedOptions)
-  }, 100), [])
+  }, 200), [])
 
   useEffect(() => {
     filterMenu(inputValue)

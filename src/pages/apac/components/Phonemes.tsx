@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Select from '../../../components/Select'
 import Popper from '../../../components/Popper'
 import { border, text } from '../color'
@@ -56,7 +56,8 @@ type PhonemeBoxProps = {
 
 const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
   const { target, react, confirmedErrorPatterns, computedErrorPatterns } = value
-  const [isSelected, setIsSelected] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectEl, setSelectEl] = useState<HTMLInputElement | null>(null)
   const handleChange = (key: keyof Phoneme) => (item: string | ErrorPattern[]) => {
     onChange({ ...value, [key]: item })
   }
@@ -65,6 +66,11 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
     return computedErrorPatterns.findIndex(({ id }) => option.id === id) === -1
   }
   const hasDifferent = confirmedErrorPatterns.reduce((acc, errorPattern) => acc || isDifferent(errorPattern), false)
+
+  useEffect(() => {
+    if (!isOpen || !selectEl) return
+    selectEl.focus({ preventScroll: true })
+  }, [isOpen])
 
   return (
     <>
@@ -78,6 +84,7 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
                 getOptionLabel={({ name }) => name}
                 options={errorPatternOptions}
                 value={confirmedErrorPatterns}
+                ref={setSelectEl}
                 onChange={handleChange('confirmedErrorPatterns')}
                 multiple
                 autocomplete
@@ -115,9 +122,9 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
               </div>
             </div>
         }
-        onChange={(isOpen) => setIsSelected(isOpen)}
+        onChange={(isOpen) => setIsOpen(isOpen)}
       >
-        <div css={[phonemeBox, isSelected && selected, isHidden && hidden, hasDifferent && different]}
+        <div css={[phonemeBox, isOpen && selected, isHidden && hidden, hasDifferent && different]}
           onClick={(e) => { isHidden && e.preventDefault() }}
         >
           <div css={item}>{target}</div>
@@ -126,7 +133,7 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
             css={[item, distortion]}
             value={value.distortion}
             onChange={(e) => handleChange('distortion')(e.target.value)}
-            onClick={(e: any) => { e.stopPropagation() }}
+            onMouseDown={(e) => { e.stopPropagation() }}
           />
         </div>
       </Popper>
@@ -138,16 +145,17 @@ export default Phonemes
 
 const container = css`
   display: grid;
-  grid-template-columns: repeat(auto-fit, 28px); 
-  justify-content: center;
-  padding: 2px 0px;
+  grid-template-columns: repeat(auto-fit, content-fit); 
+  justify-content: start;
+  flex-grow: 1;
+  padding: 2px 0px 2px 2px;
 `
 const disabled = css`
   pointer-events: none;
 `
 const noResponse = css`
   background-color: rgba(220,220,220,.2);
-  border-radius: 10px;
+  border-radius: 5px;
 `
 const item = css`
   border: 1px solid ${border.base};
