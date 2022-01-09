@@ -1,5 +1,5 @@
 import { css, SerializedStyles } from '@emotion/react'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { getAbsoluteParent } from './getParent'
 
 type Position = {
@@ -16,8 +16,9 @@ export type FloatingProps = {
 const Floating = ({ children, offset = { bottom: '0px', right: '0px' }, customCss }: FloatingProps) => {
   const node = useRef<HTMLDivElement | null>(null)
   const [position, setPosition] = useState<Position | null>(null)
-  const handlePosition = useCallback((nodeEl: HTMLElement | null) => {
-    return () => {
+  useEffect(() => {
+    const nodeEl = node.current
+    const handlePosition = () => {
       if (!nodeEl) return
       const parent = getAbsoluteParent(nodeEl)
       const { bottom, right } = parent.getBoundingClientRect()
@@ -27,13 +28,9 @@ const Floating = ({ children, offset = { bottom: '0px', right: '0px' }, customCs
         right: `${view.clientWidth - right}px`
       })
     }
-  }, [node.current])
-
-  useEffect(() => {
-    const nodeEl = node.current
-    handlePosition(nodeEl)()
-    window.addEventListener('scroll', handlePosition(nodeEl))
-    return () => window.removeEventListener('scroll', handlePosition(nodeEl))
+    handlePosition()
+    window.addEventListener('scroll', handlePosition)
+    return () => window.removeEventListener('scroll', handlePosition)
   }, [node.current])
 
   return (
