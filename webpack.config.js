@@ -13,7 +13,7 @@ module.exports = (env) => {
       APAC_URL = 'http://localhost:8080'
       break
     case 'develop':
-      APAC_URL = 'http://localhost:8080'
+      APAC_URL = 'http://121.165.242.201:12001'
       break
     case 'production':
       throw new Error('production api not supported yet')
