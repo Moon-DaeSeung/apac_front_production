@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { changeDateForm, checkValidDate } from '../../../../websol-front/src/utils/DateUtils'
+import { changeDateForm, checkValidDate } from '../../libs/utils/DateUtils'
 
 export const useDateInput = (value: string, onChange: any) => {
   const [isOpen, setIsOpen] = useState(false)

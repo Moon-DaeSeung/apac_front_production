@@ -7,7 +7,7 @@ on:
     branches:
       - develop
 jobs:
-  Deploy-Websol-Client-And-Docz:
+  Deploy-Apac:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -19,7 +19,7 @@ jobs:
           aws-region: ap-northeast-2
       - name: Install project dependencies    
         run: npm install
-      - name: Build Websol
+      - name: Build 
         run: npm run dev-build
-      - name: Deploy Websol
+      - name: Deploy
         run: aws s3 rm s3://hbrc-dev-new-apac/ --recursive && aws s3 cp dist s3://hbrc-dev-new-apac --recursive
