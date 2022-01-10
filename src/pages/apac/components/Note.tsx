@@ -14,7 +14,7 @@ const Note = ({ value, onChange }: NoteProps) => {
         hasArrow
         placement='bottom-end'
         offset={[0, 10]}
-        onChange={(isOpen) => isOpen && textareaRef.current?.focus() }
+        onChange={(isOpen) => isOpen && textareaRef.current?.focus({ preventScroll: true }) }
         renderPopNode={() => (
           <div css={popnode}>
             <textarea
