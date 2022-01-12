@@ -61,6 +61,39 @@ import {useState, useRef} from 'react'
   }
 </Playground>
 
+## Autocomplete
+
+<Playground>
+  {
+    () => {
+      const options = [
+        { id: 1, name: 'apple'}, 
+        { id: 2, name: 'banana'},
+        { id: 3, name: 'melon'},
+        { id: 4, name: 'strawberry'},
+        { id: 5, name: 'carot'},
+        { id: 6, name: 'grape'},
+        { id: 7, name: 'tomato'},
+        { id: 8, name: 'nut'},
+      ]
+      const [value, setValue] = useState(null)
+      return(
+        <div>
+          <Select
+           style={{width: '500px', height: '40px'}} 
+           value={value} 
+           onChange={setValue} 
+           options={options}
+           getOptionLabel={(option) => option.name}
+           autocomplete
+          />
+        </div>
+      )
+    }
+  }
+</Playground>
+
+
 ## Usage with Ref
 
 <Playground>

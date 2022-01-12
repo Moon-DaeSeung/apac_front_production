@@ -97,8 +97,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
       let message = ''
       if (error instanceof ServerError) { message = error.message }
       alert(`정보를 불러오는데 실패하였습니다.\n${message}`)
-    }
-    )
+    })
   }, [id])
 
   const updateQuestionInfo = (testType: TestType) => ({ questions, id: questionId, type }: QuestionInformation) => {
@@ -220,8 +219,6 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
 
   const keyboardMovingEffect = (testType: TestType) => useEffect(() => {
     const listener = (event: any) => {
-      // event.preventDefault()
-      // event.stopPropagation()
       if (!['ArrowUp', 'ArrowDown'].includes(event.key) || !event.altKey) {
         return
       }
