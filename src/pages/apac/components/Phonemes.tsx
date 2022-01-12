@@ -93,17 +93,19 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
                   deleteEvent
                 }: {
                   option: ErrorPattern;
-                  deleteEvent: () => void;
+                  deleteEvent: (e: any) => void;
                 }) => {
                   return (
                     <div css={[multiItem, isDifferent(option) && css`background-color: #FF8C00;`]} key={option.id}>
                       <span css={itemName}>{option.name}</span>
                       <div css={[icon]}>
+                        <div>
                         <img
                           src={crossIcon}
                           css={[deleteItem]}
-                          onClick={deleteEvent}
+                          onMouseDown={deleteEvent}
                         />
+                        </div>
                       </div>
                     </div>
                   )

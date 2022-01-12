@@ -14,8 +14,8 @@ import {useState, useRef} from 'react'
 <Playground>
   {
     () => {
-      const options = [12,23,33,44,55,66]
-      const [value, setValue] = useState([12,23,33])
+      const options = [1,2,3,4,5,6]
+      const [value, setValue] = useState(null)
       return(
         <div>
           <Select
@@ -23,7 +23,6 @@ import {useState, useRef} from 'react'
            value={value} 
            onChange={setValue} 
            options={options}
-           multiple
           />
         </div>
       )
@@ -102,6 +101,41 @@ import {useState, useRef} from 'react'
           />
           <input type="submit"/>
         </form>
+      )
+    }
+  }
+</Playground>
+
+## Multi Select
+
+<Playground>
+  {
+    () => {
+      const options = [
+        { id: 1, name: 'apple'}, 
+        { id: 2, name: 'banana'},
+        { id: 3, name: 'melon'},
+        { id: 4, name: 'strawberry'},
+        { id: 5, name: 'carot'},
+        { id: 6, name: 'grape'},
+        { id: 7, name: 'tomato'},
+        { id: 8, name: 'nut'},
+      ]
+      const [value, setValue] = useState([
+        { id: 1, name: 'apple'}, 
+        { id: 2, name: 'banana'}
+      ])
+      return(
+        <>
+          <Select
+           style={{width: '500px', height: '40px'}} 
+           options={options}
+           multiple
+           value={value}
+           onChange={setValue}
+           getOptionLabel={(option) => option.name}
+          />
+        </>
       )
     }
   }
