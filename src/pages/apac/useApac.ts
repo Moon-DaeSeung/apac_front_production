@@ -6,6 +6,7 @@ import { analyzeErrorPattern, createApac, getApac, getErrorPatterns, getLatestQu
 import { QuestionInformation, ApacTest, SubTest } from '../../libs/api/apac/types'
 import { ServerError } from '../../libs/api/Api'
 import apacStorage from '../../libs/storage/apac'
+import { FocusContext } from './Apac'
 import { ApacUiState, SubTestRow, SubTestUi } from './types'
 
 type UseApacProps = {
@@ -20,7 +21,6 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
   const [apacUiState, setApacUiState] = useState<ApacUiState>(defaultValue)
   const [apacServerState, setApacServerState] = useState<ApacTest | null>(null)
   const [isAllLoadedQuestionInfo, setIsAllLoadedQuestionInfo] = useState(false)
-  const [isTriggered, setIsTriggered] = useState(false)
   const {
     wordTest: { questionInformationId: wordQuestinoId },
     simpleSentenceTest: { questionInformationId: simpleQuestionId },
@@ -217,35 +217,41 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
       )
   }
 
+  const [focusContext, setFocusContext] = useState<FocusContext>({
+    wordTest: { activeRow: -1, focusedRow: -1 },
+    simpleSentenceTest: { activeRow: -1, focusedRow: -1 },
+    normalSentenceTest: { activeRow: -1, focusedRow: -1 }
+  })
+
+  const activateRow = useCallback((testType: TestType) => {
+    const length = apacUiState[testType].subTestRows.length
+    return Array.from({ length }, (_, activeRow) => () =>
+      setFocusContext(prev => {
+        return { ...prev, [testType]: { ...prev[testType], activeRow } }
+      })
+    )
+  }, [isAllLoadedQuestionInfo])
+
   const keyboardMovingEffect = (testType: TestType) => useEffect(() => {
     const listener = (event: any) => {
-      if (!['ArrowUp', 'ArrowDown'].includes(event.key) || !event.altKey) {
-        return
-      }
-      setApacUiState(prev => {
-        const subTestRows = [...prev[testType].subTestRows]
-        const activeIndex = subTestRows.findIndex(({ isActive }) => isActive)
-        const getActiveRowIndex = (direction: 'down' | 'up') => {
-          if (activeIndex === -1) return 0
-          return (activeIndex + (direction === 'up' ? -1 : 1) + subTestRows.length) % subTestRows.length
+      if (!['ArrowUp', 'ArrowDown'].includes(event.key) || !event.altKey) { return }
+
+      setFocusContext(prev => {
+        const { activeRow } = prev[testType]
+        const rowCount = apacUiState[testType].subTestRows.length
+        const getFocusedRow = (direction: string) => {
+          if (activeRow === -1) return 0
+          return (activeRow + (direction === 'ArrowUp' ? -1 : 1) + rowCount) % rowCount
         }
-        let nextActiveIndex = 0
-        if (event.key === 'ArrowUp') {
-          nextActiveIndex = getActiveRowIndex('up')
-        } else {
-          nextActiveIndex = getActiveRowIndex('down')
-        }
-        if (activeIndex !== -1) {
-          subTestRows[activeIndex] = { ...subTestRows[activeIndex], isActive: false }
-        }
-        subTestRows[nextActiveIndex] = { ...subTestRows[nextActiveIndex], isActive: true }
-        setIsTriggered(true)
-        return { ...prev, [testType]: { ...prev[testType], subTestRows } }
+        return { ...prev, [testType]: { ...prev[testType], focusedRow: getFocusedRow(event.key) } }
       })
     }
 
     window.addEventListener('keydown', listener)
-    return () => window.removeEventListener('keydown', listener)
+    return () => {
+      setFocusContext(prev => ({ ...prev, [testType]: { activeRow: -1, focusedRow: -1 } }))
+      window.removeEventListener('keydown', listener)
+    }
   }, [isAllLoadedQuestionInfo])
 
   return {
@@ -256,7 +262,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     handleAllAnswerCheck,
     handleErrorPatternAnalyze,
     keyboardMovingEffect,
-    isTriggered,
-    setIsTriggered
+    activateRow,
+    focusContext
   }
 }

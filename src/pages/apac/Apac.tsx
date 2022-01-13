@@ -14,8 +14,12 @@ export type ApacContextProps = {
   handleAllAnswerCheck: (testType: TestType) => () => void
   handleErrorPatternAnalyze: (testType: TestType) => () => void
   keyboardMovingEffect: (testType: TestType) => void
-  isTriggered: boolean
-  setIsTriggered: (value: boolean) => void
+  activateRow: (testType: TestType) => (() => void)[]
+  focusContext: FocusContext
+}
+
+export type FocusContext = {
+  [key in TestType]: {activeRow: number; focusedRow: number;}
 }
 
 const Apac = () => {
@@ -26,7 +30,8 @@ const Apac = () => {
     handleAllAnswerCheck,
     handleErrorPatternAnalyze,
     keyboardMovingEffect,
-    isTriggered, setIsTriggered
+    activateRow,
+    focusContext
   } = useApac({ defaultValue: apacDefaultValue, id: Number(id) })
   const { pathname } = useLocation()
   let current = pathname.split('/').pop()!!
@@ -55,8 +60,8 @@ const Apac = () => {
           handleAllAnswerCheck,
           handleErrorPatternAnalyze,
           keyboardMovingEffect,
-          setIsTriggered,
-          isTriggered
+          activateRow,
+          focusContext
         }} />
       </main>
     </>

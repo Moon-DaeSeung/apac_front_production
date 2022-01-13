@@ -9,11 +9,11 @@ export type SubTestRowProps = {
   value: SubTestRow
   onChange: (func: (prev: SubTestRow) => SubTestRow) => void
   questionId: string
-  setIsTriggered: (value: boolean) => void
-  isTriggered: boolean
+  activateRow: () => void
+  isFocused: boolean
 }
 
-const useSubTestRow = ({ value, onChange, questionId, isTriggered, setIsTriggered }: SubTestRowProps) => {
+const useSubTestRow = ({ value, onChange, questionId, isFocused, activateRow }: SubTestRowProps) => {
   const [isPendingTotalErrorPattern, setIsPendingTotalErrorPattern] = useState(false)
   const { question, answer, isTyping } = value
   const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null)
@@ -72,32 +72,17 @@ const useSubTestRow = ({ value, onChange, questionId, isTriggered, setIsTriggere
 
   useEffect(
     () => {
-      if (!containerEl || !onChange) return
-      const handleActiveChange = (isActive: boolean) => {
-        onChange(prev => {
-          if (prev.isActive === isActive) return prev
-          return { ...prev, isActive }
-        })
-      }
-      const listener = (event: any) => {
-        const isActive = containerEl.contains(event.target)
-        handleActiveChange(isActive)
-      }
-      document.addEventListener('click', listener)
-      document.addEventListener('focusin', listener)
-      return () => {
-        document.removeEventListener('click', listener)
-        document.removeEventListener('focusin', listener)
-      }
-    }, [onChange, containerEl]
+      if (!containerEl || !activateRow) return
+      containerEl.addEventListener('click', activateRow)
+      containerEl.addEventListener('focusin', activateRow)
+    }, [activateRow, containerEl]
   )
 
-  const reactionEl = reactionRef.current
   useEffect(() => {
-    if (!reactionEl || !(isTriggered && value.isActive)) return
+    const reactionEl = reactionRef.current
+    if (!reactionEl || !isFocused) return
     reactionEl.focus()
-    setIsTriggered(false)
-  }, [reactionEl, isTriggered, value.isActive])
+  }, [isFocused])
 
   return { handleChange, setContainerEl, reactionRef }
 }

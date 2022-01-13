@@ -16,12 +16,12 @@ const Word = () => {
     handleSubTestChange,
     handleAllAnswerCheck,
     handleErrorPatternAnalyze,
-    setIsTriggered,
-    isTriggered,
+    activateRow, focusContext: { wordTest: { focusedRow } },
     keyboardMovingEffect
   } = useOutletContext<ApacContextProps>()
   const handleChange = useMemo(() => handleSubTestChange('wordTest'), [handleSubTestChange])
   keyboardMovingEffect('wordTest')
+  const activate = useMemo(() => activateRow('wordTest'), [activateRow])
 
   return (
     <>
@@ -40,12 +40,12 @@ const Word = () => {
       {subTestRows.map((value, index) => {
         return (
           <Row
-            isTriggered={isTriggered}
-            setIsTriggered={setIsTriggered}
             key={value.question.number}
             value={value}
             onChange={handleChange[index]}
             questionId={questionInformationId}
+            activateRow={activate[index]}
+            isFocused={focusedRow === index}
           />
         )
       })}
@@ -57,10 +57,10 @@ const Word = () => {
   )
 }
 
-const Row = React.memo(({ value, onChange, questionId, isTriggered: isFocused, setIsTriggered }: SubTestRowProps) => {
-  if (!onChange) return <></>
+const Row = React.memo(({ value, onChange, questionId, isFocused, activateRow }: SubTestRowProps) => {
+  if (!onChange || !activateRow) return <></>
   const { question, answer, isTyping } = value
-  const { handleChange, setContainerEl, reactionRef } = useSubTestRow({ value, onChange, questionId, isTriggered: isFocused, setIsTriggered })
+  const { handleChange, setContainerEl, reactionRef } = useSubTestRow({ value, onChange, questionId, isFocused, activateRow })
   return (
       <div key={question.number} css={[row, grid]} ref={setContainerEl}>
         <div css={[item]}>{question.number}</div>
