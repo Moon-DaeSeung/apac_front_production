@@ -21,6 +21,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
   const [apacUiState, setApacUiState] = useState<ApacUiState>(defaultValue)
   const [apacServerState, setApacServerState] = useState<ApacTest | null>(null)
   const [isAllLoadedQuestionInfo, setIsAllLoadedQuestionInfo] = useState(false)
+  const [isSaved, setIsSaved] = useState(true)
   const {
     wordTest: { questionInformationId: wordQuestinoId },
     simpleSentenceTest: { questionInformationId: simpleQuestionId },
@@ -33,7 +34,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
   }, [wordQuestinoId, simpleQuestionId, normalQuestionId])
 
   useEffect(() => {
-    if (!id || !isAllLoadedQuestionInfo) return
+    if (isSaved || !id || !isAllLoadedQuestionInfo) return
     const cache: ApacTest = {
       id,
       updatedAt: new Date(),
@@ -92,7 +93,11 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     const cahced = apacStorage.get(id)
     if (!cahced) { getApac(id).then(initialize); return }
     getApac(id).then(data => {
-      cahced.updatedAt > data.updatedAt ? initialize(cahced) : initialize(data)
+      if (cahced.updatedAt > data.updatedAt) {
+        initialize(cahced); setIsSaved(false)
+      } else {
+        initialize(data)
+      }
     }).catch((error: Error) => {
       let message = ''
       if (error instanceof ServerError) { message = error.message }
@@ -132,6 +137,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
     promise.then(data => {
       id || navigation(`./${data.id}/word`)
       id && apacStorage.remove(id)
+      setIsSaved(true)
       alert('저장하였습니다.')
     }).catch((error: Error) => {
       let message = ''
@@ -150,6 +156,7 @@ export const useApac = ({ defaultValue, id }: UseApacProps) => {
 
   const handleSubTestChange = useCallback((testType: TestType) => {
     const { subTestRows } = apacUiState[testType]
+    setIsSaved(false)
     return subTestRows.map((_, index) => (func: ((prev: SubTestRow) => SubTestRow)) => {
       setApacUiState(prev => {
         const copied = [...prev[testType].subTestRows]
