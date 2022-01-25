@@ -102,7 +102,7 @@ export default Word
 
 const grid = css`
 display: grid;
-grid-template-columns: minmax(60px, 1fr) minmax(100px, 1fr) minmax(120px, 3fr) minmax(200px, 4fr) minmax(200px, 4fr) 100px;
+grid-template-columns: minmax(70px, 1fr) minmax(100px, 1fr) minmax(120px, 3fr) minmax(200px, 4fr) minmax(200px, 4fr) 100px;
 `
 const phonemestart = css`
   justify-content: start;

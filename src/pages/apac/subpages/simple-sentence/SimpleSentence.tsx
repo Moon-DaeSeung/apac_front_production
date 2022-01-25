@@ -114,7 +114,7 @@ export default SimpleSentence
 
 const grid = css`
   display: grid;
-  grid-template-columns: minmax(70px, 1fr) minmax(250px, 7fr) 9fr 100px;
+  grid-template-columns: minmax(70px, 1fr) minmax(400px, 450px) 600px 100px;
 `
 const grid2 = css`
   flex-grow: 1;
