@@ -135,7 +135,7 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
             css={[item, distortion]}
             value={value.distortion}
             onChange={(e) => handleChange('distortion')(e.target.value)}
-            onMouseDown={(e) => { e.stopPropagation() }}
+            onClick={(e) => { e.stopPropagation() }}
           />
         </div>
       </Popper>
