@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "webpack serve --env profile=local --mode development --open --hot",
-    "production-start": "webpack serve --env profile=local --mode production --open --hot",
+    "production-start": "webpack serve --env profile=production --mode production --open --hot",
     "production-build": "webpack --env profile=production --mode production",
     "preproduction-deploy": "npm run production-build",
     "production-deploy": "aws s3 rm s3://hbrc-new-apac/ --recursive && aws s3 cp dist s3://hbrc-new-apac --recursive",

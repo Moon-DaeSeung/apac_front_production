@@ -22,12 +22,12 @@ const Phonemes = ({ value, onChange, state }: PhonemesProps) => {
     return !isBlank && !isSpace && !isLineBreak
   }
   const transforming = (phoneme: Phoneme) => {
-    const { react, target } = phoneme
+    const { react } = phoneme
 
-    return { ...phoneme, react: react === '-' ? '∅' : react, target: target === '-' ? '∅' : target }
+    return { ...phoneme, react: react === '-' ? '∅' : react }
   }
-  const converted = value.filter(filtering).map(transforming)
-  const secondLineStart = converted.findIndex(({ target }) => target === '\n')
+  const filtered = value.filter(filtering).map(transforming)
+  const secondLineStart = filtered.findIndex(({ target }) => target === '\n')
   const row = (key: number) => key > secondLineStart ? 2 : 1
   const handleChange = (index: number) => (item: Phoneme) => {
     const copied = [...value]
@@ -37,7 +37,7 @@ const Phonemes = ({ value, onChange, state }: PhonemesProps) => {
 
   return (
     <div css={[container, state !== 'COMPLETE' && disabled, state === 'NO_RESPONSE' && noResponse]}>
-      {converted.map((item, key) => {
+      {filtered.map((item, key) => {
         return (
           <div key={key} css={css`grid-row: ${row(key)};`}>
             <PhonemeBox
@@ -131,7 +131,7 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
         }
         onChange={(isOpen) => setIsOpen(isOpen)}
       >
-        <div css={[phonemeBox, isOpen && selected, isHidden && hidden, hasDifferent && different]}
+        <div css={[phonemeBox, react.length === 2 && css`width: 40px;`, isOpen && selected, isHidden && hidden, hasDifferent && different]}
           onClick={(e) => { isHidden && e.preventDefault() }}
         >
           <div css={item}>{target}</div>
@@ -167,7 +167,7 @@ const noResponse = css`
 const item = css`
   border: 1px solid ${border.base};
   border-radius: 4px;
-  width: 24px;
+  width: 100%;
   height: 25px;
   aspect-ratio: 1;
   box-sizing: border-box;
@@ -194,6 +194,7 @@ const different = css`
 `
 const phonemeBox = css`
   padding: 2px;
+  width: 27px;
   gap: 2px;
   display: flex;
   flex-direction: column;
