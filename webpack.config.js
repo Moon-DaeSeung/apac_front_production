@@ -7,7 +7,7 @@ const mode = process.env.NODE_ENV || 'development'
 const port = process.env.PORT || 3000
 
 module.exports = (env) => {
-  let APAC_URL = ''
+  let APAC_URL = 'http://localhost:8080'
   switch (env.profile) {
     case 'local':
       APAC_URL = 'http://localhost:8080'
@@ -16,7 +16,8 @@ module.exports = (env) => {
       APAC_URL = 'http://121.165.242.201:12001'
       break
     case 'production':
-      throw new Error('production api not supported yet')
+      APAC_URL = 'http://3.38.220.108:8080'
+      break
     default:
       throw new Error('undefined profile')
   }

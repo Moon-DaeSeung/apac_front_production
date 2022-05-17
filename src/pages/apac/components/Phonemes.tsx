@@ -21,8 +21,13 @@ const Phonemes = ({ value, onChange, state }: PhonemesProps) => {
     const isLineBreak = target === '\n' && key % 3 !== 1
     return !isBlank && !isSpace && !isLineBreak
   }
-  const filtered = value.filter(filtering)
-  const secondLineStart = filtered.findIndex(({ target }) => target === '\n')
+  const transforming = (phoneme: Phoneme) => {
+    const { react, target } = phoneme
+
+    return { ...phoneme, react: react === '-' ? '∅' : react, target: target === '-' ? '∅' : target }
+  }
+  const converted = value.filter(filtering).map(transforming)
+  const secondLineStart = converted.findIndex(({ target }) => target === '\n')
   const row = (key: number) => key > secondLineStart ? 2 : 1
   const handleChange = (index: number) => (item: Phoneme) => {
     const copied = [...value]
@@ -32,7 +37,7 @@ const Phonemes = ({ value, onChange, state }: PhonemesProps) => {
 
   return (
     <div css={[container, state !== 'COMPLETE' && disabled, state === 'NO_RESPONSE' && noResponse]}>
-      {filtered.map((item, key) => {
+      {converted.map((item, key) => {
         return (
           <div key={key} css={css`grid-row: ${row(key)};`}>
             <PhonemeBox
