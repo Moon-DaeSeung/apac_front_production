@@ -17,7 +17,7 @@ export interface SelectProps {
   value: any
   onChange?: (value: any) => void
   getOptionLabel?: (option: any) => string
-  renderMultiItemNode?: ({ option, deleteEvent }: {option: any, deleteEvent: () => void}) => React.ReactElement
+  renderMultiItemNode?: ({ option, deleteEvent }: {option: any, deleteEvent: (e: any) => void}) => React.ReactElement
   name?: string,
   autocomplete?: boolean
   eraser?: boolean
@@ -69,13 +69,13 @@ function Select ({
         {(value as any[]).map((option: any, key: number) => {
           return (
             renderMultiItemNode
-              ? renderMultiItemNode({ option, deleteEvent: () => handleDeleteItem(option) })
+              ? renderMultiItemNode({ option, deleteEvent: (e: any) => { e.preventDefault(); handleDeleteItem(option) } })
               : <div key={key} css={item}>
               <span css={itemName}>
                 {getOptionLabel(option)}
               </span>
               <div css={[icon]}>
-                <img src={crossIcon} css={[deleteItem]} onClick={() => handleDeleteItem(option)} />
+                <img src={crossIcon} css={[deleteItem]} onMouseDown={(e) => { e.preventDefault(); handleDeleteItem(option) }} />
               </div>
             </div>
           )

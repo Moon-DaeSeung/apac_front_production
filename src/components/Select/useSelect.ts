@@ -144,6 +144,7 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
 
   const handleInputChange = (event: any) => {
     setInputValue(event.target.value)
+    isMenuOpen || setIsMenuOpen(true)
   }
 
   const filterMenu = useCallback(debounce((searchString: string) => {
@@ -166,7 +167,8 @@ export function useSelect<T> ({ multiple, value, options: optionsProp, getOption
   }, [inputValue])
 
   useEffect(() => {
-    setFocusedOption(null)
+    const focused = options.length ? options[0] : null
+    setFocusedOption(focused)
   }, [options])
 
   useEffect(() => {

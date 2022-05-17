@@ -38,6 +38,7 @@ export default function Popper ({ hasArrow = false, onChange, renderPopNode, chi
           popperContainer.contains(event.target) ||
           targetContainer.contains(event.target)
         )) {
+          console.log(event.target, targetContainer.contains(event.target))
           setIsOpen(false)
         }
       }

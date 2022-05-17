@@ -16,10 +16,13 @@ const SimpleSentence = () => {
     handleSubTestChange,
     handleAllAnswerCheck,
     handleErrorPatternAnalyze,
-    isTriggered, setIsTriggered, keyboardMovingEffect
+    activateRow, focusContext: { simpleSentenceTest: { focusedRow } },
+    keyboardMovingEffect
   } = useOutletContext<ApacContextProps>()
   const handleChange = useMemo(() => handleSubTestChange('simpleSentenceTest'), [handleSubTestChange])
   keyboardMovingEffect('simpleSentenceTest')
+  const activate = useMemo(() => activateRow('simpleSentenceTest'), [activateRow])
+
   return (
     <>
       <h2>문장검사 간략형</h2>
@@ -42,8 +45,8 @@ const SimpleSentence = () => {
             key={index}
             value={value}
             onChange={handleChange[index]}
-            isTriggered={isTriggered}
-            setIsTriggered={setIsTriggered}
+            activateRow={activate[index]}
+            isFocused={index === focusedRow}
           />
         )
       })}
@@ -55,10 +58,10 @@ const SimpleSentence = () => {
   )
 }
 
-const Row = React.memo(({ value, onChange, questionId, isTriggered, setIsTriggered }: SubTestRowProps) => {
-  if (!onChange) return <></>
+const Row = React.memo(({ value, onChange, questionId, isFocused, activateRow }: SubTestRowProps) => {
+  if (!onChange || !activateRow) return <></>
   const { question, answer, isTyping } = value
-  const { handleChange, setContainerEl, reactionRef } = useSubTestRow({ value, onChange, questionId, setIsTriggered, isTriggered })
+  const { handleChange, setContainerEl, reactionRef } = useSubTestRow({ value, onChange, questionId, isFocused, activateRow })
   return (
       <div key={question.number} css={[row, grid]} ref={setContainerEl}>
         <div css={[item, css`grid-row: 1 / 3; grid-column: 1;`]}>{question.number}</div>
@@ -111,7 +114,7 @@ export default SimpleSentence
 
 const grid = css`
   display: grid;
-  grid-template-columns: minmax(70px, 1fr) minmax(250px, 7fr) 9fr 100px;
+  grid-template-columns: minmax(70px, 1fr) minmax(400px, 450px) 600px 100px;
 `
 const grid2 = css`
   flex-grow: 1;

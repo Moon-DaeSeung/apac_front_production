@@ -21,7 +21,12 @@ const Phonemes = ({ value, onChange, state }: PhonemesProps) => {
     const isLineBreak = target === '\n' && key % 3 !== 1
     return !isBlank && !isSpace && !isLineBreak
   }
-  const filtered = value.filter(filtering)
+  const transforming = (phoneme: Phoneme) => {
+    const { react } = phoneme
+
+    return { ...phoneme, react: react === '-' ? '∅' : react }
+  }
+  const filtered = value.filter(filtering).map(transforming)
   const secondLineStart = filtered.findIndex(({ target }) => target === '\n')
   const row = (key: number) => key > secondLineStart ? 2 : 1
   const handleChange = (index: number) => (item: Phoneme) => {
@@ -93,17 +98,19 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
                   deleteEvent
                 }: {
                   option: ErrorPattern;
-                  deleteEvent: () => void;
+                  deleteEvent: (e: any) => void;
                 }) => {
                   return (
                     <div css={[multiItem, isDifferent(option) && css`background-color: #FF8C00;`]} key={option.id}>
                       <span css={itemName}>{option.name}</span>
                       <div css={[icon]}>
+                        <div>
                         <img
                           src={crossIcon}
                           css={[deleteItem]}
-                          onClick={deleteEvent}
+                          onMouseDown={deleteEvent}
                         />
+                        </div>
                       </div>
                     </div>
                   )
@@ -124,7 +131,7 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
         }
         onChange={(isOpen) => setIsOpen(isOpen)}
       >
-        <div css={[phonemeBox, isOpen && selected, isHidden && hidden, hasDifferent && different]}
+        <div css={[phonemeBox, react.length === 2 && css`width: 40px;`, isOpen && selected, isHidden && hidden, hasDifferent && different]}
           onClick={(e) => { isHidden && e.preventDefault() }}
         >
           <div css={item}>{target}</div>
@@ -133,7 +140,7 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
             css={[item, distortion]}
             value={value.distortion}
             onChange={(e) => handleChange('distortion')(e.target.value)}
-            onMouseDown={(e) => { e.stopPropagation() }}
+            onClick={(e) => { e.stopPropagation() }}
           />
         </div>
       </Popper>
@@ -160,7 +167,7 @@ const noResponse = css`
 const item = css`
   border: 1px solid ${border.base};
   border-radius: 4px;
-  width: 24px;
+  width: 100%;
   height: 25px;
   aspect-ratio: 1;
   box-sizing: border-box;
@@ -187,6 +194,7 @@ const different = css`
 `
 const phonemeBox = css`
   padding: 2px;
+  width: 27px;
   gap: 2px;
   display: flex;
   flex-direction: column;

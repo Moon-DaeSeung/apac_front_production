@@ -5,7 +5,7 @@ import Button from '../../../../components/Button'
 import DateInput from '../../../../components/DateInput'
 import { InformationProps } from '../../types'
 import { useOutletContext } from 'react-router-dom'
-import { changeDateForm } from '../../../../../../websol-front/src/utils/DateUtils'
+import { changeDateForm } from '../../../../libs/utils/DateUtils'
 import { ApacContextProps } from '../../Apac'
 
 const Information = () => {
