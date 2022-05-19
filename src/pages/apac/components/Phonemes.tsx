@@ -44,7 +44,7 @@ const Phonemes = ({ value, onChange, state }: PhonemesProps) => {
               key={key}
               isHidden={item.target === ' ' || item.target === '\n'}
               value={item}
-              onChange={handleChange(value.indexOf(item))}
+              onChange={handleChange(key)}
             />
           </div>
         )
