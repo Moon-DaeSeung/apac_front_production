@@ -32,12 +32,13 @@ const Phonemes = ({ value, onChange, state }: PhonemesProps) => {
       {value.map((item, key) => {
         const {target, react } = item
         const isBlank = target === '-' && (react === '-' || react === '')
-        const isSpace = target === ' ' && key % 3 !== 1
+        const isSpace = target === ' '
+        const isSpaceOnConsonant = isSpace && key % 3 !== 1
         const isLineBreak = target === '\n'
         const isBreak = react === '.' && key % 3 !== 1
-        const isHidden = isBlank || isSpace || isLineBreak || isBreak
+        const isHidden = isBlank || isSpaceOnConsonant || isLineBreak || isBreak
         return (
-          <div key={key} css={ isHidden ? css`display: none;` : css`grid-row: ${row(key)};`}>
+          <div key={key} css={ [isHidden ? css`display: none;` : css`grid-row: ${row(key)};`, isSpace && css`visibility: hidden;`]}>
             <PhonemeBox
               key={key}
               value={transform(item)}
