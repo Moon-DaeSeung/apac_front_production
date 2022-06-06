@@ -31,7 +31,7 @@ const Phonemes = ({ value, onChange, state }: PhonemesProps) => {
     <div css={[container, state !== 'COMPLETE' && disabled, state === 'NO_RESPONSE' && noResponse]}>
       {value.map((item, key) => {
         const {target, react } = item
-        const isBlank = target === '-' && (react === '-' || react === '')
+        const isBlank = target === '-' && (react === '-' || react === '' || react === '*' || react === '&')
         const isSpace = target === ' '
         const isSpaceOnConsonant = isSpace && key % 3 !== 1
         const isLineBreak = target === '\n'
