@@ -61,6 +61,7 @@ const NormalSentence = () => {
 const Row = React.memo(({ value, onChange, questionId, isFocused, activateRow }: SubTestRowProps) => {
   if (!onChange || !activateRow) return <></>
   const { question, answer, isTyping } = value
+  console.log(value)
   const { handleChange, setContainerEl, reactionRef } = useSubTestRow({ value, onChange, questionId, isFocused, activateRow })
   return (
     <div key={question.number} css={[row, grid]} ref={setContainerEl}>

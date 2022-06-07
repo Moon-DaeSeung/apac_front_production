@@ -15,19 +15,11 @@ export type PhonemesProps = {
 }
 
 const Phonemes = ({ value, onChange, state }: PhonemesProps) => {
-  const filtering = ({ target, react }: Phoneme, key: number) => {
-    const isBlank = target === '-' && (react === '-' || react === '')
-    const isSpace = target === ' ' && key % 3 !== 1
-    const isLineBreak = target === '\n' && key % 3 !== 1
-    return !isBlank && !isSpace && !isLineBreak
-  }
-  const transforming = (phoneme: Phoneme) => {
+  const transform = (phoneme: Phoneme) => {
     const { react } = phoneme
-
     return { ...phoneme, react: react === '-' ? '∅' : react }
   }
-  const filtered = value.filter(filtering).map(transforming)
-  const secondLineStart = filtered.findIndex(({ target }) => target === '\n')
+  const secondLineStart = value.findIndex(({ target }) => target === '\n')
   const row = (key: number) => key > secondLineStart ? 2 : 1
   const handleChange = (index: number) => (item: Phoneme) => {
     const copied = [...value]
@@ -37,13 +29,19 @@ const Phonemes = ({ value, onChange, state }: PhonemesProps) => {
 
   return (
     <div css={[container, state !== 'COMPLETE' && disabled, state === 'NO_RESPONSE' && noResponse]}>
-      {filtered.map((item, key) => {
+      {value.map((item, key) => {
+        const {target, react } = item
+        const isBlank = target === '-' && (react === '-' || react === '' || react === '*' || react === '&')
+        const isSpace = target === ' '
+        const isSpaceOnConsonant = isSpace && key % 3 !== 1
+        const isLineBreak = target === '\n'
+        const isBreak = react === '.' && key % 3 !== 1
+        const isHidden = isBlank || isSpaceOnConsonant || isLineBreak || isBreak
         return (
-          <div key={key} css={css`grid-row: ${row(key)};`}>
+          <div key={key} css={ [isHidden ? css`display: none;` : css`grid-row: ${row(key)};`, isSpace && css`visibility: hidden;`]}>
             <PhonemeBox
               key={key}
-              isHidden={item.target === ' ' || item.target === '\n'}
-              value={item}
+              value={transform(item)}
               onChange={handleChange(key)}
             />
           </div>
@@ -54,12 +52,11 @@ const Phonemes = ({ value, onChange, state }: PhonemesProps) => {
 }
 
 type PhonemeBoxProps = {
-  isHidden: boolean
   value: Phoneme
   onChange: (value: Phoneme) => void
 }
 
-const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
+const PhonemeBox = ({ value, onChange }: PhonemeBoxProps) => {
   const { target, react, confirmedErrorPatterns, computedErrorPatterns } = value
   const [isOpen, setIsOpen] = useState(false)
   const [selectEl, setSelectEl] = useState<HTMLInputElement | null>(null)
@@ -131,9 +128,7 @@ const PhonemeBox = ({ isHidden = false, value, onChange }: PhonemeBoxProps) => {
         }
         onChange={(isOpen) => setIsOpen(isOpen)}
       >
-        <div css={[phonemeBox, react.length === 2 && css`width: 40px;`, isOpen && selected, isHidden && hidden, hasDifferent && different]}
-          onClick={(e) => { isHidden && e.preventDefault() }}
-        >
+        <div css={[phonemeBox, react.length === 2 && css`width: 40px;`, isOpen && selected, hasDifferent && different]}>
           <div css={item}>{target}</div>
           <div css={[item, red, (target === react) && white]}>{react}</div>
           <input
@@ -152,7 +147,6 @@ export default Phonemes
 
 const container = css`
   display: grid;
-  grid-template-columns: repeat(auto-fit, content-fit); 
   justify-content: start;
   flex-grow: 1;
   padding: 2px 0px 2px 2px;
@@ -226,9 +220,6 @@ const button = css`
   margin-top: auto;
   margin-left: auto;
   font-size: 12px;
-`
-const hidden = css`
-  display: none;
 `
 const multiItem = css`
   display: flex;
